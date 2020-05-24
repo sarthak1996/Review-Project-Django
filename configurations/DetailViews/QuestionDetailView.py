@@ -17,4 +17,5 @@ class QuestionDetailView(DetailView):
 		context['detail_view_title']='Question'
 		context['update_view_url']='configurations:question_update_view'
 		context['button_label']='Update'
+		context['update_rendered']=True
 		return context

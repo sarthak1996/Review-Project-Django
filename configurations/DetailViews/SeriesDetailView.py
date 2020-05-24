@@ -17,4 +17,5 @@ class SeriesDetailView(DetailView):
 		context['detail_view_title']='Series'
 		context['update_view_url']='configurations:series_update_view'
 		context['button_label']='Update'
+		context['update_rendered']=True
 		return context

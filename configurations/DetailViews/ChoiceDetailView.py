@@ -17,4 +17,5 @@ class ChoiceDetailView(DetailView):
 		context['detail_view_title']='Choice'
 		context['update_view_url']='configurations:choice_update_view'
 		context['button_label']='Update'
+		context['update_rendered']=True
 		return context

@@ -17,4 +17,5 @@ class TeamDetailView(DetailView):
 		context['detail_view_title']='Team'
 		context['update_view_url']='configurations:team_update_view'
 		context['button_label']='Update'
+		context['update_rendered']=True
 		return context

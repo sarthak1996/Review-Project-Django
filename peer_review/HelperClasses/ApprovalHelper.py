@@ -1,5 +1,6 @@
 from peer_review.models import Review,Approval
 from peer_review.HelperClasses import StatusCodes
+
 def approve_review(review):
 	latest_approval_row=get_latest_approval_row(review)
 	status=StatusCodes.get_approved_status()
@@ -35,4 +36,14 @@ def reject_review(review):
 	latest_approval_row=get_latest_approval_row(review)
 	status=StatusCodes.get_rejected_status()
 	change_status_approval_row(review,latest_approval_row,status)
+
+def mark_review_pending(review):
+	latest_approval_row=get_latest_approval_row(review)
+	status=StatusCodes.get_pending_status()
+	change_status_approval_row(review,latest_approval_row,status)
+
+def delegate_review(review):
+	pass
+
+
 

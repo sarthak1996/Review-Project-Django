@@ -1,5 +1,5 @@
 from django.views.generic.detail import DetailView
-
+from peer_review.HelperClasses import StatusCodes
 from peer_review.models import Review
 
 class ReviewRaisedToMeDetailView(DetailView):
@@ -17,4 +17,5 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['detail_view_title']='Review'
 		context['update_view_url']='peer_review:review_update_view'
 		context['button_label']='Approve'
+		context['update_rendered']=(review_obj.approval_outcome==StatusCodes.get_pending_status())
 		return context

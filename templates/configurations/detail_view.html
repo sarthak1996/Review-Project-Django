@@ -37,7 +37,9 @@
 								{% endif %}
 								<hr/>
 						{% endfor %}
-						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url update_view_url obj_pk=detail_obj.pk %}">{{button_label}}</a>
+						{% if update_rendered %}
+							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url update_view_url obj_pk=detail_obj.pk %}">{{button_label}}</a>
+						{% endif %}
 					</div>
 					<div class="card-footer">
 						{% for key,value in detail_obj.get_last_update_fields%}
