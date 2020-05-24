@@ -26,7 +26,8 @@ class ReviewCreateView(CreateView):
 													user=self.request.user,
 													raise_to=form.cleaned_data['raise_to'],
 													approval_outcome=review_obj.approval_outcome,
-													delegated=False)
+													delegated=False,
+													is_create=True)
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):

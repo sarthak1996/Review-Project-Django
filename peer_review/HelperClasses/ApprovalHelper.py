@@ -53,12 +53,13 @@ def mark_all_approval_rows_as_not_latest(all_approval_rows):
 	for apr in all_approval_rows:
 		apr.save()
 
-def create_new_approval_row(review_obj,user,raise_to,approval_outcome,delegated):
-	latest_approval_row=get_latest_approval_row(review_obj)
-	if latest_approval_row.approval_outcome==StatusCodes.get_approved_status():
-		print('This should not have happened! - Approved rows should not have been touched from UI.')
-		return
-	mark_all_approval_rows_as_not_latest(get_all_approval_rows(review_obj))
+def create_new_approval_row(review_obj,user,raise_to,approval_outcome,delegated,is_create=False):
+	if not is_create:
+		latest_approval_row=get_latest_approval_row(review_obj)
+		if latest_approval_row.approval_outcome==StatusCodes.get_approved_status():
+			print('This should not have happened! - Approved rows should not have been touched from UI.')
+			return
+		mark_all_approval_rows_as_not_latest(get_all_approval_rows(review_obj))
 	approval_obj=Approval(review=review_obj,
 								raised_by=user,
 								raised_to=raise_to,
