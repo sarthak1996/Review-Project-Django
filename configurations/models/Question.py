@@ -1,0 +1,65 @@
+from django.db import models
+from django.conf import settings
+from collections import OrderedDict 
+from django.urls import reverse_lazy
+from .Series import Series
+from .Choice import Choice
+QUESTION_CHOICE_TYPE=[("SCH","Single choice"),("MCH","Multiple choice"),("TXT","Text")]
+QUESTION_TYPE=[("PRTEST","Peer Testing"),("MRGCHK","Mergereq checklist")]
+
+
+class Question(models.Model):
+	question_text=models.CharField(max_length=200,blank=False)
+	question_choice_type=models.CharField(max_length=3, blank=False,choices=QUESTION_CHOICE_TYPE)
+	mandatory=models.BooleanField(blank=True)
+	creation_date=models.DateTimeField(blank=False)
+	last_update_date=models.DateTimeField(auto_now=True)
+	series_type=models.CharField(max_length=3,blank=True,null=True,choices = Series.get_choices_models()['series_type'])
+	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='questions_created_by',on_delete=models.PROTECT)
+	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='question_last_update_by',on_delete=models.PROTECT)
+	choices=models.ManyToManyField(Choice,blank=True,related_name='question_choices_assoc')
+	question_type=models.CharField(max_length=10, blank=False,choices=QUESTION_TYPE)
+	
+	class Meta:
+		verbose_name_plural = "Questions"
+	def __str__(self):
+		return self.question_text
+
+	@staticmethod
+	def get_questions_choice_types():
+		return {'question_type':QUESTION_TYPE,
+			'question_choice_type':QUESTION_CHOICE_TYPE}
+
+	def get_values_for_fields(self):
+		field_dict=OrderedDict()
+		SERIES_TYPE=Series.get_choices_models()['series_type']
+		# field_dict['Team Name']=self.team_name
+		field_dict['Question text']=self.question_text
+		field_dict['Question choice type']=''.join([value for (item,value) in QUESTION_CHOICE_TYPE if item==self.question_choice_type])
+		field_dict['Mandatory']=self.mandatory
+		field_dict['Question type']=''.join([value for (item,value) in QUESTION_TYPE if item==self.question_type])
+		field_dict['Series type']=SERIES_TYPE[1][1] if not self.series_type else self.series_type
+		field_dict['MULTI_DISP_FIELD']='Choices'
+		field_dict['Created By']=self.created_by.username
+		field_dict['Creation Date']= str(self.creation_date)
+		# print(field_dict.items())
+		return field_dict.items()
+
+	#create method to return choice list for rendering
+	def get_choices_multi_field(self):
+		choice_list=self.choices.all()
+		return [choice for choice in choice_list]
+
+
+	def get_last_update_fields(self):
+		field_dict=OrderedDict()
+		field_dict['Last Update By']= self.last_update_by.username
+		field_dict['Last Update Date']= str(self.last_update_date)
+		return field_dict.items()
+
+	def get_absolute_url(self):
+		return reverse_lazy('configurations:question_detail_view',kwargs={'obj_pk':self.pk})
+
+	def get_display_list_name(self):
+		return self.question_text
+	

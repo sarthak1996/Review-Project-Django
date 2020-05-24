@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+{% block static_head_files %}
+	<link href="{% static 'css/detail_view.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block title %}
+	{{detail_view_title}}
+{% endblock %}
+{% block content%}
+
+<div class="container d-flex h-100">
+    <div class="row align-self-center w-100">
+        <div class="col-6 mx-auto">
+			<div class="card border-dark mb-3 mx-auto my-auto" >
+				<div class="card-header">{{detail_view_card_title}}</div>
+					<div class="card-body text-dark">
+						<h5 class="card-title" data-letters="{{ name_first_letter }}">{{ detail_name }}</h5>
+						{% for key,value in detail_obj.get_values_for_fields %}
+								{% if key == 'MULTI_DISP_FIELD' %}
+									<label>Choices</label>
+									{% for ch in detail_obj.get_choices_multi_field %}
+										<div class="form-check">
+        									<input class="form-check-input" type="checkbox" checked disabled>
+        									<label class="form-check-label">
+          										{{ch}}
+        									</label>
+      									</div>
+										
+									{% endfor %}
+								{% else %}
+									<div class="card-text">
+										<small class="text-muted">{{key}}</small>
+									</div>
+									<div class="card-text">
+										<h7>{{value}}</h7>
+									</div>	
+								{% endif %}
+								<hr/>
+						{% endfor %}
+						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url update_view_url obj_pk=detail_obj.pk %}">{{button_label}}</a>
+					</div>
+					<div class="card-footer">
+						{% for key,value in detail_obj.get_last_update_fields%}
+				    	<small class="text-muted">{{key}} : {{value}}</small>
+				    	{% endfor %}
+					</div>
+				</div>
+        </div>
+    </div>
+</div>
+
+	
+{% endblock %}

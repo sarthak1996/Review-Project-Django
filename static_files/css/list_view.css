@@ -1,0 +1,12 @@
+.btn-register:link,.btn-register:visited {
+  color: white;
+  background-color: #e42616;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-register:hover,.btn-register:active {
+  color: white;
+  background-color: #ea4335;
+}

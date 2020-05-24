@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% block static_head_files %}
+	<link href="{% static 'css/list_view.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block title %}
+	{{page_title}}
+{% endblock %}
+{% block content%}
+<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url create_url %}">{{create_object_button_title}}</a>
+	<ul class="list-group">
+		{% for obj in object_list %}
+			<li class="list-group-item list-group-item-success"><a href="{% url detail_view_url obj_pk=obj.pk %}">{{obj.get_display_list_name}}</a></li>
+		{% endfor %}
+	</ul>
+{% endblock %}
