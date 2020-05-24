@@ -3,12 +3,14 @@ from peer_review.models import Review,Approval
 import datetime 
 from peer_review.forms.ReviewForm import ReviewForm
 from configurations.models import Question
-from peer_review.HelperClasses import CommonLookups,StatusCodes
+from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper
+from django.db import transaction
 class ReviewCreateView(CreateView):
 	model= Review
 	form_class=ReviewForm
 	template_name='configurations/create_view.html'
 
+	@transaction.atomic
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user
@@ -20,16 +22,11 @@ class ReviewCreateView(CreateView):
 			review_obj.approval_outcome=StatusCodes.get_pending_status()
 			print('Review approval:'+ review_obj.approval_outcome)
 			review_obj.save()
-			approval_obj=Approval(review=review_obj,
-								raised_by=self.request.user,
-								raised_to=form.cleaned_data['raise_to'],
-								approval_outcome=Review.get_review_priority_approval_types()['approval_outcome'][1][0],
-								delegated=False,
-								latest=True,
-								creation_date=datetime.datetime.now(),
-								created_by=self.request.user,
-								last_update_by=self.request.user)
-			approval_obj.save()
+			ApprovalHelper.create_new_approval_row(review_obj=review_obj,
+													user=self.request.user,
+													raise_to=form.cleaned_data['raise_to'],
+													approval_outcome=review_obj.approval_outcome,
+													delegated=False)
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):
