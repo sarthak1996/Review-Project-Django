@@ -18,4 +18,7 @@ class SeriesDetailView(DetailView):
 		context['update_view_url']='configurations:series_update_view'
 		context['button_label']='Update'
 		context['update_rendered']=True
+		context['delegate_rendered']=False
+		context['delegate_label']='Delegate'
+		context['delegate_view_url']='peer_review:delegate_view'
 		return context

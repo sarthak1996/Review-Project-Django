@@ -22,7 +22,7 @@
 							{% if form.non_field_errors %}
 								<div class="list-group">
 									{% for err in form.non_field_errors %}
-										<li class="list-group-item list-group-item-danger">Hi{{err}}</li>
+										<li class="list-group-item list-group-item-danger">{{err}}</li>
 									{% endfor %}
 								</div>
 							{% endif %}
@@ -58,7 +58,7 @@
 							{% endfor %}
 						{% endfor %}
 						<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
-						
+						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:delegate_review' review_obj=review_object.pk %}">Delegate</a>
 					</form>
 				</div>
 			</div>

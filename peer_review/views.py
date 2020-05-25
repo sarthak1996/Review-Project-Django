@@ -42,6 +42,7 @@ def peer_review_approval_form(request,**kwargs):
 	context_dict['detail_name']=review.bug_number
 	context_dict['name_first_letter']=context_dict['detail_name'][0]
 	context_dict['button_label']='Approve'
+	context_dict['review_object']=review
 	
 	# for form in formset:
 	# 	print('Initial form values' + str(form.initial['question']))

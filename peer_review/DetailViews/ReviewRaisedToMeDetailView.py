@@ -18,4 +18,7 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['update_view_url']='peer_review:review_update_view'
 		context['button_label']='Approve'
 		context['update_rendered']=(review_obj.approval_outcome==StatusCodes.get_pending_status())
+		context['delegate_rendered']=False
+		context['delegate_label']='Delegate'
+		context['delegate_view_url']='peer_review:delegate_view'
 		return context
