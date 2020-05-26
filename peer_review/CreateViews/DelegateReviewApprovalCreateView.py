@@ -21,7 +21,8 @@ class DelegateReviewApprovalCreateView(CreateView):
 			ApprovalHelper.delegate_approval(review=review,
 												user=self.request.user,
 												raised_to=form.cleaned_data['raised_to'])
-		return redirect('peer_review:review_home')
+			redirect(review.get_absolute_url())
+		return redirect('peer_review:review_raised_to_me')
 
 
 	def get_context_data(self, **kwargs):

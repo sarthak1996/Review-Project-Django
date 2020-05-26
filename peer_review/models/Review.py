@@ -40,6 +40,7 @@ class Review(models.Model):
 		field_dict['Review type']=''.join([value for (item,value) in QUESTION_TYPE if item==self.review_type])
 		field_dict['Team']=self.team.team_name
 		field_dict['Raised to']=self.approval_review_assoc.filter(latest=True).first().raised_to
+		field_dict['Number of exemptions']=str(self.num_of_exemption)
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
 		# print(field_dict.items())

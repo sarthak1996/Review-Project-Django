@@ -27,7 +27,8 @@ class ReviewUpdateView(UpdateView):
 													raise_to=form.cleaned_data['raise_to'],
 													approval_outcome=review_obj.approval_outcome,
 													delegated=False)
-		return super().form_valid(form)
+			return render(review_obj.get_absolute_url())
+		return redirect('peer_review:review_list_view')
 
 	def get_context_data(self, **kwargs):
 		context=super(ReviewUpdateView,self).get_context_data(**kwargs)
