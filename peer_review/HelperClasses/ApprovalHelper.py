@@ -41,6 +41,11 @@ def reject_review(review):
 	status=StatusCodes.get_rejected_status()
 	change_status_approval_row(review,latest_approval_row,status)
 
+def invalidate_review(review):
+	latest_approval_row=get_latest_approval_row(review)
+	status=StatusCodes.get_invalid_status()
+	change_status_approval_row(review,latest_approval_row,status)
+
 def mark_review_pending(review):
 	latest_approval_row=get_latest_approval_row(review)
 	status=StatusCodes.get_pending_status()

@@ -21,4 +21,7 @@ class ReviewDetailView(DetailView):
 		context['delegate_rendered']=False
 		context['delegate_label']='Delegate'
 		context['delegate_view_url']='peer_review:delegate_review'
+		context['invalidate_review']=(review_obj.approval_outcome==StatusCodes.get_pending_status())
+		context['invlidate_view_url']='peer_review:invalidate_review'
+		context['invalidate_label']='Invalidate'
 		return context

@@ -21,4 +21,7 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['delegate_rendered']=False
 		context['delegate_label']='Delegate'
 		context['delegate_view_url']='peer_review:delegate_view'
+		context['invalidate_review']=False
+		context['invlidate_view_url']='peer_review:invalidate_review'
+		context['invalidate_label']='Invalidate'
 		return context

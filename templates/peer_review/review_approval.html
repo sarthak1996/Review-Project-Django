@@ -59,6 +59,7 @@
 						{% endfor %}
 						<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
 						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:delegate_review' review_obj=review_object.pk %}">Delegate</a>
+						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:reject_review' review_obj=review_object.pk %}">Reject</a>
 					</form>
 				</div>
 			</div>

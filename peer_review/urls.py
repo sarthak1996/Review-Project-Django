@@ -28,5 +28,8 @@ urlpatterns =[
     path('review_home',views.reviews_home,name='review_home'),
     path('review_raised_to_me',ReviewRaisedToMeListView.as_view(),name='review_raised_to_me'),
     url(r'^review_detail_approve_view/(?P<obj_pk>\d+)$',views.peer_review_approval_form,name='review_detail_approve_view'),
-   	url(r'^delegate_approval/(?P<review_obj>\d+)$',DelegateReviewApprovalCreateView.as_view(),name='delegate_review')
+   	url(r'^delegate_approval/(?P<review_obj>\d+)$',DelegateReviewApprovalCreateView.as_view(),name='delegate_review'),
+   	url(r'^invalidate_review/(?P<review_obj>\d+)$',views.invalidate_review,name='invalidate_review'),
+   	url(r'^reject_review/(?P<review_obj>\d+)$',views.reject_review,name='reject_review'),
+   	
 ]

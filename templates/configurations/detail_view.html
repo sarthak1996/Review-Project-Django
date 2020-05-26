@@ -43,6 +43,9 @@
 						{% if delegate_rendered %}
 							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url delegate_view_url review_obj=detail_obj.pk %}">{{delegate_label}}</a>
 						{% endif %}
+						{% if invalidate_review %}
+							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url invlidate_view_url review_obj=detail_obj.pk %}">{{invalidate_label}}</a>
+						{% endif %}
 					</div>
 					<div class="card-footer">
 						{% for key,value in detail_obj.get_last_update_fields%}
