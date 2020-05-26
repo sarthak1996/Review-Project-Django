@@ -12,4 +12,5 @@ class ChoiceListView(ListView):
 		context['create_object_button_title']='Create Choice'
 		context['detail_view_url']='configurations:choice_detail_view'
 		context['page_title']='Choice'
+		context['create_button_rendered']=True
 		return context

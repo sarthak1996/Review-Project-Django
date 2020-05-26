@@ -12,4 +12,5 @@ class TeamListView(ListView):
 		context['create_object_button_title']='Create Team'
 		context['detail_view_url']='configurations:team_detail_view'
 		context['page_title']='Teams'
+		context['create_button_rendered']=True
 		return context

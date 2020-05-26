@@ -16,7 +16,8 @@ class ReviewRaisedToMeListView(ListView):
 		context['create_object_button_title']='Create Peer Review'
 		context['detail_view_url']='peer_review:review_detail_approve_view'
 		context['page_title']='Peer Review'
-		print()
+		context['create_button_rendered']=False
+		# print()
 		# print(Approval.objects.filter(latest='True',raised_to=self.request.user).approval_review_assoc.all())
 		return context
 

@@ -7,7 +7,9 @@
 	{{page_title}}
 {% endblock %}
 {% block content%}
-<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url create_url %}">{{create_object_button_title}}</a>
+	{% if create_button_rendered %}
+		<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url create_url %}">{{create_object_button_title}}</a>
+	{% endif %}
 	<ul class="list-group">
 		{% for obj in object_list %}
 			<li class="list-group-item list-group-item-success"><a href="{% url detail_view_url obj_pk=obj.pk %}">{{obj.get_display_list_name}}</a></li>

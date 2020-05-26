@@ -1,5 +1,6 @@
-from peer_review.models import Review,Approval
-from peer_review.HelperClasses import StatusCodes
+from peer_review.models import Approval
+from peer_review.HelperClasses import StatusCodes,PrintObjs
+
 import datetime
 def approve_review(review):
 	latest_approval_row=get_latest_approval_row(review)
@@ -78,22 +79,7 @@ def create_new_approval_row(review_obj,user,raise_to,approval_outcome,delegated,
 								creation_date=datetime.datetime.now(),
 								created_by=user,
 								last_update_by=user)
-	print('---Approval obj from create_new_approval_row start--')
-	print('Pk:')
-	print(approval_obj.pk)
-	print('Review pk:')
-	print(approval_obj.review.pk)
-	print('Raised by:')
-	print(approval_obj.raised_by)
-	print('Raised to:')
-	print(approval_obj.raised_to)
-	print('Approval outcome:')
-	print(approval_obj.approval_outcome)
-	print('Latest:')
-	print(approval_obj.latest)
-	print('Delegated:')
-	print(approval_obj.delegated)
-	print('---Approval obj from create_new_approval_row end--')
+	PrintObjs.print_approval_obj(approval_obj)
 	approval_obj.save()
 
 

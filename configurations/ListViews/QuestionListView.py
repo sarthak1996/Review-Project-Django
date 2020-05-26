@@ -12,4 +12,5 @@ class QuestionListView(ListView):
 		context['create_object_button_title']='Create Question'
 		context['detail_view_url']='configurations:question_detail_view'
 		context['page_title']='Question'
+		context['create_button_rendered']=True
 		return context
