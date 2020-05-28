@@ -10,10 +10,10 @@ class ReviewForm(ModelForm):
 	priority=forms.ChoiceField(required=False,choices=Review.get_review_priority_approval_types()['review_priority'],widget=forms.Select(attrs={'class':'form-control choice_select','label':'Priority'}))
 	team=forms.ModelChoiceField(queryset=Team.objects.all(),empty_label='Choose a Team',widget=forms.Select(attrs={'class':'form-control choice_select'}))
 	raise_to=forms.ModelChoiceField(queryset=get_user_model().objects.all(),empty_label='Choose a User',widget=forms.Select(attrs={'class':'form-control choice_select'}))
-	num_of_exemption=forms.IntegerField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Bug number','class':'form-control'}))
+	# num_of_exemption=forms.IntegerField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Bug number','class':'form-control'}))
 	class Meta:
 		model=Review
-		fields=['bug_number','priority','team','num_of_exemption']
+		fields=['bug_number','priority','team']
 
 	def __init__(self, *args, **kwargs):
 		request_user= kwargs.pop('request').user

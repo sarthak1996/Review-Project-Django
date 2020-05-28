@@ -21,9 +21,9 @@ class ReviewCreateView(CreateView):
 			review_obj.creation_date=datetime.datetime.now()
 			review_obj.review_type=CommonLookups.get_peer_review_question_type()
 			review_obj.approval_outcome=StatusCodes.get_pending_status()
-			if not review_obj.num_of_exemption :
-				print('No exemptions entered')
-				review_obj.num_of_exemption=0
+			# if not review_obj.num_of_exemption :
+			# 	print('No exemptions entered')
+			# 	review_obj.num_of_exemption=0
 			print('Review approval:'+ review_obj.approval_outcome)
 			PrintObjs.print_review_obj(review_obj)
 			

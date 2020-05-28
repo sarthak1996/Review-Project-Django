@@ -13,4 +13,4 @@ class Exemption(models.Model):
 	class Meta:
 		verbose_name_plural = "Exemptions"
 	def __str__(self):
-		return self.review.bug_number + '->' + self.exemption_for
+		return self.review.bug_number + '->' + self.exemption_for+'->' +self.exemption_explanation

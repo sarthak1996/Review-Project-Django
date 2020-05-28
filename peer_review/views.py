@@ -2,14 +2,16 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from peer_review.models import Approval,Review
+from peer_review.models import Approval,Review,Exemption
 from configurations.HelperClasses import ConfigurationDashboard
-from peer_review.HelperClasses import PeerReviewApprovalQuestions,StatusCodes,ApprovalHelper
+from peer_review.HelperClasses import PeerReviewApprovalQuestions,StatusCodes,ApprovalHelper,ExemptionHelper
 from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
+from peer_review.forms.ExemptionForm import ExemptionForm
 from django.forms import modelformset_factory
 from peer_testing.models import Answer
 from datetime import datetime
 from django.db import transaction
+from peer_review.Formsets import RequiredFormSet
 # Create your views here.
 
 
@@ -33,10 +35,13 @@ def peer_review_approval_form(request,**kwargs):
 
 	initial_questions=PeerReviewApprovalQuestions.get_answer_form_sets_for_peer_review()
 	model_formset=modelformset_factory(Answer, form=PeerReviewAnswerForm, extra=len(initial_questions))
-	formset=model_formset(request.POST or None,queryset=Answer.objects.none(),initial=initial_questions)
-
+	formset=model_formset(request.POST or None,queryset=Answer.objects.none(),initial=initial_questions,prefix='answer')
+	
+	exemption_model_fs=modelformset_factory(Exemption, form=ExemptionForm, extra=0,can_delete=True,formset=RequiredFormSet)
+	exemption_formset=exemption_model_fs(request.POST or None,queryset=Exemption.objects.none(),prefix='exemption')
 	context_dict={}
 	context_dict['formset']=formset
+	context_dict['exemption_formset']=exemption_formset
 	context_dict['review_approval_title']='Approve Review'
 	context_dict['detail_view_card_title']='Approval for Review'
 	context_dict['detail_name']=review.bug_number
@@ -53,6 +58,7 @@ def peer_review_approval_form(request,**kwargs):
 			# print('test')
 			all_forms_valid=True
 			for form in formset:
+				print('Approval Form errors:')
 				print(form.errors)
 				if form.is_valid():
 					all_forms_valid=True
@@ -60,8 +66,8 @@ def peer_review_approval_form(request,**kwargs):
 					all_forms_valid=False
 					break
 		print('Approval form :')
-		print('Forms valid'+str(all_forms_valid))
-		print('Formset errors (if any)')
+		print('Forms valid:'+str(all_forms_valid))
+		print('Review Approval Formset errors (if any)')
 		print(formset.errors)
 		print(formset.non_form_errors())
 		if all_forms_valid:
@@ -75,10 +81,47 @@ def peer_review_approval_form(request,**kwargs):
 				obj_instance.last_update_by=request.user
 				if 'question' in form.initial:
 					obj_instance.question=form.initial['question']
-				# print()
-			formset.save()
-			ApprovalHelper.approve_review(review)
-			return redirect("peer_review:review_raised_to_me")
+				
+			print('Exemption logging')
+			all_forms_valid=False
+			if exemption_formset.is_valid():
+				all_forms_valid=True
+				print('Exemption formset is valid')
+				print('Printing exemption form details')
+				for form1 in exemption_formset:
+					print('Exemption Form errors:')
+					print(form1.errors)
+					if form1.is_valid():
+						all_forms_valid=True
+					else:
+						all_forms_valid=False
+						break
+			print('Exemption form:')
+			print('Forms valid:'+str(all_forms_valid))
+			# print('Request')
+			# print(request.POST)
+			if all_forms_valid:
+				for form1 in exemption_formset:
+
+					
+					obj_instance=form1.instance
+					if not form1.cleaned_data.get('DELETE',False):
+						# print(form1.cleaned_data)
+						exemption_for=form1.cleaned_data['exemption_for']
+						exemption_explanation=form1.cleaned_data['exemption_explanation']
+						ExemptionHelper.create_exemption_row(review=review,
+															user=request.user,
+															exemption_for=exemption_for,
+															exemption_explanation=exemption_explanation
+															)
+				#save answer model from formset
+				formset.save()
+				ApprovalHelper.approve_review(review)
+				return redirect("peer_review:review_raised_to_me")
+			print('Exemption Formset errors (if any)')
+			print(exemption_formset.errors)
+			print(exemption_formset.non_form_errors())
+			
 		# print('here')
 
 	return render(request, 'peer_review/review_approval.html', context_dict)

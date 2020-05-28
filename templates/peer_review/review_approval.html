@@ -2,6 +2,21 @@
 {% load static %}
 {% block static_head_files %}
 	<link href="{% static 'css/detail_view.css' %}" rel="stylesheet" type="text/css">
+	<script src="{% static 'js/add_exemption_button.js' %}" type="text/javascript"></script>
+	<script type="text/javascript">
+    
+    	$(document).ready(function(){
+        	$('#add_exemption').click(function() {
+	    	    return add_exemption_form('exemption');
+	        });
+        	$('a.delete_exemption_button').click(function(){
+        		return delete_exemption_form(this,'exemption');
+        	});
+        	hide_deleted_exemptions();
+
+    	})
+    
+    </script>
 {% endblock %}
 {% block title %}
 	{{review_approval_title}}
@@ -60,7 +75,73 @@
 						<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
 						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:delegate_review' review_obj=review_object.pk %}">Delegate</a>
 						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:reject_review' review_obj=review_object.pk %}">Reject</a>
+						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  id="add_exemption"  href="javascript:void(0)" > Add Exemption</a>
+						<div id="exemption_form_set">
+							{{ exemption_formset.management_form }}
+							{% for form2 in exemption_formset %}
+								{% if form2.non_field_errors %}
+									<div class="list-group">
+										{% for err in form2.non_field_errors %}
+											<li class="list-group-item list-group-item-danger">{{err}}</li>
+										{% endfor %}
+									</div>
+								{% endif %}
+								<div class='empty_exemption_form'>
+									<div class="form-label-group">
+										<div class="form-label-group">
+								        	{{form2.exemption_for}}
+								        	{{form2.exemption_for.label_tag}}
+								        	
+								        	{% if form2.exemption_for.errors %}
+												<div class="list-group">
+													{% for err in form2.exemption_for.errors %}
+														<li class="list-group-item list-group-item-danger">{{err}}</li>
+													{% endfor %}
+												</div>
+											{% endif %}
+
+								        </div>
+								        <div class="form-label-group">
+								        	{{form2.exemption_explanation}}
+								        	{{form2.exemption_explanation.label_tag}}
+								        	
+								        	{% if form2.exemption_explanation.errors %}
+												<div class="list-group">
+													{% for err in form2.exemption_explanation.errors %}
+														<li class="list-group-item list-group-item-danger">{{err}}</li>
+													{% endfor %}
+												</div>
+											{% endif %}
+
+								        </div>
+									</div>
+									<div class="delete_checkbox_form" hidden>{{ form2.DELETE }}</div>
+								    <a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none delete_exemption_button"   href="javascript:void(0)" > Delete Exemption</a>
+								</div>
+							{% endfor %}
+							
+							<div id="empty_form" style="display:none">
+							    <div class='empty_exemption_form'>
+							        <div class="form-label-group">
+							        	{{exemption_formset.empty_form.exemption_for}}
+							        	{{exemption_formset.empty_form.exemption_for.label_tag}}
+							        </div>
+							        <div class="form-label-group">
+							        	{{exemption_formset.empty_form.exemption_explanation}}
+							        	{{exemption_formset.empty_form.exemption_explanation.label_tag}}
+							        </div>
+							        <div class="delete_checkbox_form" hidden>{{ exemption_formset.empty_form.DELETE }}</div>
+							        <a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none delete_exemption_button"   href="javascript:void(0)" > Delete Exemption</a>
+							    </div>
+							</div>
+							
+							
+						</div>
+
 					</form>
+					<!-- <form method='POST'>
+						
+					</form> -->
 				</div>
 			</div>
         </div>

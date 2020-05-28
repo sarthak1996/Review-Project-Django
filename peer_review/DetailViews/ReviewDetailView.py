@@ -24,4 +24,7 @@ class ReviewDetailView(DetailView):
 		context['invalidate_review']=(review_obj.approval_outcome==StatusCodes.get_pending_status())
 		context['invlidate_view_url']='peer_review:invalidate_review'
 		context['invalidate_label']='Invalidate'
+		exemptions=review_obj.exemption_review_assoc.all()
+		context['show_exemptions']=(exemptions.count()>0)
+		context['exemptions']=exemptions
 		return context

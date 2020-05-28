@@ -35,6 +35,20 @@ def print_review_obj(review_obj):
 	print(review_obj.team.pk)
 	print('Review Type:')
 	print(review_obj.review_type)
-	print('Num exemptions:')
-	print(review_obj.num_of_exemption)
 	print('---Print Review obj end--')
+
+
+def print_exemption_obj(exemption_obj):
+	if not(exemption_obj):
+		print('print_exemption_obj(): Null is being passed to print! This should not happen.')
+		return
+	print('---Print Exemption obj start--')
+	print('Pk:')
+	print(exemption_obj.pk)
+	print('Review pk')
+	print(exemption_obj.review.pk)
+	print('Exemption For')
+	print(exemption_obj.exemption_for)
+	print('Exemption explanation')
+	print(exemption_obj.exemption_explanation)
+	print('---Print Exemption obj end--')

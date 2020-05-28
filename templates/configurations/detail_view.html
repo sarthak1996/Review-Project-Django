@@ -37,6 +37,20 @@
 								{% endif %}
 								<hr/>
 						{% endfor %}
+						{% if show_exemptions %}
+							<div class="card-text">
+								<h7>Exemptions</h7>
+							</div>
+							{% for exemption in exemptions %}
+								<div class="card-text">
+										<small class="text-muted">{{exemption.exemption_for}}</small>
+									</div>
+									<div class="card-text">
+										<h7>{{exemption.exemption_explanation}}</h7>
+								</div>	
+								<hr/>
+							{% endfor %}
+						{% endif %}
 						{% if update_rendered %}
 							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url update_view_url obj_pk=detail_obj.pk %}">{{button_label}}</a>
 						{% endif %}

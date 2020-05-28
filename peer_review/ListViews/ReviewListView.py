@@ -17,4 +17,4 @@ class ReviewListView(ListView):
 
 	def get_queryset(self):
 		req=self.request 
-		return Review.objects.filter(created_by=req.user,approval_outcome=StatusCodes.get_pending_status()).all()
+		return Review.objects.filter(created_by=req.user).all()
