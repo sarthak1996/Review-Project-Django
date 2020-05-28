@@ -33,7 +33,7 @@ def peer_review_approval_form(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
 
-	initial_questions=PeerReviewApprovalQuestions.get_answer_form_sets_for_peer_review()
+	initial_questions=PeerReviewApprovalQuestions.get_answer_form_sets_for_peer_review(review)
 	model_formset=modelformset_factory(Answer, form=PeerReviewAnswerForm, extra=len(initial_questions))
 	formset=model_formset(request.POST or None,queryset=Answer.objects.none(),initial=initial_questions,prefix='answer')
 	

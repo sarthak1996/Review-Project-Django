@@ -3,6 +3,7 @@ from peer_review.models import Review
 from peer_review.forms.ReviewForm import ReviewForm
 from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper
 from django.db import transaction
+from django.shortcuts import render,redirect
 class ReviewUpdateView(UpdateView):
 	model=Review
 	template_name='configurations/create_view.html'
@@ -27,7 +28,7 @@ class ReviewUpdateView(UpdateView):
 													raise_to=form.cleaned_data['raise_to'],
 													approval_outcome=review_obj.approval_outcome,
 													delegated=False)
-			return render(review_obj.get_absolute_url())
+			return redirect(review_obj.get_absolute_url())
 		return redirect('peer_review:review_list_view')
 
 	def get_context_data(self, **kwargs):

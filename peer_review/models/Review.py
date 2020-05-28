@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from configurations.models import Team,Question
+from configurations.models import Team,Question,Series
 from collections import OrderedDict
 from django.urls import reverse_lazy
 # from peer_review.HelperClasses import ApprovalHelper
@@ -19,7 +19,8 @@ class Review(models.Model):
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='reviews_last_update_by',on_delete=models.PROTECT)
 	review_type=models.CharField(max_length=10, blank=False,choices=Question.get_questions_choice_types()['question_type'])
 	# num_of_exemption=models.IntegerField(blank=True,default=0) 
-
+	series_type=models.CharField(max_length=3,blank=True,null=True,choices = Series.get_choices_models()['series_type'])
+	
 	class Meta:
 		verbose_name_plural = "Reviews"
 	def __str__(self):
@@ -33,6 +34,7 @@ class Review(models.Model):
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()
 		QUESTION_TYPE=Question.get_questions_choice_types()['question_type']
+		SERIES_TYPE=Series.get_choices_models()['series_type']
 		# field_dict['Team Name']=self.team_name
 		field_dict['Bug number']=self.bug_number
 		field_dict['Priority']=''.join([value for (item,value) in REVIEW_PRIORITY if item==self.priority])
@@ -41,6 +43,7 @@ class Review(models.Model):
 		field_dict['Team']=self.team.team_name
 		field_dict['Raised to']=self.approval_review_assoc.filter(latest=True).first().raised_to
 		# field_dict['Number of exemptionss']=str(self.num_of_exemption)
+		field_dict['Series Type']=''.join([value for (item,value) in SERIES_TYPE if item==self.series_type])
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
 		# print(field_dict.items())
