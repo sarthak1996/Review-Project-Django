@@ -49,6 +49,7 @@ def peer_review_approval_form(request,**kwargs):
 	context_dict['button_label']='Approve'
 	context_dict['review_object']=review
 	
+	
 	# for form in formset:
 	# 	print('Initial form values' + str(form.initial['question']))
 
@@ -116,7 +117,7 @@ def peer_review_approval_form(request,**kwargs):
 															)
 				#save answer model from formset
 				formset.save()
-				ApprovalHelper.approve_review(review)
+				ApprovalHelper.approve_review(review,user)
 				return redirect("peer_review:review_raised_to_me")
 			print('Exemption Formset errors (if any)')
 			print(exemption_formset.errors)
@@ -129,13 +130,13 @@ def peer_review_approval_form(request,**kwargs):
 def invalidate_review(request,**kwargs):
 	review_id=kwargs['review_obj']
 	review=Review.objects.filter(pk=review_id).first()
-	ApprovalHelper.invalidate_review(review)
+	ApprovalHelper.invalidate_review(review,request.user)
 	return redirect(review.get_absolute_url())
 
 def reject_review(request,**kwargs):
 	review_id=kwargs['review_obj']
 	review=Review.objects.filter(pk=review_id).first()
-	ApprovalHelper.reject_review(review)
+	ApprovalHelper.reject_review(review,request.user)
 	return redirect(review.get_absolute_url())
 
 

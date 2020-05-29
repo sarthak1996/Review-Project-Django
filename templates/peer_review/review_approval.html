@@ -72,11 +72,12 @@
 								{% endif %}
 							{% endfor %}
 						{% endfor %}
-						<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
-						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:delegate_review' review_obj=review_object.pk %}">Delegate</a>
-						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:reject_review' review_obj=review_object.pk %}">Reject</a>
-						<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  id="add_exemption"  href="javascript:void(0)" > Add Exemption</a>
-						<div id="exemption_form_set">
+						{% if review_object.is_pending %}
+							<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
+							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:delegate_review' review_obj=review_object.pk %}">Delegate</a>
+							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:reject_review' review_obj=review_object.pk %}">Reject</a>
+							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  id="add_exemption"  href="javascript:void(0)" > Add Exemption</a>
+							<div id="exemption_form_set">
 							{{ exemption_formset.management_form }}
 							{% for form2 in exemption_formset %}
 								{% if form2.non_field_errors %}
@@ -136,7 +137,8 @@
 							</div>
 							
 							
-						</div>
+							</div>
+						{% endif %}
 
 					</form>
 					<!-- <form method='POST'>

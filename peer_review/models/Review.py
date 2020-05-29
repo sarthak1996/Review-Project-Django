@@ -3,15 +3,15 @@ from django.conf import settings
 from configurations.models import Team,Question,Series
 from collections import OrderedDict
 from django.urls import reverse_lazy
+from peer_review.HelperClasses import StatusCodes,CommonLookups
 # from peer_review.HelperClasses import ApprovalHelper
-
-REVIEW_PRIORITY=[(1,"High Priority (Sev1)"),(2,"Normal priority (Sev2)")]
-APPROVAL_OUTCOMES=[('APR','APPROVED'),('PND','PENDING'),('REJ','REJECTED'),('INV','INVALID')]
+REVIEW_PRIORITY=CommonLookups.get_review_priorities()
+APPROVAL_OUTCOMES=CommonLookups.get_approval_outcomes()
 
 class Review(models.Model):
 	bug_number = models.CharField(max_length=10,blank=False)
-	priority=models.IntegerField(choices=REVIEW_PRIORITY)	
-	approval_outcome=models.CharField(max_length=4,blank=False,choices=APPROVAL_OUTCOMES)
+	priority=models.IntegerField(choices=CommonLookups.get_review_priorities())	
+	approval_outcome=models.CharField(max_length=4,blank=False,choices=CommonLookups.get_approval_outcomes())
 	team=models.ForeignKey(Team,related_name='review_team_assoc',on_delete=models.PROTECT)
 	creation_date=models.DateTimeField(blank=False)
 	last_update_date=models.DateTimeField(auto_now=True)
@@ -28,8 +28,8 @@ class Review(models.Model):
 
 	@staticmethod
 	def get_review_priority_approval_types():
-		return {'review_priority':REVIEW_PRIORITY,
-				'approval_outcome':APPROVAL_OUTCOMES}
+		return {'review_priority':CommonLookups.get_review_priorities(),
+				'approval_outcome':CommonLookups.get_approval_outcomes()}
 
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()
@@ -60,4 +60,7 @@ class Review(models.Model):
 
 	def get_display_list_name(self):
 		return self.created_by.username + '->' +' for '+ self.bug_number 
+
+	def is_pending(self):
+		return self.approval_outcome==StatusCodes.get_pending_status()
 

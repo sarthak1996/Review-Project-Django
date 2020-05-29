@@ -1,5 +1,6 @@
-from peer_review.models import Review
-APPROVAL_OUTCOMES=Review.get_review_priority_approval_types()['approval_outcome']
+from peer_review.HelperClasses import CommonLookups
+
+APPROVAL_OUTCOMES=CommonLookups.get_approval_outcomes()
 
 def get_approved_status():
 	return APPROVAL_OUTCOMES[0][0]

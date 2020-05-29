@@ -4,13 +4,11 @@ from collections import OrderedDict
 from django.urls import reverse_lazy
 from .Series import Series
 from .Choice import Choice
-QUESTION_CHOICE_TYPE=[("SCH","Single choice"),("MCH","Multiple choice"),("TXT","Text")]
-QUESTION_TYPE=[("PRTEST","Peer Testing"),("MRGCHK","Mergereq checklist")]
-
+from peer_review.HelperClasses import CommonLookups
 
 class Question(models.Model):
 	question_text=models.CharField(max_length=200,blank=False)
-	question_choice_type=models.CharField(max_length=3, blank=False,choices=QUESTION_CHOICE_TYPE)
+	question_choice_type=models.CharField(max_length=3, blank=False,choices=CommonLookups.get_question_choice_types())
 	mandatory=models.BooleanField(blank=True)
 	creation_date=models.DateTimeField(blank=False)
 	last_update_date=models.DateTimeField(auto_now=True)
@@ -18,7 +16,7 @@ class Question(models.Model):
 	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='questions_created_by',on_delete=models.PROTECT)
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='question_last_update_by',on_delete=models.PROTECT)
 	choices=models.ManyToManyField(Choice,blank=True,related_name='question_choices_assoc')
-	question_type=models.CharField(max_length=10, blank=False,choices=QUESTION_TYPE)
+	question_type=models.CharField(max_length=10, blank=False,choices=CommonLookups.get_question_types())
 	
 	class Meta:
 		verbose_name_plural = "Questions"
@@ -27,8 +25,8 @@ class Question(models.Model):
 
 	@staticmethod
 	def get_questions_choice_types():
-		return {'question_type':QUESTION_TYPE,
-			'question_choice_type':QUESTION_CHOICE_TYPE}
+		return {'question_type':CommonLookups.get_question_types(),
+			'question_choice_type':CommonLookups.get_question_choice_types()}
 
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()

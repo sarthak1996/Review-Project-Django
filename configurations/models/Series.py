@@ -2,11 +2,11 @@ from django.db import models
 from django.conf import settings
 from collections import OrderedDict 
 from django.urls import reverse_lazy
-SERIES_TYPE=[("ARU","ARU"),("","Non-ARU")]
+from peer_review.HelperClasses import CommonLookups
 
 class Series(models.Model):
 	series_name=models.CharField(max_length=200,blank=False)
-	series_type = models.CharField(max_length=3,blank=True,null=True,choices = SERIES_TYPE)
+	series_type = models.CharField(max_length=3,blank=True,null=True,choices = CommonLookups.get_series_types())
 	creation_date=models.DateTimeField(blank=False)
 	last_update_date=models.DateTimeField(auto_now=True)
 	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='series_created_by',on_delete=models.PROTECT)
@@ -19,7 +19,7 @@ class Series(models.Model):
 
 	@staticmethod
 	def get_choices_models():
-		return {'series_type':SERIES_TYPE}
+		return {'series_type':CommonLookups.get_series_types()}
 
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()
