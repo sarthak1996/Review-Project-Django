@@ -12,6 +12,8 @@ from peer_testing.models import Answer
 from datetime import datetime
 from django.db import transaction
 from peer_review.Formsets import RequiredFormSet
+from configurations.models import Team
+from collections import OrderedDict
 # Create your views here.
 
 
@@ -139,4 +141,17 @@ def reject_review(request,**kwargs):
 	ApprovalHelper.reject_review(review,request.user)
 	return redirect(review.get_absolute_url())
 
+def load_users_based_on_team(request):
+	# review=request.GET.get('review')
+	# print('Review request url')
+	# print(request.GET)
+	team=request.GET.get('team')
+	print('Team id:'+str(team))
+	team_obj=Team.objects.get(pk=team)
+	print(team_obj)
+	users=team_obj.user_team_assoc.all().exclude(pk=request.user.pk).order_by('first_name')
+	objects_lov=OrderedDict()
+	for user in users:
+		objects_lov[user.pk]=user.get_full_name()
+	return render(request,'lov/dependent_lov.html',{'objects':objects_lov.items()})
 

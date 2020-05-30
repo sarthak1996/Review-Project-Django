@@ -31,5 +31,5 @@ urlpatterns =[
    	url(r'^delegate_approval/(?P<review_obj>\d+)$',DelegateReviewApprovalCreateView.as_view(),name='delegate_review'),
    	url(r'^invalidate_review/(?P<review_obj>\d+)$',views.invalidate_review,name='invalidate_review'),
    	url(r'^reject_review/(?P<review_obj>\d+)$',views.reject_review,name='reject_review'),
-   	
+   	path('ajax/load_raise_to_review',views.load_users_based_on_team,name='ajax_load_raise_to_lov')
 ]

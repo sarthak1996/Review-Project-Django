@@ -2,9 +2,12 @@ from django.forms import ModelForm
 from django import forms
 from peer_review.models import Approval
 from django.contrib.auth import get_user_model
+from configurations.ModelChoiceFields import UserModelChoiceField
+from configurations.models import Team
+from peer_review.HelperClasses import PrintObjs
 
 class DelegateReviewApprovalFlowForm(ModelForm):
-	raised_to=forms.ModelChoiceField(queryset=get_user_model().objects.all(),empty_label='Choose a User',widget=forms.Select(attrs={'class':'form-control choice_select'}))
+	raised_to=UserModelChoiceField(queryset=get_user_model().objects.all(),empty_label='Choose a User',widget=forms.Select(attrs={'class':'form-control choice_select'}))
 
 	class Meta:
 		model=Approval
@@ -12,6 +15,8 @@ class DelegateReviewApprovalFlowForm(ModelForm):
 
 	def __init__(self, *args, **kwargs):
 		request_user= kwargs.pop('request').user
+		team_id=kwargs.pop('team_id')
 		super(DelegateReviewApprovalFlowForm, self).__init__(*args, **kwargs)
-		self.fields['raised_to'].queryset=get_user_model().objects.all().exclude(pk=request_user.pk).all()
+		self.fields['raised_to'].queryset=Team.objects.get(pk=team_id).user_team_assoc.all().exclude(pk=request_user.pk)
 		
+

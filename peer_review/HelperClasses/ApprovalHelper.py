@@ -76,7 +76,7 @@ def create_new_approval_row(review_obj,user,raise_to,approval_outcome,delegated,
 			print('This should not have happened! - Approved rows should not have been touched from UI.')
 			return
 		if latest_approval_row:
-			mark_all_approval_rows_as_not_latest(get_all_approval_rows(review_obj,user))
+			mark_all_approval_rows_as_not_latest(get_all_approval_rows(review_obj),user)
 	approval_obj=Approval(review=review_obj,
 								raised_by=user,
 								raised_to=raise_to,

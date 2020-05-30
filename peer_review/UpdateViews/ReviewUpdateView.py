@@ -1,7 +1,7 @@
 from django.views.generic.edit import UpdateView 
 from peer_review.models import Review
 from peer_review.forms.ReviewForm import ReviewForm
-from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper
+from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,CommonValidations
 from django.db import transaction
 from django.shortcuts import render,redirect
 class ReviewUpdateView(UpdateView):
@@ -15,27 +15,33 @@ class ReviewUpdateView(UpdateView):
 
 	@transaction.atomic
 	def form_valid(self, form):
+		raised_to_user=get_user_model().objects.get(pk=form.cleaned_data['raise_to'].pk)
+		if not CommonValidations.user_exists_in_team(raised_to_user,review.team):
+			form.add_error('raise_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
+			return super(ReviewUpdateView,self).form_invalid(form)
 		form.instance.last_update_by=self.request.user
 		form.instance.review_type=CommonLookups.get_peer_review_question_type()
 		review_obj=form.instance
-		if form.is_valid():
-			review_obj=form.save(commit=False)
-			review_obj.approval_outcome=StatusCodes.get_pending_status()
-			print('Review approval:'+ review_obj.approval_outcome)
-			review_obj.save()
-			ApprovalHelper.create_new_approval_row(review_obj=review_obj,
-													user=self.request.user,
-													raise_to=form.cleaned_data['raise_to'],
-													approval_outcome=review_obj.approval_outcome,
-													delegated=False)
-			return redirect(review_obj.get_absolute_url())
-		return redirect('peer_review:review_list_view')
+		review_obj=form.save(commit=False)
+		review_obj.approval_outcome=StatusCodes.get_pending_status()
+		print('Review approval:'+ review_obj.approval_outcome)
+		review_obj.save()
+		ApprovalHelper.create_new_approval_row(review_obj=review_obj,
+												user=self.request.user,
+												raise_to=form.cleaned_data['raise_to'],
+												approval_outcome=review_obj.approval_outcome,
+												delegated=False)
+		return redirect(review_obj.get_absolute_url())
+		
 
 	def get_context_data(self, **kwargs):
 		context=super(ReviewUpdateView,self).get_context_data(**kwargs)
 		context['page_title']='Update Peer Review'
 		context['card_title']='Peer Review'
+		context['dependent_raise_to']=True
+		context['lov_raise_to_url']='peer_review:ajax_load_raise_to_lov'
 		return context
+	
 	def get_form_kwargs(self):
 		kw = super(ReviewUpdateView, self).get_form_kwargs()
 		kw['request'] = self.request
