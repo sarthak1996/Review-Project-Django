@@ -1,0 +1,50 @@
+
+
+.lbl {
+    padding: .5rem 1rem;
+    border-radius: .2rem;
+    cursor: pointer;
+    transition: all .3s;
+    transition-timing-function: ease-in-out;
+}
+
+.lbl-default {
+    background-color: rgb(116,120,141, 0.1);
+    color: #74788d;
+}
+
+.lbl-default:hover {
+    background-color: #74788d;
+    color: #fff;
+}
+
+.tag a .glyphicon-white {
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.tag a {
+  color: #bbb;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.tag a:hover {
+  opacity: 1.0
+}
+.tag .remove {
+  vertical-align: bottom;
+  top: 0;
+}
+.tag a {
+  margin: 0 0 0 .3em;
+}
+
+.lbl-primary {
+    background-color: rgba(93,120,255,.1);
+    color: #5d78ff;
+}
+
+.lbl-primary:hover {
+    background-color: #5d78ff;
+    color: #fff;
+}

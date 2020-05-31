@@ -1,18 +1,67 @@
 {% extends "base.html" %}
 {% load static %}
+{% load bootstrap %}
 {% block static_head_files %}
 	<link href="{% static 'css/list_view.css' %}" rel="stylesheet" type="text/css">
+	<link href="{% static 'css/filter_labels.css' %}" rel="stylesheet" type="text/css">
+	<script src="{% static 'js/filter_labels.js' %}" type="text/javascript"></script>
+	<script type="text/javascript">
+    
+    	$(document).ready(function(){
+    		$('.filter_badges').click(function(){
+    			return remove_filter($(this),'filter_form')
+    		});
+    		hide_all_lov_filters();
+    	});
+    
+    </script>
 {% endblock %}
 {% block title %}
 	{{page_title}}
 {% endblock %}
 {% block content%}
+	{% if read_only_number_badges %}
+	<ul class="list-group">
+		{% for badges,badge_number in read_only_number_badges %}
+		<li class="list-group-item d-flex justify-content-between align-items-center">{{badges}}
+    		<span class="badge badge-primary badge-pill">{{badge_number}}</span>
+  		</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+	{% if filter %}
+		<form method="GET">
+			<div class="form-group tag">
+	    		{% for fbadge in filter_badges %}
+		    		<span class="filter_badges">
+	    				<label class="lbl lbl-primary">
+	    					<span>
+	    	    				<span>{{fbadge}}</span>
+	    	    					<a><i class="remove glyphicon glyphicon-remove-sign glyphicon-white"></i>x</a> 
+	    	    			</span>
+	    	    		</label>
+	    			</span>
+    			{% endfor %}
+			</div>
+			{{filter.form|bootstrap}}
+			<button type="submit" class="btn btn-primary">Search</button>
+			
+		</form>
+	{% endif %}
 	{% if create_button_rendered %}
 		<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url create_url %}">{{create_object_button_title}}</a>
 	{% endif %}
-	<ul class="list-group">
-		{% for obj in object_list %}
-			<li class="list-group-item list-group-item-success"><a href="{% url detail_view_url obj_pk=obj.pk %}">{{obj.get_display_list_name}}</a></li>
-		{% endfor %}
-	</ul>
+	<div class="container">
+		<nav class="navbar navbar-expand-sm navbar-light bg-light">
+			 <a class="btn btn-lg">
+			 	<i class="material-icons">add</i>
+			  	Add
+			  </a>
+		</nav>
+		<ul class="list-group">
+			{% for obj in filter.qs %}
+				<li class="list-group-item list-group-item-success"><a href="{% url detail_view_url obj_pk=obj.pk %}">{{obj.get_display_list_name}}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
 {% endblock %}

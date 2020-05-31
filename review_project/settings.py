@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'configurations.apps.ConfigurationsConfig',
     'peer_review.apps.PeerReviewConfig',
     'peer_testing.apps.PeerTestingConfig',
+    'django_filters',
+    'bootstrapform'
 ]
 
 MIDDLEWARE = [
