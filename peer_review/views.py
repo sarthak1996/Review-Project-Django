@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from peer_review.models import Approval,Review,Exemption
 from configurations.HelperClasses import ConfigurationDashboard
-from peer_review.HelperClasses import PeerReviewApprovalQuestions,StatusCodes,ApprovalHelper,ExemptionHelper
+from peer_review.HelperClasses import PeerReviewApprovalQuestions,StatusCodes,ApprovalHelper,ExemptionHelper,CommonLookups
 from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
 from peer_review.forms.ExemptionForm import ExemptionForm
 from django.forms import modelformset_factory
@@ -18,8 +18,8 @@ from collections import OrderedDict
 
 
 def reviews_home(request):
-	reviews_raised_by_me_count=request.user.reviews_created_by.all().count()
-	reviews_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status()).all().count()
+	reviews_raised_by_me_count=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_review_question_type()).count()
+	reviews_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_review_question_type()).all().count()
 	
 	dashboard_objects=[]
 	raised_by_me_obj=ConfigurationDashboard('Reviews Raised by me','',reviews_raised_by_me_count,'peer_review:review_list_view')
@@ -76,14 +76,17 @@ def peer_review_approval_form(request,**kwargs):
 		if all_forms_valid:
 			# print('here2')
 			for form in formset:
+
 				obj_instance=form.instance
+				if 'question' in form.initial:
+					obj_instance.question=form.initial['question']
+				question_choice_type=obj_instance.question.question_choice_type
 				obj_instance.review=review
-				obj_instance.answer=form.cleaned_data['single_choice_field']
+				obj_instance.answer=form.cleaned_data['single_choice_field'] if question_choice_type==CommonLookups.get_single_choice_question_type() else form.cleaned_data['text_answer']
 				obj_instance.creation_date=datetime.now()
 				obj_instance.created_by=request.user
 				obj_instance.last_update_by=request.user
-				if 'question' in form.initial:
-					obj_instance.question=form.initial['question']
+				
 				
 			print('Exemption logging')
 			all_forms_valid=False

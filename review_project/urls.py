@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('reviews/',include('configurations.urls')),
     path('peer_reviews/',include('peer_review.urls')),
+    path('peer_testing/',include('peer_testing.urls')),
 ]

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+{% block static_head_files %}
+	<link href="{% static 'css/detail_view.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block title %}
+	{{review_approval_title}}
+{% endblock %}
+{% block content%}
+	
+<div class="container d-flex">
+    <div class="row align-self-center w-100">
+        <div class="col-6 mx-auto">
+			<div class="card border-dark mb-3 mx-auto my-auto" >
+				<div class="card-header">{{detail_view_card_title}}</div>
+				<div class="card-body text-dark">
+					<h5 class="card-title" data-letters="{{ name_first_letter }}">{{ detail_name }}</h5>
+					<form method='POST'>
+						{% csrf_token %}
+						{% if review_form.non_field_errors %}
+							<div class="list-group">
+								{% for err in review_form.non_field_errors %}
+									<li class="list-group-item list-group-item-danger">{{err}}</li>
+								{% endfor %}
+							</div>
+						{% endif %}
+						{% for field in review_form %}
+							{% if 'choice_select' in field.field.widget.attrs.class %}
+								<div class="form-group">
+									<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+									{{ field }}
+									
+									{% if field.errors %}
+										<div class="list-group">
+											{% for err in field.errors %}
+												<li class="list-group-item list-group-item-danger">{{err}}</li>
+											{% endfor %}
+										</div>
+									{% endif %}
+								</div>
+							{% elif 'choice_check_box_select' in field.field.widget.attrs.class %}
+								<div class="form-check">
+									{{ field }}
+									<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+									
+									
+									{% if field.errors %}
+										<div class="list-group">
+											{% for err in field.errors %}
+												<li class="list-group-item list-group-item-danger">{{err}}</li>
+											{% endfor %}
+										</div>
+									{% endif %}
+								</div>
+							{% elif 'choice_check_box_multi_select' in field.field.widget.attrs.class %}
+								<div class="form-check">
+									<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+									{{ field }}
+									
+									{% if field.errors %}
+										<div class="list-group">
+											{% for err in field.errors %}
+												<li class="list-group-item list-group-item-danger">{{err}}</li>
+											{% endfor %}
+										</div>
+									{% endif %}
+								</div>
+							{% else %}
+								<div class="form-label-group">
+									{{ field }}
+									{{ field.label_tag }}
+									{% if field.errors %}
+										<div class="list-group">
+											{% for err in field.errors %}
+												<li class="list-group-item list-group-item-danger">{{err}}</li>
+											{% endfor %}
+										</div>
+									{% endif %}
+								</div>
+							{% endif %}
+						{% endfor %}
+						{{ formset.management_form }}
+						{% for form in formset%}
+							{% if form.non_field_errors %}
+								<div class="list-group">
+									{% for err in form.non_field_errors %}
+										<li class="list-group-item list-group-item-danger">{{err}}</li>
+									{% endfor %}
+								</div>
+							{% endif %}
+							{% for field in form%}
+								{%if 'not_rendered' not in field.field.widget.attrs.class %}
+									{% if 'choice_select' in field.field.widget.attrs.class %}
+										<div class="form-group">
+											<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+											{{ field }}
+											
+											{% if field.errors %}
+												<div class="list-group">
+													{% for err in field.errors %}
+														<li class="list-group-item list-group-item-danger">{{err}}</li>
+													{% endfor %}
+												</div>
+											{% endif %}
+										</div>
+									{% else %}
+										<div class="form-label-group">
+											{{field}}
+											{{field.label_tag}}
+											{% if field.errors %}
+												<div class="list-group">
+													{% for err in field.errors %}
+														<li class="list-group-item list-group-item-danger">{{err}}</li>
+													{% endfor %}
+												</div>
+											{% endif %}
+										</div>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						{% endfor %}
+						
+						<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
+							
+						
+					</form>
+					<!-- <form method='POST'>
+						
+					</form> -->
+				</div>
+			</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

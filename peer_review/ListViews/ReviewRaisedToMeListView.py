@@ -1,6 +1,6 @@
 from django.views.generic import ListView
 from peer_review.models import Review,Approval
-from peer_review.HelperClasses import StatusCodes
+from peer_review.HelperClasses import StatusCodes,CommonLookups
 class ReviewRaisedToMeListView(ListView):
 	model=Review
 	template_name='configurations/list_view.html'
@@ -22,4 +22,4 @@ class ReviewRaisedToMeListView(ListView):
 		return context
 
 	def get_queryset(self):
-		return Review.objects.filter(approval_review_assoc__latest='True',approval_review_assoc__raised_to=self.request.user,approval_review_assoc__approval_outcome=StatusCodes.get_pending_status()).all()
+		return Review.objects.filter(approval_review_assoc__latest='True',approval_review_assoc__raised_to=self.request.user,approval_review_assoc__approval_outcome=StatusCodes.get_pending_status(),review_type=CommonLookups.get_peer_review_question_type()).all()

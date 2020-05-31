@@ -2,7 +2,7 @@ from peer_review.models import Approval
 from peer_review.HelperClasses import StatusCodes,PrintObjs
 
 import datetime
-def approve_review(review):
+def approve_review(review,user):
 	latest_approval_row=get_latest_approval_row(review)
 	status=StatusCodes.get_approved_status()
 	change_status_approval_row(review,latest_approval_row,status,user)
@@ -11,6 +11,10 @@ def get_latest_approval_row(review,raise_exception=True):
 	latest_approval_row=review.approval_review_assoc.filter(latest=True).all()
 	if latest_approval_row.count()>1:
 		print('Multiple rows exists for approval')
+		print('Rows:')
+		# all_latest_rows=review.approval_review_assoc.assoc.filter(latest=True).all()
+		for row in latest_approval_row:
+			PrintObjs.print_approval_obj(row) 
 		if raise_exception:
 			raise Exception('Multiple latest rows exists for approval')
 	if latest_approval_row.count()<0:

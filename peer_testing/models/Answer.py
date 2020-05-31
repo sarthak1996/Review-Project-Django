@@ -12,7 +12,7 @@ class Answer(models.Model):
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='answers_last_update_by',on_delete=models.PROTECT)
 	class Meta:
 		verbose_name_plural = "Answers"
-	# def __str__(self):
-	# 	return self.question.question_text + ' : '+self.answer
+	def __str__(self):
+		return str(self.review)+'@'+str(self.question) + ' : '+self.answer
 
 	

@@ -31,6 +31,8 @@ class Question(models.Model):
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()
 		SERIES_TYPE=Series.get_choices_models()['series_type']
+		QUESTION_CHOICE_TYPE=CommonLookups.get_question_choice_types()
+		QUESTION_TYPE=CommonLookups.get_question_types()
 		# field_dict['Team Name']=self.team_name
 		field_dict['Question text']=self.question_text
 		field_dict['Question choice type']=''.join([value for (item,value) in QUESTION_CHOICE_TYPE if item==self.question_choice_type])

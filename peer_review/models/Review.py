@@ -49,6 +49,13 @@ class Review(models.Model):
 		# print(field_dict.items())
 		return field_dict.items()
 
+	def get_values_for_fields_answers(self):
+		field_dict=OrderedDict()
+		answer_obj=self.answer_review_assoc.all()
+		for ans in answer_obj:
+			field_dict[ans.question.question_text]=ans.answer
+		return field_dict.items()
+
 	def get_last_update_fields(self):
 		field_dict=OrderedDict()
 		field_dict['Last Update By']= self.last_update_by.username
