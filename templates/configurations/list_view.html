@@ -5,14 +5,16 @@
 	<link href="{% static 'css/list_view.css' %}" rel="stylesheet" type="text/css">
 	<link href="{% static 'css/filter_labels.css' %}" rel="stylesheet" type="text/css">
 	<script src="{% static 'js/filter_labels.js' %}" type="text/javascript"></script>
+	<script src="{% static 'js/toolbar_search_bar.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
     
     	$(document).ready(function(){
-    		$('.filter_badges').click(function(){
-    			return remove_filter($(this),'filter_form')
-    		});
+    		
     		hide_all_lov_filters();
+    		// search_dropdown();
+
     	});
+
     
     </script>
 {% endblock %}
@@ -20,47 +22,102 @@
 	{{page_title}}
 {% endblock %}
 {% block content%}
-	{% if read_only_number_badges %}
-	<ul class="list-group">
-		{% for badges,badge_number in read_only_number_badges %}
-		<li class="list-group-item d-flex justify-content-between align-items-center">{{badges}}
-    		<span class="badge badge-primary badge-pill">{{badge_number}}</span>
-  		</li>
-		{% endfor %}
-	</ul>
-	{% endif %}
-	{% if filter %}
-		<form method="GET">
-			<div class="form-group tag">
-	    		{% for fbadge in filter_badges %}
-		    		<span class="filter_badges">
-	    				<label class="lbl lbl-primary">
-	    					<span>
-	    	    				<span>{{fbadge}}</span>
-	    	    					<a><i class="remove glyphicon glyphicon-remove-sign glyphicon-white"></i>x</a> 
-	    	    			</span>
-	    	    		</label>
-	    			</span>
-    			{% endfor %}
-			</div>
-			{{filter.form|bootstrap}}
-			<button type="submit" class="btn btn-primary">Search</button>
-			
-		</form>
-	{% endif %}
-	{% if create_button_rendered %}
-		<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url create_url %}">{{create_object_button_title}}</a>
-	{% endif %}
+
 	<div class="container">
+		
+	
+			<form method="GET">
+				{% if filter_badges %}
+					<div><b>Filters</b> &emsp; <a href="{% url reset_filters %}">Reset Filters</a></div>
+					<div class="form-group tag">
+			    		{% for fbadge in filter_badges %}
+			    		<span class="badge badge-success applied_filter_badges">{{fbadge}}</span>			    		<!-- <button class="filter_badges" type="submit" value="TXT" name="filter_form-question_choice_type">
+			    				<label class="lbl lbl-primary">
+			    					<span>
+			    	    				<span>{{fbadge}}</span>
+			    	    					<a><i class="remove glyphicon glyphicon-remove-sign glyphicon-white"></i>x</a> 
+			    	    			</span>
+			    	    		</label>
+			    			</button> -->
+		    			{% endfor %}
+					</div>
+				{% endif %}
+				{{filter.form|bootstrap}}
+				<button type="submit" class="btn btn-primary" id="#filter_form_search_button">Search</button>
+				
+			
+		
+		<!--Search bar-->
+
+		
+
+
+
+
+
 		<nav class="navbar navbar-expand-sm navbar-light bg-light">
-			 <a class="btn btn-lg">
-			 	<i class="material-icons">add</i>
-			  	Add
-			  </a>
+			{% if create_button_rendered %}
+				<a class="btn btn-light" href="{% url create_url %}">
+					 	<i class="material-icons">add</i>
+					  	Create
+				</a>
+			{% endif %}
+			{% if search_drop_downs %}
+				{% for drop in search_drop_downs %}
+					<div class="dropdown">
+							<button class="btn btn-light dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{drop.title}}</button>
+							{% if drop.drp_list %}
+		  						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+		  							{% for item in drop.drp_list %}
+								    	<button class="dropdown-item" type="submit" value="{{item.lov_id}}" class="drop_down_filter_lov"
+								    	name="{{item.lov_name}}">{{item.lov_value}}</button>
+								    {% endfor %}
+		  						</div>
+							{% endif %}
+					</div>
+				{% endfor %}
+			{% endif %}
+
+			  
 		</nav>
+		</form>
 		<ul class="list-group">
 			{% for obj in filter.qs %}
-				<li class="list-group-item list-group-item-success"><a href="{% url detail_view_url obj_pk=obj.pk %}">{{obj.get_display_list_name}}</a></li>
+				<a href="{% url detail_view_url obj_pk=obj.pk %}" class="list-group-item list-group-item-action flex-column align-items-start">
+    				<div class="d-flex w-100 justify-content-between">
+      					<h5 class="mb-1">{{obj.get_display_list_name}}</h5>
+      					{% if obj.get_tag_right_1 %}
+	      					<span class="filter_badges">
+			    				<label class="lbl lbl-primary">
+			    					<span>{{obj.get_tag_right_1}}</span>
+			    	    		</label>
+			    			</span>
+			    		{% endif %}
+    				</div>
+    				{% if obj.get_display_list_description %}
+	    				{% for key, value in obj.get_display_list_description %}
+		    				<div class="d-flex w-100 justify-content-between">
+		      					<p class="mb-1 text-muted">{{key}}</p>
+		      					{% if value %}
+			      					<span class="filter_badges">
+					    				<label class="lbl lbl-primary">
+					    					<span>{{value}}</span>
+					    	    		</label>
+					    			</span>
+					    		{% endif %}
+		    				</div>
+		    			{% endfor %}
+	    			{% endif %}
+	    			{% for badge in obj.get_display_list_continuous_tags %}
+			    		<span class="filter_badges">
+		    				<label class="lbl lbl-primary">
+		    					<span>{{badge}}</span>
+		    	    		</label>
+		    			</span>
+	    			{% endfor %}
+    				
+  				</a>
+
 			{% endfor %}
 		</ul>
 	</div>

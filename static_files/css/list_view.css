@@ -11,6 +11,12 @@
   background-color: #ea4335;
 }
 
-.material-icons{
-	margin:auto;
+
+.no_bullets{
+  list-style-type: none;
+}
+
+.applied_filter_badges{
+	background-color: #5d78ff;
+	font-size:100%;
 }
