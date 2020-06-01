@@ -34,3 +34,6 @@ class Team(models.Model):
 
 	def get_display_list_name(self):
 		return self.team_name
+
+	def get_tag_right_1(self):
+		return self.team_grp_mail

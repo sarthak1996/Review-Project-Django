@@ -41,3 +41,7 @@ class Series(models.Model):
 
 	def get_display_list_name(self):
 		return self.series_name
+
+	def get_tag_right_1(self):
+		SERIES_TYPE=CommonLookups.get_series_types()
+		return SERIES_TYPE[1][1] if not self.series_type else self.series_type
