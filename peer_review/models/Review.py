@@ -4,6 +4,7 @@ from configurations.models import Team,Question,Series
 from collections import OrderedDict
 from django.urls import reverse_lazy
 from peer_review.HelperClasses import StatusCodes,CommonLookups
+
 # from peer_review.HelperClasses import ApprovalHelper
 REVIEW_PRIORITY=CommonLookups.get_review_priorities()
 APPROVAL_OUTCOMES=CommonLookups.get_approval_outcomes()
@@ -43,7 +44,7 @@ class Review(models.Model):
 		field_dict['Team']=self.team.team_name
 		field_dict['Raised to']=self.approval_review_assoc.filter(latest=True).first().raised_to
 		# field_dict['Number of exemptionss']=str(self.num_of_exemption)
-		field_dict['Series Type']=''.join([value for (item,value) in SERIES_TYPE if item==self.series_type])
+		field_dict['Series Type']=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
 		# print(field_dict.items())
@@ -66,8 +67,27 @@ class Review(models.Model):
 		return reverse_lazy('peer_review:review_detail_view',kwargs={'obj_pk':self.pk})
 
 	def get_display_list_name(self):
-		return self.created_by.username + '->' +' for '+ self.bug_number 
+		return self.bug_number 
 
 	def is_pending(self):
 		return self.approval_outcome==StatusCodes.get_pending_status()
+
+	def get_tag_right_1(self):
+		# print('tag_right_1')
+		return ''.join([value for (item,value) in APPROVAL_OUTCOMES if item==self.approval_outcome])
+
+	def get_display_list_description(self):
+		desc=OrderedDict()
+		idx="Team: "+self.team.team_name
+		desc[idx]=''.join([value for (item,value) in REVIEW_PRIORITY if item==self.priority])
+		idx="Raised to:"+self.approval_review_assoc.get(latest=True).raised_to.get_full_name()
+		desc[idx]=None
+		return desc.items()
+
+	def get_display_list_continuous_tags(self):
+		QUESTION_TYPE=Question.get_questions_choice_types()['question_type']
+		SERIES_TYPE=Series.get_choices_models()['series_type']
+		review_type=''.join([value for (item,value) in QUESTION_TYPE if item==self.review_type])
+		series_type=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
+		return [review_type,series_type]
 

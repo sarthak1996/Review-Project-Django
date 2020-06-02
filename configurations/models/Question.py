@@ -62,4 +62,24 @@ class Question(models.Model):
 
 	def get_display_list_name(self):
 		return self.question_text
+		
+	def get_tag_right_1(self):
+		return 'Mandatory' if self.mandatory else None
+
+	def get_display_list_description(self):
+		QUESTION_CHOICE_TYPE=CommonLookups.get_question_choice_types()
+		QUESTION_TYPE=CommonLookups.get_question_types()
+		SERIES_TYPE=Series.get_choices_models()['series_type']
+		desc=OrderedDict()
+		idx='Series: '+ SERIES_TYPE[1][1] if not self.series_type else self.series_type
+		desc[idx]=None
+		idx='Choice type: '+''.join([value for (item,value) in QUESTION_CHOICE_TYPE if item==self.question_choice_type])
+		desc[idx]=''.join([value for (item,value) in QUESTION_TYPE if item==self.question_type])
+		return desc.items()
+		
+	def get_display_list_continuous_tags(self):
+		choices=self.get_choices_multi_field()
+		return [choice.choice_text for choice in choices]
+
+
 	
