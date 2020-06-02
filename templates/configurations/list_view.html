@@ -5,14 +5,18 @@
 	<link href="{% static 'css/list_view.css' %}" rel="stylesheet" type="text/css">
 	<link href="{% static 'css/filter_labels.css' %}" rel="stylesheet" type="text/css">
 	<script src="{% static 'js/filter_labels.js' %}" type="text/javascript"></script>
-	<script src="{% static 'js/toolbar_search_bar.js' %}" type="text/javascript"></script>
+	<script src="{% static 'js/filter.js' %}" type="text/javascript"></script>
 
 	<script type="text/javascript">
     
     	$(document).ready(function(){
     		
     		hide_all_lov_filters();
+    		keep_initial_filter_as_displayed();
     		// search_dropdown();
+    		$('.search_filter_drop_down_contains').click(function(){
+    			return on_select_filter_change(this);
+    		});
 
     	});
 
@@ -46,22 +50,39 @@
 				{% endif %}
 				<!-- {{filter.form|bootstrap}} -->
 				{% for field in filter.form %}
-					<div class="input-group">
-						<div class="input-group-prepend">
-      						<!-- <span class="input-group-text">@</span> -->
-      						<!--dropdown-toggle-->
-      						<div class="dropdown">
-										<button class="btn btn-default {{text_filters_drop_down_icon}}" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: rgba(93,120,255,.1);color: #5d78ff;">{{field.label}}
-										</button>
+					<div>
+						<span class="input-group search_search_hori">
+							<div class="input-group-prepend">
+	      						<!-- <span class="input-group-text">@</span> -->
+	      						<!--dropdown-toggle-->
+	      						<div class="dropdown">
+											<button class="btn btn-default {{text_filters_drop_down_icon}}" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: rgba(93,120,255,.1);color: #5d78ff;">{{field.label}}
+											</button>
+											{% if other_filters %}
+												<div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+						  							{% for item,val in other_filters %}
+												    	<a class="dropdown-item search_filter_drop_down_contains" data-search-id={{item}} href="#"
+												    	name="">{{val}}</a>
+												    {% endfor %}
+						  						</div>
+						  					{% endif %}
+								</div>
+	    					</div>
+							{{field}}
+							<!-- {{field.label_tag}} -->
+							<div class="input-group-append">
+								<!-- <span class="material-icons">search</span> -->
+								<!-- <button class="glyphicon glyphicon-search" ></button> -->
+								<button type="submit" class="glyphicon glyphicon-search btn btn-default" id="#filter_form_search_button" style="background-color: rgba(93,120,255,.1);color: #5d78ff;"></button>
 							</div>
-    					</div>
-						{{field}}
-						<!-- {{field.label_tag}} -->
-						<div class="input-group-append">
-							<!-- <span class="material-icons">search</span> -->
-							<!-- <button class="glyphicon glyphicon-search" ></button> -->
-							<button type="submit" class="glyphicon glyphicon-search btn btn-default" id="#filter_form_search_button" style="background-color: rgba(93,120,255,.1);color: #5d78ff;"></button>
-						</div>
+						</span>
+						{% if create_button_rendered %}
+						<span class="search_create_hori">
+							<a class="btn btn-success table_navbar_button" href="{% url create_url %}"> {{create_object_button_title}}
+							</a>
+						</span>
+						{% endif %}
+						
 					</div>
 
 					
@@ -83,16 +104,7 @@
 
 
 		<nav class="navbar navbar-expand-sm navbar-light bg-light table_toolbar">
-			{% if create_button_rendered %}
-				<div class="collapse navbar-collapse table_navbar_collapse" id="navbarNav">
-		    		<ul class="navbar-nav mr-auto">
-			      		<li class="nav-item">
-							<a class="btn btn-light glyphicon glyphicon-plus table_navbar_button" href="{% url create_url %}">
-							</a>
-						</li>
-					</ul>
-				</div>
-			{% endif %}
+			
 			{% if search_drop_downs %}
 				{% for drop in search_drop_downs %}
 					<div class="collapse navbar-collapse" id="navbarNav">

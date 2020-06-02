@@ -88,3 +88,15 @@
   font-size: 12px;
   color: #777;
 }
+
+.search_search_hori{
+  display:inline-flex;
+    width:80%;
+}
+
+.search_create_hori{
+  display:inline;
+    width:20%;
+    position: absolute;
+    right: 0;
+}
