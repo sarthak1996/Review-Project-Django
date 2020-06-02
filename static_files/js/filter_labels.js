@@ -12,6 +12,11 @@ function hide_all_lov_filters(){
 	hide_filter($('#id_filter_form-series_type').parent().parent());
 	hide_filter($('#id_filter_form-choices').parent().parent());
 	hide_filter($('#id_filter_form-question_type').parent().parent());
+	hide_filter($('#id_filter_form-priority').parent().parent())
+	hide_filter($('#id_filter_form-approval_outcome').parent().parent())
+	hide_filter($('#id_filter_form-team').parent().parent())
+	hide_filter($('#id_filter_form-review_type').parent().parent())
+	hide_filter($('#id_filter_form-series_type').parent().parent())
 	return;
 }
 

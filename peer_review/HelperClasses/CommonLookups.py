@@ -44,6 +44,12 @@ def get_series_types():
 def get_aru_series_type():
 	return SERIES_TYPE[0][0]
 
+def get_aru_series_type_name():
+	return SERIES_TYPE[0][1]
+
 def get_non_aru_series_type():
 	return SERIES_TYPE[1][0]
+
+def get_non_aru_series_type_name():
+	return SERIES_TYPE[1][1]
 	

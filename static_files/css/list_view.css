@@ -97,6 +97,6 @@
 .search_create_hori{
   display:inline;
     width:20%;
-    position: absolute;
+    position: relative;
     right: 0;
 }
