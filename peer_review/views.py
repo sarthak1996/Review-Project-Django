@@ -133,13 +133,13 @@ def peer_review_approval_form(request,**kwargs):
 	return render(request, 'peer_review/review_approval.html', context_dict)
 
 def invalidate_review(request,**kwargs):
-	review_id=kwargs['review_obj']
+	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
 	ApprovalHelper.invalidate_review(review,request.user)
 	return redirect(review.get_absolute_url())
 
 def reject_review(request,**kwargs):
-	review_id=kwargs['review_obj']
+	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
 	ApprovalHelper.reject_review(review,request.user)
 	return redirect(review.get_absolute_url())

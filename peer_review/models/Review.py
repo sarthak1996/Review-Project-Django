@@ -91,20 +91,29 @@ class Review(models.Model):
 		series_type=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		return [review_type,series_type]
 
-	def get_reviews_raised_by_me_actions(self):
-		if self.approval_outcome==CommonLookups.get_approval_outcomes():
+	def get_reviews_raised_by_me_actions(self,exclude=None):
+		if self.approval_outcome==StatusCodes.get_approved_status():
 			return None
 		actions=OrderedDict()
-		actions['Update']='peer_review:review_update_view'
-		actions['Invalidate']='peer_review:invalidate_review'
+		print('Fetching actions allowed on raised by me review')
+		print(exclude)
+		if not exclude or (exclude and 'update' not in exclude):
+			actions['Update']='peer_review:review_update_view'
+		if not exclude or (exclude and 'invalidate' not in exclude):
+			actions['Invalidate']='peer_review:invalidate_review'
 		return actions.items()
 
-	def get_review_raised_to_me_actions(self):
-		if self.approval_outcome!=CommonLookups.get_pending_status():
+	def get_review_raised_to_me_actions(self,exclude=None):
+		if self.approval_outcome!=StatusCodes.get_pending_status():
 			return None
 		actions=OrderedDict()
-		actions['Approve']='peer_review:review_detail_approve_view'
-		actions['Reject']='peer_review:reject_review'
-		actions['Delegate']='peer_review:delegate_review'
+		print('Fetching actions allowed on raised to me review')
+		print(exclude)
+		if not exclude or (exclude and 'approve' not in exclude):
+			actions['Approve']='peer_review:review_detail_approve_view'
+		if not exclude or (exclude and 'reject' not in exclude):
+			actions['Reject']='peer_review:reject_review'
+		if not exclude or (exclude and 'delegate' not in exclude):
+			actions['Delegate']='peer_review:delegate_review'
 		return actions.items()
 

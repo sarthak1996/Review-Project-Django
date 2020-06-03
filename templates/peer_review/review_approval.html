@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load actions_template_tags %}
 {% block static_head_files %}
 	<link href="{% static 'css/detail_view.css' %}" rel="stylesheet" type="text/css">
 	<script src="{% static 'js/add_exemption_button.js' %}" type="text/javascript"></script>
@@ -27,7 +28,23 @@
     <div class="row align-self-center w-100">
         <div class="col-6 mx-auto">
 			<div class="card border-dark mb-3 mx-auto my-auto" >
-				<div class="card-header">{{detail_view_card_title}}</div>
+				
+				<div class="card-header">
+					<div>{{detail_view_card_title}}</div>
+					{% get_action_values review_object 'review_approval' as actions_drop%}
+    				{% if actions_drop %}
+	    				<div>
+		    				<div class="dropdown">
+								<button class="btn btn-danger dropdown-toggle right_aligned_action" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									{% for action_name,action_url in actions_drop %}
+									<a class="dropdown-item" href="{% url action_url obj_pk=review_object.pk%}">{{action_name}}</a>
+									{% endfor %}
+								</div>
+		    				</div>	
+	    				</div>
+    				{% endif %}
+				</div>
 				<div class="card-body text-dark">
 					<h5 class="card-title" data-letters="{{ name_first_letter }}">{{ detail_name }}</h5>
 					<form method='POST'>
@@ -74,8 +91,7 @@
 						{% endfor %}
 						{% if review_object.is_pending %}
 							<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:delegate_review' review_obj=review_object.pk %}">Delegate</a>
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:reject_review' review_obj=review_object.pk %}">Reject</a>
+							
 							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  id="add_exemption"  href="javascript:void(0)" > Add Exemption</a>
 							<div id="exemption_form_set">
 							{{ exemption_formset.management_form }}

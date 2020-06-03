@@ -147,3 +147,7 @@ hr {
   margin-right:1em;
   color:white;
   }
+
+.right_aligned_action{
+  float: right;
+}

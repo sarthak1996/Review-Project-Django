@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load bootstrap %}
+{% load actions_template_tags %}
 {% block static_head_files %}
 	<link href="{% static 'css/list_view.css' %}" rel="stylesheet" type="text/css">
 	<link href="{% static 'css/filter_labels.css' %}" rel="stylesheet" type="text/css">
@@ -165,19 +166,19 @@
 		    	    		</label>
 		    			</span>
 	    			{% endfor %}
-	    			<div>
-	    				{% if obj.get_actions_drop %}
+	    			{% get_action_values obj as actions_drop%}
+	    			{% if actions_drop %}
+	    				<div>
 		    				<div class="dropdown">
 								<button class="btn btn-danger dropdown-toggle right_aligned_action" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-									{% for action_name,action_url in obj.get_actions_drop %}
+									{% for action_name,action_url in actions_drop %}
 									<a class="dropdown-item" href="{% url action_url obj_pk=obj.pk%}">{{action_name}}</a>
 									{% endfor %}
 								</div>
-		    				</div>
-	    				{% endif %}
-	    				
-	    			</div>
+		    				</div>	
+	    				</div>
+	    			{% endif %}
     			</div>	
   			
 			{% endfor %}
