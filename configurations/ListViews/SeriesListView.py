@@ -42,4 +42,6 @@ class SeriesListView(ListView):
 		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		context['reset_filters']='configurations:series_list_view'
+		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:series_update_view')
+
 		return context

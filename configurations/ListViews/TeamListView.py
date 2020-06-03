@@ -39,7 +39,7 @@ class TeamListView(ListView):
 		context['search_drop_downs']=None
 		context['reset_filters']='configurations:team_list_view'
 		
-
+		context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:team_update_view')
 
 
 		return context

@@ -45,3 +45,6 @@ class Series(models.Model):
 	def get_tag_right_1(self):
 		SERIES_TYPE=CommonLookups.get_series_types()
 		return SERIES_TYPE[1][1] if not self.series_type else self.series_type
+
+	def get_actions_drop(self):
+		return {'Update':'configurations:series_update_view'}.items()

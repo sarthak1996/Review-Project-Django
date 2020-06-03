@@ -91,3 +91,20 @@ class Review(models.Model):
 		series_type=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		return [review_type,series_type]
 
+	def get_reviews_raised_by_me_actions(self):
+		if self.approval_outcome==CommonLookups.get_approval_outcomes():
+			return None
+		actions=OrderedDict()
+		actions['Update']='peer_review:review_update_view'
+		actions['Invalidate']='peer_review:invalidate_review'
+		return actions.items()
+
+	def get_review_raised_to_me_actions(self):
+		if self.approval_outcome!=CommonLookups.get_pending_status():
+			return None
+		actions=OrderedDict()
+		actions['Approve']='peer_review:review_detail_approve_view'
+		actions['Reject']='peer_review:reject_review'
+		actions['Delegate']='peer_review:delegate_review'
+		return actions.items()
+

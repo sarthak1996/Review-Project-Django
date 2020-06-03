@@ -81,5 +81,6 @@ class Question(models.Model):
 		choices=self.get_choices_multi_field()
 		return [choice.choice_text for choice in choices]
 
-
+	def get_actions_drop(self):
+		return {'Update':'configurations:question_update_view'}.items()
 	

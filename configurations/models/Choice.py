@@ -34,3 +34,6 @@ class Choice(models.Model):
 
 	def get_display_list_name(self):
 		return self.choice_text
+
+	def get_actions_drop(self):
+		return {'Update':'configurations:choice_update_view'}.items()

@@ -33,4 +33,6 @@ class ChoiceListView(ListView):
 		context['search_drop_downs']=None
 
 		context['reset_filters']='configurations:choice_list_view'
+		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:choice_update_view')
+
 		return context

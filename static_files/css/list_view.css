@@ -100,3 +100,15 @@
     position: relative;
     right: 0;
 }
+
+.hover_underline_link{
+  font-size: larger;
+}
+
+.hover_underline_link:hover{
+  text-decoration: underline;
+}
+
+.right_aligned_action{
+  float: right;
+}
