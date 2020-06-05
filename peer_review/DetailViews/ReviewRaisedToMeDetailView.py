@@ -24,4 +24,5 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['invalidate_review']=False
 		context['invlidate_view_url']='peer_review:invalidate_review'
 		context['invalidate_label']='Invalidate'
+		context['detail_view_type']='review_approval'
 		return context

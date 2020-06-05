@@ -37,7 +37,7 @@ class Review(models.Model):
 		QUESTION_TYPE=Question.get_questions_choice_types()['question_type']
 		SERIES_TYPE=Series.get_choices_models()['series_type']
 		# field_dict['Team Name']=self.team_name
-		field_dict['Bug number']=self.bug_number
+		# field_dict['Bug number']=self.bug_number
 		field_dict['Priority']=''.join([value for (item,value) in REVIEW_PRIORITY if item==self.priority])
 		field_dict['Approval Outcome']=''.join([value for (item,value) in APPROVAL_OUTCOMES if item==self.approval_outcome])
 		field_dict['Review type']=''.join([value for (item,value) in QUESTION_TYPE if item==self.review_type])

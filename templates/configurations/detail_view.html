@@ -1,18 +1,35 @@
 {% extends "base.html" %}
 {% load static %}
+{% load actions_template_tags %}
 {% block static_head_files %}
 	<link href="{% static 'css/detail_view.css' %}" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/timeline_right.css' %}">
 {% endblock %}
 {% block title %}
 	{{detail_view_title}}
 {% endblock %}
 {% block content%}
+<br/>
+<div class="container">
+	<div class="row">
 
-<div class="container d-flex h-100">
-    <div class="row align-self-center w-100">
-        <div class="col-6 mx-auto">
-			<div class="card border-dark mb-3 mx-auto my-auto" >
-				<div class="card-header">{{detail_view_card_title}}</div>
+			<div class="card border-dark col" >
+				<div class="card-header row">
+					<div class="horizontal_title col align-middle"><h4 class="card_header_title">{{detail_view_card_title}}</h4></div>
+					{% get_action_values detail_obj detail_view_type as actions_drop%}
+    				{% if actions_drop %}
+	    				<div class="horizontal_right_action col-2">
+		    				<div class="dropdown">
+								<button class="btn btn-danger dropdown-toggle right_aligned_action" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									{% for action_name,action_url in actions_drop %}
+									<a class="dropdown-item" href="{% url action_url obj_pk=detail_obj.pk%}">{{action_name}}</a>
+									{% endfor %}
+								</div>
+		    				</div>	
+	    				</div>
+    				{% endif %}
+				</div>
 					<div class="card-body text-dark">
 						<h5 class="card-title" data-letters="{{ name_first_letter }}">{{ detail_name }}</h5>
 						{% for key,value in detail_obj.get_values_for_fields %}
@@ -65,27 +82,55 @@
 								<hr/>
 							{% endfor %}
 						{% endif %}
-						{% if update_rendered %}
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url update_view_url obj_pk=detail_obj.pk %}">{{button_label}}</a>
-						{% endif %}
+						
 						{% if delegate_rendered %}
 							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url delegate_view_url obj_pk=detail_obj.pk %}">{{delegate_label}}</a>
 						{% endif %}
-						{% if invalidate_review %}
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url invlidate_view_url obj_pk=detail_obj.pk %}">{{invalidate_label}}</a>
-						{% endif %}
+					
 						{% if reject_rendered %}
 							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url reject_view_url obj_pk=detail_obj.pk %}">{{reject_label}}</a>
 						{% endif %}
 					</div>
-					<div class="card-footer">
+					<div class="card-footer row">
 						{% for key,value in detail_obj.get_last_update_fields%}
 				    	<small class="text-muted">{{key}} : {{value}}</small>
 				    	{% endfor %}
 					</div>
 				</div>
-        </div>
-    </div>
+        
+   <!--flex-shrink-0 col-12 col-md-3   -->
+   {% if right_aligned_timeline %}
+   <div class="col offset-md-1">
+   		<!-- <div class="col-md-6 offset-md-3"> -->
+			<h4>{{right_aligned_timeline_title}}</h4>
+			<ul class="timeline">
+				{% for timeline_obj in right_aligned_timeline %}
+				<li>
+					{% if timeline_obj.is_url %}
+						<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
+						<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+						
+						
+					{% else %}
+						<!-- <h6  >{{timeline_obj.title}}</h6> -->
+						<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+						<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+					{% endif %}
+
+					{% if timeline_obj.description %}
+						<p>{{timeline_obj.description}}</p>
+					{% endif %}
+
+				</li>
+				{% endfor %}
+			</ul>
+		<!-- </div> -->
+
+   </div>
+   {% endif %}
+
+   </div>
+</div>
 </div>
 
 	

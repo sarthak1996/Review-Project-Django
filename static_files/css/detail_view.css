@@ -148,6 +148,23 @@ hr {
   color:white;
   }
 
+.horizontal_right_action{
+  /*float: right;*/
+  display:inline;
+  width:20%;
+  position: relative;
+  right: 0;
+}
+
+.horizontal_title{
+  display:inline-flex;
+    width:80%;
+}
 .right_aligned_action{
   float: right;
+}
+
+.card_header_title{
+  margin-top: auto;
+  margin-bottom: auto;
 }
