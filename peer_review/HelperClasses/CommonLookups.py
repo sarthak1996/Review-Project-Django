@@ -55,4 +55,7 @@ def get_non_aru_series_type_name():
 
 def get_approval_value(status_code):
 	return ''.join([value for (item,value) in APPROVAL_OUTCOMES if item==status_code])
+
+def get_priority_value(id):
+	return ''.join([value for (item,value) in REVIEW_PRIORITY if item==id])
 	

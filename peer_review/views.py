@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from peer_review.models import Approval,Review,Exemption
 from configurations.HelperClasses import ConfigurationDashboard
-from peer_review.HelperClasses import PeerReviewApprovalQuestions,StatusCodes,ApprovalHelper,ExemptionHelper,CommonLookups
+from peer_review.HelperClasses import PeerReviewApprovalQuestions,StatusCodes,ApprovalHelper,ExemptionHelper,CommonLookups,Timeline
 from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
 from peer_review.forms.ExemptionForm import ExemptionForm
 from django.forms import modelformset_factory
@@ -14,6 +14,7 @@ from django.db import transaction
 from peer_review.Formsets import RequiredFormSet
 from configurations.models import Team
 from collections import OrderedDict
+
 # Create your views here.
 
 
@@ -51,7 +52,31 @@ def peer_review_approval_form(request,**kwargs):
 	context_dict['button_label']='Approve'
 	context_dict['review_object']=review
 	
-	
+	#approval timeline
+	approval_timeline=Approval.objects.filter(review=review).all()
+	approval_history=[]
+	for approval in approval_timeline:
+		approval_history.append(Timeline(title=approval.raised_to.get_full_name(),
+										description=approval.approver_comment,
+										is_url=False,
+										title_right_floater=CommonLookups.get_approval_value(approval.approval_outcome)
+										))
+	print('\n'.join([str(usage) for usage in approval_history]))
+	context_dict['right_aligned_timeline']=True
+
+	context_dict['right_aligned_timeline']=True
+	context_dict['approval_timeline']=approval_history
+	context_dict['approval_timeline_title']='Approval History'
+
+
+	detail_timeline=Timeline(title=review.bug_number,
+							description=review.team.team_name,
+							is_url=True,
+							timeline_url='peer_review:review_detail_view',
+							obj_pk=review.pk,
+							title_right_floater=CommonLookups.get_priority_value(review.priority))
+	context_dict['detail_timeline']=[detail_timeline]
+	context_dict['detail_timeline_title']='Review details'
 	# for form in formset:
 	# 	print('Initial form values' + str(form.initial['question']))
 

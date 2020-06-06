@@ -1,7 +1,7 @@
 from django.views.generic.edit import UpdateView 
 from configurations.models import Question
 from configurations.forms.QuestionForm import QuestionForm
-
+from django.contrib import messages
 class QuestionUpdateView(UpdateView):
 	model=Question
 	template_name='configurations/create_view.html'
@@ -11,6 +11,7 @@ class QuestionUpdateView(UpdateView):
 
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
+		messages.success(self.request, 'Successfully updated question : '+form.instance.question_text)
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):

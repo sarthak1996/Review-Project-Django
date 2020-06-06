@@ -25,4 +25,31 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['invlidate_view_url']='peer_review:invalidate_review'
 		context['invalidate_label']='Invalidate'
 		context['detail_view_type']='review_approval'
+
+		#approval timeline
+		approval_timeline=Approval.objects.filter(review=review_obj).all()
+		approval_history=[]
+		for approval in approval_timeline:
+			approval_history.append(Timeline(title=approval.raised_to.get_full_name(),
+											description=approval.approver_comment,
+											is_url=False,
+											title_right_floater=CommonLookups.get_approval_value(approval.approval_outcome)
+											))
+		print('Preparing Approval timeline for review raised to me')
+		print('\n'.join([str(usage) for usage in approval_history]))
+		
+		context['right_aligned_timeline']=True
+		context['approval_timeline']=approval_history
+		context['approval_timeline_title']='Approval History'
+
+
+		detail_timeline=Timeline(title=review.bug_number,
+								description=review.team.team_name,
+								is_url=True,
+								timeline_url='peer_review:review_detail_view',
+								obj_pk=review.pk,
+								title_right_floater=CommonLookups.get_priority_value(review.priority))
+		context['detail_timeline']=[detail_timeline]
+		context['detail_timeline_title']='Review details'
+
 		return context

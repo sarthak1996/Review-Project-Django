@@ -10,10 +10,9 @@
 {% endblock %}
 {% block content%}
 <br/>
-<div class="container">
-	<div class="row">
+	<div class="row justify-content-md-center">
 
-			<div class="card border-dark col" >
+			<div class="card border-dark col-6" >
 				<div class="card-header row">
 					<div class="horizontal_title col align-middle"><h4 class="card_header_title">{{detail_view_card_title}}</h4></div>
 					{% get_action_values detail_obj detail_view_type as actions_drop%}
@@ -99,39 +98,111 @@
 				</div>
         
    <!--flex-shrink-0 col-12 col-md-3   -->
-   {% if right_aligned_timeline %}
-   <div class="col offset-md-1">
-   		<!-- <div class="col-md-6 offset-md-3"> -->
-			<h4>{{right_aligned_timeline_title}}</h4>
-			<ul class="timeline">
-				{% for timeline_obj in right_aligned_timeline %}
-				<li>
-					{% if timeline_obj.is_url %}
-						<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
-						<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
-						
-						
-					{% else %}
-						<!-- <h6  >{{timeline_obj.title}}</h6> -->
-						<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
-						<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+   				{% if right_aligned_timeline %}
+			   		<div class="col-6">
+			   		<!-- <div class="col-md-6 offset-md-3"> -->
+			   			{% if detail_timeline %}
+			   				<div>
+								<h4>{{detail_timeline_title}}</h4>
+								<ul class="timeline">
+									{% for timeline_obj in detail_timeline %}
+										<li>
+											{% if timeline_obj.is_url %}
+												<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
+												{% if timeline_obj.title_right_floater %}
+													<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+												{% endif %}
+												
+												
+											{% else %}
+												<!-- <h6  >{{timeline_obj.title}}</h6> -->
+												<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+												{% if timeline_obj.title_right_floater %}
+													<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+												{% endif %}
+											{% endif %}
+
+											{% if timeline_obj.description %}
+												<p>{{timeline_obj.description}}</p>
+											{% endif %}
+
+										</li>
+									{% endfor %}
+								</ul>
+					<!-- </div> -->
+							</div>
+							</br>
+						{% endif %}
+						{% if approval_timeline %}
+
+					   		<div>
+								<h4>{{approval_timeline_title}}</h4>
+								<ul class="timeline">
+									{% for timeline_obj in approval_timeline %}
+									<li>
+										{% if timeline_obj.is_url %}
+											<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
+											{% if timeline_obj.title_right_floater %}
+												<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+											{% endif %}
+											
+											
+										{% else %}
+											<!-- <h6  >{{timeline_obj.title}}</h6> -->
+											<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+											{% if timeline_obj.title_right_floater %}
+												<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+											{% endif %}
+										{% endif %}
+
+										{% if timeline_obj.description %}
+											<p>{{timeline_obj.description}}</p>
+										{% endif %}
+
+									</li>
+									{% endfor %}
+								</ul>
+							<!-- </div> -->
+							</div>
+							</br>
 					{% endif %}
+					{% if exemption_timeline %}
+						
+				   		<div>
+							<h4>{{exemption_timeline_title}}</h4>
+							<ul class="timeline">
+								{% for timeline_obj in exemption_timeline %}
+								<li>
+									{% if timeline_obj.is_url %}
+										<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
+										{% if timeline_obj.title_right_floater %}
+											<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+										{% endif %}
+										
+										
+									{% else %}
+										<!-- <h6  >{{timeline_obj.title}}</h6> -->
+										<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+										{% if timeline_obj.title_right_floater %}
+											<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+										{% endif %}
+									{% endif %}
 
-					{% if timeline_obj.description %}
-						<p>{{timeline_obj.description}}</p>
+									{% if timeline_obj.description %}
+										<p>{{timeline_obj.description}}</p>
+									{% endif %}
+
+								</li>
+								{% endfor %}
+							</ul>
+						<!-- </div> -->
+						</div>
 					{% endif %}
+				</div>
+				{% endif %}
 
-				</li>
-				{% endfor %}
-			</ul>
-		<!-- </div> -->
-
-   </div>
-   {% endif %}
-
-   </div>
-</div>
-</div>
+   		</div>
+	</div>
 
 	
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.views.generic.detail import DetailView
 from peer_review.HelperClasses import StatusCodes,Timeline,CommonLookups
-from peer_review.models import Review,Approval
+from peer_review.models import Review,Approval,Exemption
 
 class ReviewDetailView(DetailView):
 	model=Review
@@ -39,8 +39,22 @@ class ReviewDetailView(DetailView):
 											title_right_floater=CommonLookups.get_approval_value(approval.approval_outcome)
 											))
 		print('\n'.join([str(usage) for usage in approval_history]))
-		context['right_aligned_timeline_title']='Approval History'
-		context['right_aligned_timeline']=approval_history
+		
+
+		context['right_aligned_timeline']=True
+		context['approval_timeline']=approval_history
+		context['approval_timeline_title']='Approval History'
+
+
+		exemptions_added=Exemption.objects.filter(review=review_obj).all()
+		exemption_timeline=[]
+		for exemption in exemptions_added:
+			exemption_timeline.append(Timeline(title=exemption.exemption_for,
+												description=exemption.exemption_explanation,
+												is_url=False))
+		context['exemption_timeline']=exemption_timeline
+		context['exemption_timeline_title']='Exemptions granted'
+
 
 
 		return context

@@ -1,7 +1,7 @@
 from django.views.generic.edit import UpdateView 
 from configurations.models import Series
 from configurations.forms.SeriesForm import SeriesForm
-
+from django.contrib import messages
 class SeriesUpdateView(UpdateView):
 	model=Series
 	template_name='configurations/create_view.html'
@@ -14,6 +14,7 @@ class SeriesUpdateView(UpdateView):
 
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
+		messages.success(self.request, 'Successfully updated series : '+form.instance.series_name)
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):

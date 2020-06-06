@@ -168,3 +168,11 @@ hr {
   margin-top: auto;
   margin-bottom: auto;
 }
+
+.empty_exemption_form{
+  margin-top:1em;
+}
+
+#exemption_form_set{
+  margin-bottom: 1em;
+}

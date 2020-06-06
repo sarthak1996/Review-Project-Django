@@ -32,8 +32,9 @@ class ChoiceDetailView(DetailView):
 											obj_pk=question.pk
 											))
 		print('\n'.join([str(usage) for usage in choice_usages]))
-		context['right_aligned_timeline_title']='Question Usages'
-		context['right_aligned_timeline']=choice_usages
+		context['right_aligned_timeline']=True
+		context['detail_timeline']=choice_usages
+		context['detail_timeline_title']='Question Usages'
 
 
 
