@@ -13,7 +13,7 @@ class PeerTestingReviewForm(ModelForm):
 	class Meta:
 		model=Review
 		fields=['bug_number','priority','team']
-
+		
 	def __init__(self, *args, **kwargs):
 		request_user= kwargs.pop('request').user
 		super(PeerTestingReviewForm, self).__init__(*args, **kwargs)

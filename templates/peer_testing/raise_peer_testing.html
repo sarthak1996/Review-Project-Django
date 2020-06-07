@@ -2,20 +2,33 @@
 {% load static %}
 {% block static_head_files %}
 	<link href="{% static 'css/detail_view.css' %}" rel="stylesheet" type="text/css">
+	<script src="{% static 'js/dependent_raise_to_lov.js' %}" type="text/javascript"></script>
+	<script>
+		$(document).ready(function(){
+		    $("#id_team").change(function () {
+		    	// alert('hello');
+		      var url = $("#form_main").attr("data-raise_to-url");
+		      var teamId = $(this).val(); 
+		      // console.log('LOV-'+teamId)
+		      return refresh_raise_to_lov(url,teamId);
+		    });
+    	})
+  </script>
 {% endblock %}
 {% block title %}
 	{{review_approval_title}}
 {% endblock %}
 {% block content%}
-	
-<div class="container">
-    <div class="row align-self-center w-100">
-        <div class="col-6 mx-auto">
-			<div class="card border-dark mb-3 mx-auto my-auto" >
-				<div class="card-header">{{detail_view_card_title}}</div>
+    <div class="row justify-content-md-center">
+        
+			<div class="card col-6" >
 				<div class="card-body text-dark">
 					<h5 class="card-title" data-letters="{{ name_first_letter }}">{{ detail_name }}</h5>
-					<form method='POST'>
+					<form  method="POST" id='form_main'
+	            	{%if dependent_raise_to %}
+	            		data-raise_to-url="{% url lov_raise_to_url %}" 
+	            	{% endif %}
+	            	>
 						{% csrf_token %}
 						{% if review_form.non_field_errors %}
 							<div class="list-group">
@@ -129,7 +142,7 @@
 					</form> -->
 				</div>
 			</div>
-        </div>
+        
     </div>
-</div>
+
 {% endblock %}
