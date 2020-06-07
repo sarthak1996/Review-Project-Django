@@ -7,11 +7,19 @@ from configurations.models import Team,Series,Choice,Question
 from configurations.HelperClasses import ConfigurationDashboard
 from django.contrib.auth.hashers import make_password
 from collections import OrderedDict
+from peer_review.models import Review,Approval
+from peer_review.HelperClasses import CommonLookups,StatusCodes
 # Create your views here.
 def index(request):
 	if request.user.is_authenticated:
-		return render(request,'site_pages/home_page.html')
+		context={}
+		context['review_raised_by_me_count']=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_review_question_type()).count()
+		context['peer_testing_raised_by_me_count']=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_testing_question_type()).count()
+		context['peer_testing_raised_to_me_count']=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_testing_question_type()).all().count()
+		context['review_raised_to_me_count']=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_review_question_type()).all().count()
+		return render(request,'site_pages/home_page.html',context)
 	else:
+		messages.error(request,'You must login first')
 		return redirect("configurations:login")
 
 def logout_view(request):
