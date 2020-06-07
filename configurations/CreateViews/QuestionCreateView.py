@@ -19,4 +19,6 @@ class QuestionCreateView(CreateView):
 		context=super(QuestionCreateView,self).get_context_data(**kwargs)
 		context['page_title']='Create Question'
 		context['card_title']='Question'
+		context['dependent_choice']=True
+		context['choice_dependent_url']='configurations:ajax_choices_for_questions'
 		return context

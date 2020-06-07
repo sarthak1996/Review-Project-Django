@@ -51,6 +51,6 @@ urlpatterns = [
     url(r'^question_view/(?P<obj_pk>\d+)$',QuestionDetailView.as_view(),name='question_detail_view'),
     url(r'^question_update_view/(?P<obj_pk>\d+)$',QuestionUpdateView.as_view(),name='question_update_view'),
     path('question/create',QuestionCreateView.as_view(),name='question_create_view'),
-    
+    path('ajax/choices_for_questions',views.choices_dependent_region,name='ajax_choices_for_questions'),
     
 ]

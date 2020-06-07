@@ -1,0 +1,8 @@
+{% load generic_tags %}
+{% enumerate_objects objects as objs%}
+{% for object in objs %}
+	<li>
+		<label for="id_choices_{{object.index}}">
+			<input type="checkbox" name="choices" value="{{object.key}}" class="no_bullets choice_check_box_multi_select" label="Choices" id="id_choices_{{object.index}}"> {{object.value}}</label>
+	</li>
+{% endfor %}
