@@ -6,7 +6,7 @@ from .forms import LoginForm,UserRegistrationForm
 from configurations.models import Team,Series,Choice,Question
 from configurations.HelperClasses import ConfigurationDashboard
 from django.contrib.auth.hashers import make_password
-
+from collections import OrderedDict
 # Create your views here.
 def index(request):
 	if request.user.is_authenticated:
@@ -66,3 +66,17 @@ def configurations_home(request):
 	dashboard_objects.append(question_obj)
 	context_dict={'dashboard_objects':dashboard_objects}
 	return render(request,'configurations/configuration_home.html',context_dict)
+
+
+def choices_dependent_region(request):
+	choice_type=request.GET.get('choice_type')
+	print('Choice type ajax')
+	print(choice_type)
+	if choice_type=='TXT':
+		return HttpResponse('Choice not needed for text type')
+	choices=Choice.objects.all()
+	choices_lov=OrderedDict()
+	for choice in choices:
+		choices_lov[choice.pk]=choice.choice_text
+	return render(request,'lov/choices_dependent_region.html',{'objects':choices_lov.items()})
+

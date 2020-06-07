@@ -16,7 +16,7 @@ class TeamCreateView(CreateView):
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):
-		context=super(SeriesCreateView,self).get_context_data(**kwargs)
+		context=super(TeamCreateView,self).get_context_data(**kwargs)
 		context['page_title']='Create Team'
 		context['card_title']='Team'
 		return context

@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from peer_review.HelperClasses import CommonLookups
 from peer_review.models import Approval,Review
 from configurations.HelperClasses import ConfigurationDashboard
-from peer_review.HelperClasses import StatusCodes,PrintObjs,ApprovalHelper
+from peer_review.HelperClasses import StatusCodes,PrintObjs,ApprovalHelper,CommonValidations
 from peer_testing.HelperClasses import PeerTestingQuestions
 from django.forms import modelformset_factory
 from django.db import transaction
@@ -58,6 +58,8 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 	context_dict['name_first_letter']=context_dict['detail_name'][0]
 	context_dict['button_label']='Submit'
 	context_dict['review_form']=review_form
+	context_dict['lov_raise_to_url']='peer_review:ajax_load_raise_to_lov'
+	context_dict['dependent_raise_to']=True
 	review_pk=None
 	if edit and not initial_review_instance:
 		print('Invalid call ! returning with null')
@@ -90,6 +92,11 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 				review_instance.approval_outcome=StatusCodes.get_pending_status()
 				review_instance.review_type=CommonLookups.get_peer_testing_question_type()
 				PrintObjs.print_review_obj(review_instance)
+				raised_to_user=review_form.cleaned_data['raise_to']
+				if not CommonValidations.user_exists_in_team(raised_to_user,review_instance.team):
+					form.add_error('raise_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
+					return render(request,'peer_testing/raise_peer_testing.html',context_dict)
+		
 				review_form.save()
 				review_pk=review_form.instance.pk
 				if not edit:
@@ -135,6 +142,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 				pass
 			return redirect(reverse_lazy('peer_testing:peer_testing_detail_view',kwargs={'obj_pk':review_pk}))
 	return render(request,'peer_testing/raise_peer_testing.html',context_dict)
+
 
 
 

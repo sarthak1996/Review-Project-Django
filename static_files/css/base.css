@@ -6,3 +6,7 @@
 	bottom: 0; 
 	margin: 2em auto 2em auto;
 }
+
+.parent_container{
+	word-break: break-all;
+}
