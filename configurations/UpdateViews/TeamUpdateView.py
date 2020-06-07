@@ -1,7 +1,7 @@
 from django.views.generic.edit import UpdateView 
 from configurations.models import Team
 from configurations.forms.TeamForm import TeamForm
-
+from django.contrib import messages
 class TeamUpdateView(UpdateView):
 	model=Team
 	template_name='configurations/create_view.html'
@@ -14,6 +14,7 @@ class TeamUpdateView(UpdateView):
 
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
+		messages.success(self.request, 'Successfully updated team : '+form.instance.team_name)
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):

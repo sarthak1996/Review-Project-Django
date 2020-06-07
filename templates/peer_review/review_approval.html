@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
+{% load actions_template_tags %}
 {% block static_head_files %}
 	<link href="{% static 'css/detail_view.css' %}" rel="stylesheet" type="text/css">
 	<script src="{% static 'js/add_exemption_button.js' %}" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/timeline_right.css' %}">
 	<script type="text/javascript">
     
     	$(document).ready(function(){
@@ -23,11 +25,26 @@
 {% endblock %}
 {% block content%}
 	
-<div class="container d-flex">
-    <div class="row align-self-center w-100">
-        <div class="col-6 mx-auto">
-			<div class="card border-dark mb-3 mx-auto my-auto" >
-				<div class="card-header">{{detail_view_card_title}}</div>
+    <div class="row justify-content-md-center">
+        
+			<div class="card border-dark col-6" >
+				
+				<div class="card-header row">
+					<div class="horizontal_title col align-middle"><h4 class="card_header_title">{{detail_view_card_title}}</h4></div>
+					{% get_action_values review_object 'review_approval' as actions_drop%}
+    				{% if actions_drop %}
+	    				<div class="horizontal_right_action col-2">
+		    				<div class="dropdown">
+								<button class="btn btn-danger dropdown-toggle right_aligned_action" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									{% for action_name,action_url in actions_drop %}
+									<a class="dropdown-item" href="{% url action_url obj_pk=review_object.pk%}">{{action_name}}</a>
+									{% endfor %}
+								</div>
+		    				</div>	
+	    				</div>
+    				{% endif %}
+				</div>
 				<div class="card-body text-dark">
 					<h5 class="card-title" data-letters="{{ name_first_letter }}">{{ detail_name }}</h5>
 					<form method='POST'>
@@ -73,10 +90,8 @@
 							{% endfor %}
 						{% endfor %}
 						{% if review_object.is_pending %}
-							<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:delegate_review' review_obj=review_object.pk %}">Delegate</a>
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url 'peer_review:reject_review' review_obj=review_object.pk %}">Reject</a>
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  id="add_exemption"  href="javascript:void(0)" > Add Exemption</a>
+							
+
 							<div id="exemption_form_set">
 							{{ exemption_formset.management_form }}
 							{% for form2 in exemption_formset %}
@@ -138,6 +153,9 @@
 							
 							
 							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">{{button_label}}</button>
+							
+							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  id="add_exemption"  href="javascript:void(0)" > Add Exemption</a>
 						{% endif %}
 
 					</form>
@@ -146,7 +164,84 @@
 					</form> -->
 				</div>
 			</div>
-        </div>
+			{% if right_aligned_timeline %}
+			   <div class="col-6">
+			   		<!-- <div class="col-md-6 offset-md-3"> -->
+			   		{% if detail_timeline %}
+			   		<div>
+						<h4>{{detail_timeline_title}}</h4>
+						<ul class="timeline">
+							{% for timeline_obj in detail_timeline %}
+							<li>
+								{% if timeline_obj.is_url %}
+									<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
+									{% if timeline_obj.title_right_floater %}
+										<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+									{% endif %}
+									
+									
+								{% else %}
+									<!-- <h6  >{{timeline_obj.title}}</h6> -->
+									<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+									{% if timeline_obj.title_right_floater %}
+										<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+									{% endif %}
+								{% endif %}
+
+								{% if timeline_obj.description %}
+									<p>
+									{% for desc in timeline_obj.description %}
+										{{desc}}<br>
+									{% endfor %}
+									</p>
+								{% endif %}
+
+							</li>
+							{% endfor %}
+						</ul>
+					<!-- </div> -->
+					</div>
+					</br>
+					{% endif %}
+					{% if approval_timeline %}
+			   		<div>
+						<h4>{{approval_timeline_title}}</h4>
+						<ul class="timeline">
+							{% for timeline_obj in approval_timeline %}
+							<li>
+								{% if timeline_obj.is_url %}
+									<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
+									{% if timeline_obj.title_right_floater %}
+										<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+									{% endif %}
+									
+									
+								{% else %}
+									<!-- <h6  >{{timeline_obj.title}}</h6> -->
+									<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+									{% if timeline_obj.title_right_floater %}
+										<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+									{% endif %}
+								{% endif %}
+
+								{% if timeline_obj.description %}
+									<p>
+									{% for desc in timeline_obj.description %}
+										{{desc}}<br>
+									{% endfor %}
+									</p>
+
+								{% endif %}
+
+							</li>
+							{% endfor %}
+						</ul>
+					<!-- </div> -->
+					</div>
+					</br>
+				{% endif %}
+			 </div>
+   {% endif %}
+        
     </div>
-</div>
 {% endblock %}

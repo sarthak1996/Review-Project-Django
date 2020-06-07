@@ -37,3 +37,6 @@ class Team(models.Model):
 
 	def get_tag_right_1(self):
 		return self.team_grp_mail
+
+	def get_actions_drop(self):
+		return {'Update':'configurations:team_update_view'}.items()

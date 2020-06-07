@@ -58,7 +58,8 @@ class ReviewListView(ListView):
 		context['search_drop_downs']=search_drop_downs
 		
 		context['reset_filters']='peer_review:review_list_view'
-		
+		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:team_update_view')
+
 							
 		return context
 

@@ -2,6 +2,7 @@ from django.views.generic.edit import CreateView
 from configurations.models import Choice
 import datetime 
 from configurations.forms.ChoiceForm import ChoiceForm
+from django.contrib import messages
 class ChoiceCreateView(CreateView):
 	model= Choice
 	form_class=ChoiceForm
@@ -11,6 +12,7 @@ class ChoiceCreateView(CreateView):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user
 		form.instance.creation_date=datetime.datetime.now()
+		messages.success(self.request, 'Successfully created choice : '+form.instance.choice_text)
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):

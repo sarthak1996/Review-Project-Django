@@ -1,6 +1,6 @@
 from django.views.generic.detail import DetailView
-from peer_review.HelperClasses import StatusCodes
-from peer_review.models import Review
+from peer_review.HelperClasses import StatusCodes,Timeline,CommonLookups
+from peer_review.models import Review,Approval,Exemption
 
 class ReviewDetailView(DetailView):
 	model=Review
@@ -27,4 +27,34 @@ class ReviewDetailView(DetailView):
 		exemptions=review_obj.exemption_review_assoc.all()
 		context['show_exemptions']=(exemptions.count()>0)
 		context['exemptions']=exemptions
+		context['detail_view_type']='review_user_view'
+
+		#approval timeline
+		approval_timeline=Approval.objects.filter(review=review_obj).all()
+		approval_history=[]
+		for approval in approval_timeline:
+			approval_history.append(Timeline(title=approval.raised_to.get_full_name(),
+											description=[approval.approver_comment],
+											is_url=False,
+											title_right_floater=CommonLookups.get_approval_value(approval.approval_outcome)
+											))
+		print('\n'.join([str(usage) for usage in approval_history]))
+		
+
+		context['right_aligned_timeline']=True
+		context['approval_timeline']=approval_history
+		context['approval_timeline_title']='Approval History'
+
+
+		exemptions_added=Exemption.objects.filter(review=review_obj).all()
+		exemption_timeline=[]
+		for exemption in exemptions_added:
+			exemption_timeline.append(Timeline(title=exemption.exemption_for,
+												description=exemption.exemption_explanation,
+												is_url=False))
+		context['exemption_timeline']=exemption_timeline
+		context['exemption_timeline_title']='Exemptions granted'
+
+
+
 		return context

@@ -23,6 +23,7 @@ class Series(models.Model):
 
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()
+		SERIES_TYPE=CommonLookups.get_series_types()
 		# field_dict['Team Name']=self.team_name
 		field_dict['Series type']=SERIES_TYPE[1][1] if not self.series_type else self.series_type
 		field_dict['Created By']=self.created_by.username
@@ -45,3 +46,6 @@ class Series(models.Model):
 	def get_tag_right_1(self):
 		SERIES_TYPE=CommonLookups.get_series_types()
 		return SERIES_TYPE[1][1] if not self.series_type else self.series_type
+
+	def get_actions_drop(self):
+		return {'Update':'configurations:series_update_view'}.items()

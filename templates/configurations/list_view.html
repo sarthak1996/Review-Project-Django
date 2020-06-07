@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% load bootstrap %}
+{% load actions_template_tags %}
 {% block static_head_files %}
 	<link href="{% static 'css/list_view.css' %}" rel="stylesheet" type="text/css">
 	<link href="{% static 'css/filter_labels.css' %}" rel="stylesheet" type="text/css">
+	
 	<script src="{% static 'js/filter_labels.js' %}" type="text/javascript"></script>
 	<script src="{% static 'js/filter.js' %}" type="text/javascript"></script>
 
@@ -28,7 +30,6 @@
 {% endblock %}
 {% block content%}
 
-	<div class="container">
 		
 	
 			<form method="GET">
@@ -132,9 +133,9 @@
 		</form>
 		<ul class="list-group">
 			{% for obj in filter.qs %}
-				<a href="{% url detail_view_url obj_pk=obj.pk %}" class="list-group-item list-group-item-action flex-column align-items-start">
+				<div class="list-group-item list-group-item-action">
     				<div class="d-flex w-100 justify-content-between">
-      					<h5 class="mb-1">{{obj.get_display_list_name}}</h5>
+      					<a href="{% url detail_view_url obj_pk=obj.pk %}" class="hover_underline_link">{{obj.get_display_list_name}}</a>
       					{% if obj.get_tag_right_1 %}
 	      					<span class="filter_badges">
 			    				<label class="lbl lbl-primary">
@@ -164,10 +165,21 @@
 		    	    		</label>
 		    			</span>
 	    			{% endfor %}
-    				
-  				</a>
-
+	    			{% get_action_values obj as actions_drop%}
+	    			{% if actions_drop %}
+	    				<div>
+		    				<div class="dropdown">
+								<button class="btn btn-danger dropdown-toggle right_aligned_action" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									{% for action_name,action_url in actions_drop %}
+									<a class="dropdown-item" href="{% url action_url obj_pk=obj.pk%}">{{action_name}}</a>
+									{% endfor %}
+								</div>
+		    				</div>	
+	    				</div>
+	    			{% endif %}
+    			</div>	
+  			
 			{% endfor %}
 		</ul>
-	</div>
 {% endblock %}

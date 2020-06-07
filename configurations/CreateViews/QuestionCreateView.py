@@ -2,6 +2,7 @@ from django.views.generic.edit import CreateView
 from configurations.models import Question
 import datetime 
 from configurations.forms.QuestionForm import QuestionForm
+from django.contrib import messages
 class QuestionCreateView(CreateView):
 	model= Question
 	form_class=QuestionForm
@@ -11,6 +12,7 @@ class QuestionCreateView(CreateView):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user
 		form.instance.creation_date=datetime.datetime.now()
+		messages.success(self.request, 'Successfully created question : '+form.instance.question_text)
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):

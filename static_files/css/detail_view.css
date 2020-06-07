@@ -147,3 +147,32 @@ hr {
   margin-right:1em;
   color:white;
   }
+
+.horizontal_right_action{
+  /*float: right;*/
+  display:inline;
+  width:20%;
+  position: relative;
+  right: 0;
+}
+
+.horizontal_title{
+  display:inline-flex;
+    width:80%;
+}
+.right_aligned_action{
+  float: right;
+}
+
+.card_header_title{
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.empty_exemption_form{
+  margin-top:1em;
+}
+
+#exemption_form_set{
+  margin-bottom: 1em;
+}

@@ -4,8 +4,9 @@ import datetime
 from django.shortcuts import render,redirect
 from peer_review.forms.ReviewForm import ReviewForm
 from configurations.models import Question
-from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,PrintObjs
+from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,PrintObjs,CommonValidations
 from django.db import transaction
+from django.contrib.auth import get_user_model
 class ReviewCreateView(CreateView):
 	model= Review
 	form_class=ReviewForm
@@ -15,11 +16,12 @@ class ReviewCreateView(CreateView):
 	def form_valid(self, form):
 		#create approval model and change latest of all the previous approval rows to false
 		raised_to_user=get_user_model().objects.get(pk=form.cleaned_data['raise_to'].pk)
-		if not CommonValidations.user_exists_in_team(raised_to_user,review.team):
+		review_obj=form.save(commit=False)
+		if not CommonValidations.user_exists_in_team(raised_to_user,review_obj.team):
 			form.add_error('raise_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
 			return super(ReviewCreateView,self).form_invalid(form)
 		
-		review_obj=form.save(commit=False)
+		
 		review_obj.last_update_by=self.request.user
 		review_obj.created_by=self.request.user
 		review_obj.creation_date=datetime.datetime.now()

@@ -15,7 +15,7 @@ class DelegateReviewApprovalCreateView(CreateView):
 	@transaction.atomic
 	def form_valid(self, form):
 		approval_instance=form.instance
-		review_id=self.kwargs['review_obj']
+		review_id=self.kwargs['obj_pk']
 		review=Review.objects.filter(pk=review_id).first()
 		approval_instance.review=review
 		raised_to_user=get_user_model().objects.get(pk=form.cleaned_data['raised_to'].pk)

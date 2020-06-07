@@ -2,6 +2,7 @@ from django.views.generic.edit import CreateView
 from configurations.models import Series
 import datetime 
 from configurations.forms.SeriesForm import SeriesForm
+from django.contrib import messages
 class SeriesCreateView(CreateView):
 	model= Series
 	form_class=SeriesForm
@@ -11,6 +12,7 @@ class SeriesCreateView(CreateView):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user
 		form.instance.creation_date=datetime.datetime.now()
+		messages.success(self.request, 'Successfully created series : '+form.instance.series_name)
 		return super().form_valid(form)
 
 	def get_context_data(self, **kwargs):

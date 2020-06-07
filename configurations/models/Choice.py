@@ -17,7 +17,7 @@ class Choice(models.Model):
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()
 		# field_dict['Team Name']=self.team_name
-		field_dict['Choice Text']=self.choice_text
+		# field_dict['Choice Text']=self.choice_text
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
 		# print(field_dict.items())
@@ -34,3 +34,6 @@ class Choice(models.Model):
 
 	def get_display_list_name(self):
 		return self.choice_text
+
+	def get_actions_drop(self):
+		return {'Update':'configurations:choice_update_view'}.items()

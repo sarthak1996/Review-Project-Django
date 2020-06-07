@@ -1,7 +1,6 @@
 from django.views.generic.detail import DetailView
-
-from configurations.models import Choice
-
+from configurations.models import Choice,Question
+from peer_review.HelperClasses import Timeline
 class ChoiceDetailView(DetailView):
 	model=Choice
 	template_name='configurations/detail_view.html'
@@ -21,4 +20,22 @@ class ChoiceDetailView(DetailView):
 		context['delegate_rendered']=False
 		context['delegate_label']='Delegate'
 		context['delegate_view_url']='peer_review:delegate_view'
+
+		choice_questions=Question.objects.filter(choices=choice_obj)
+		question_url='configurations:question_detail_view'
+		choice_usages=[]
+		for question in choice_questions:
+			choice_usages.append(Timeline(title=question.question_text,
+											timeline_url=question_url,
+											description=['Question Type:'+question.question_type],
+											is_url=True,
+											obj_pk=question.pk
+											))
+		print('\n'.join([str(usage) for usage in choice_usages]))
+		context['right_aligned_timeline']=True
+		context['detail_timeline']=choice_usages
+		context['detail_timeline_title']='Question Usages'
+
+
+
 		return context

@@ -37,7 +37,7 @@ class Review(models.Model):
 		QUESTION_TYPE=Question.get_questions_choice_types()['question_type']
 		SERIES_TYPE=Series.get_choices_models()['series_type']
 		# field_dict['Team Name']=self.team_name
-		field_dict['Bug number']=self.bug_number
+		# field_dict['Bug number']=self.bug_number
 		field_dict['Priority']=''.join([value for (item,value) in REVIEW_PRIORITY if item==self.priority])
 		field_dict['Approval Outcome']=''.join([value for (item,value) in APPROVAL_OUTCOMES if item==self.approval_outcome])
 		field_dict['Review type']=''.join([value for (item,value) in QUESTION_TYPE if item==self.review_type])
@@ -90,4 +90,44 @@ class Review(models.Model):
 		review_type=''.join([value for (item,value) in QUESTION_TYPE if item==self.review_type])
 		series_type=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		return [review_type,series_type]
+
+	def get_reviews_raised_by_me_actions(self,exclude=None):
+		if self.approval_outcome==StatusCodes.get_approved_status():
+			return None
+		actions=OrderedDict()
+		print('Fetching actions allowed on raised by me review')
+		print(exclude)
+		if not exclude or (exclude and 'update' not in exclude):
+			actions['Update']='peer_review:review_update_view'
+		if not exclude or (exclude and 'invalidate' not in exclude):
+			actions['Invalidate']='peer_review:invalidate_review'
+		return actions.items()
+
+	def get_review_raised_to_me_actions(self,exclude=None):
+		if self.approval_outcome!=StatusCodes.get_pending_status():
+			return None
+		actions=OrderedDict()
+		print('Fetching actions allowed on raised to me review')
+		print(exclude)
+		if not exclude or (exclude and 'approve' not in exclude):
+			actions['Approve']='peer_review:review_detail_approve_view'
+		if not exclude or (exclude and 'reject' not in exclude):
+			actions['Reject']='peer_review:reject_review'
+		if not exclude or (exclude and 'delegate' not in exclude):
+			actions['Delegate']='peer_review:delegate_review'
+		return actions.items()
+
+	def get_peer_testing_raised_to_me_actions(self,exclude=None):
+		if self.approval_outcome!=StatusCodes.get_pending_status():
+			return None
+		actions=OrderedDict()
+		print('Fetching actions allowed on raised to me review')
+		print(exclude)
+		if not exclude or (exclude and 'approve' not in exclude):
+			actions['Approve']='peer_testing:peer_testing_approve'
+		if not exclude or (exclude and 'reject' not in exclude):
+			actions['Reject']='peer_review:reject_review'
+		if not exclude or (exclude and 'delegate' not in exclude):
+			actions['Delegate']='peer_review:delegate_review'
+		return actions.items()
 

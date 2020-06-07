@@ -34,7 +34,7 @@ class Question(models.Model):
 		QUESTION_CHOICE_TYPE=CommonLookups.get_question_choice_types()
 		QUESTION_TYPE=CommonLookups.get_question_types()
 		# field_dict['Team Name']=self.team_name
-		field_dict['Question text']=self.question_text
+		# field_dict['Question text']=self.question_text
 		field_dict['Question choice type']=''.join([value for (item,value) in QUESTION_CHOICE_TYPE if item==self.question_choice_type])
 		field_dict['Mandatory']=self.mandatory
 		field_dict['Question type']=''.join([value for (item,value) in QUESTION_TYPE if item==self.question_type])
@@ -81,5 +81,6 @@ class Question(models.Model):
 		choices=self.get_choices_multi_field()
 		return [choice.choice_text for choice in choices]
 
-
+	def get_actions_drop(self):
+		return {'Update':'configurations:question_update_view'}.items()
 	
