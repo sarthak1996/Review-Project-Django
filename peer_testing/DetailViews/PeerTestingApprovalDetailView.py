@@ -32,5 +32,6 @@ class PeerTestingApprovalDetailView(DetailView):
 		context['reject_rendered']=True
 		context['reject_view_url']='peer_review:reject_review'
 		context['reject_label']='Reject'
+		context['detail_view_type']='testing_review_approval'
 
 		return context

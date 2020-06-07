@@ -27,7 +27,7 @@ class ChoiceDetailView(DetailView):
 		for question in choice_questions:
 			choice_usages.append(Timeline(title=question.question_text,
 											timeline_url=question_url,
-											description=question.question_type,
+											description=['Question Type:'+question.question_type],
 											is_url=True,
 											obj_pk=question.pk
 											))

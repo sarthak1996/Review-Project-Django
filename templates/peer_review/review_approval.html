@@ -189,7 +189,11 @@
 								{% endif %}
 
 								{% if timeline_obj.description %}
-									<p>{{timeline_obj.description}}</p>
+									<p>
+									{% for desc in timeline_obj.description %}
+										{{desc}}<br>
+									{% endfor %}
+									</p>
 								{% endif %}
 
 							</li>
@@ -221,7 +225,12 @@
 								{% endif %}
 
 								{% if timeline_obj.description %}
-									<p>{{timeline_obj.description}}</p>
+									<p>
+									{% for desc in timeline_obj.description %}
+										{{desc}}<br>
+									{% endfor %}
+									</p>
+
 								{% endif %}
 
 							</li>

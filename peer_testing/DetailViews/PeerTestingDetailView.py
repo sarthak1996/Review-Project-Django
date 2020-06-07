@@ -38,6 +38,9 @@ class PeerTestingDetailView(DetailView):
 											title_right_floater=CommonLookups.get_approval_value(approval.approval_outcome)
 											))
 		print('\n'.join([str(usage) for usage in approval_history]))
-		context['right_aligned_timeline_title']='Approval History'
-		context['right_aligned_timeline']=approval_history
+		# context['right_aligned_timeline_title']='Approval History'
+		context['right_aligned_timeline']=True
+		context['approval_timeline']=approval_history
+		context['approval_timeline_title']='Approval History'
+		context['detail_view_type']='review_user_view'
 		return context

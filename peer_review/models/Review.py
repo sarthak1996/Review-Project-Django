@@ -117,3 +117,17 @@ class Review(models.Model):
 			actions['Delegate']='peer_review:delegate_review'
 		return actions.items()
 
+	def get_peer_testing_raised_to_me_actions(self,exclude=None):
+		if self.approval_outcome!=StatusCodes.get_pending_status():
+			return None
+		actions=OrderedDict()
+		print('Fetching actions allowed on raised to me review')
+		print(exclude)
+		if not exclude or (exclude and 'approve' not in exclude):
+			actions['Approve']='peer_testing:peer_testing_approve'
+		if not exclude or (exclude and 'reject' not in exclude):
+			actions['Reject']='peer_review:reject_review'
+		if not exclude or (exclude and 'delegate' not in exclude):
+			actions['Delegate']='peer_review:delegate_review'
+		return actions.items()
+

@@ -70,7 +70,7 @@ def peer_review_approval_form(request,**kwargs):
 
 
 	detail_timeline=Timeline(title=review.bug_number,
-							description=review.team.team_name,
+							description=['Team: '+ review.team.team_name,'Series type: '+CommonLookups.get_series_type_value(review.series_type),'Raised by: '+review.created_by.get_full_name()],
 							is_url=True,
 							timeline_url='peer_review:review_detail_view',
 							obj_pk=review.pk,

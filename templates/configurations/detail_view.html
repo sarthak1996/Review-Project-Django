@@ -82,13 +82,7 @@
 							{% endfor %}
 						{% endif %}
 						
-						{% if delegate_rendered %}
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url delegate_view_url obj_pk=detail_obj.pk %}">{{delegate_label}}</a>
-						{% endif %}
-					
-						{% if reject_rendered %}
-							<a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none"  href="{% url reject_view_url obj_pk=detail_obj.pk %}">{{reject_label}}</a>
-						{% endif %}
+						
 					</div>
 					<div class="card-footer row">
 						{% for key,value in detail_obj.get_last_update_fields%}
@@ -156,7 +150,12 @@
 										{% endif %}
 
 										{% if timeline_obj.description %}
-											<p>{{timeline_obj.description}}</p>
+											<p>
+											{% for desc in timeline_obj.description %}
+												{{desc}}<br>
+											{% endfor %}
+											</p>
+
 										{% endif %}
 
 									</li>
@@ -189,7 +188,12 @@
 									{% endif %}
 
 									{% if timeline_obj.description %}
-										<p>{{timeline_obj.description}}</p>
+										<p>
+										{% for desc in timeline_obj.description %}
+											{{desc}}<br>
+										{% endfor %}
+										</p>
+
 									{% endif %}
 
 								</li>

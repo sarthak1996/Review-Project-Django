@@ -31,7 +31,7 @@ class ReviewRaisedToMeDetailView(DetailView):
 		approval_history=[]
 		for approval in approval_timeline:
 			approval_history.append(Timeline(title=approval.raised_to.get_full_name(),
-											description=approval.approver_comment,
+											description=[approval.approver_comment],
 											is_url=False,
 											title_right_floater=CommonLookups.get_approval_value(approval.approval_outcome)
 											))
@@ -44,7 +44,7 @@ class ReviewRaisedToMeDetailView(DetailView):
 
 
 		detail_timeline=Timeline(title=review.bug_number,
-								description=review.team.team_name,
+								description=[review.team.team_name],
 								is_url=True,
 								timeline_url='peer_review:review_detail_view',
 								obj_pk=review.pk,
