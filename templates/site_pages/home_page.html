@@ -1,7 +1,111 @@
 {% extends "base.html" %}
+{% load static %}
+{% block static_head_files %}
+	<link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css">
+	<link href="{% static 'css/home.css' %}" rel="stylesheet" type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script src="{% static 'js/home_page_charts.js' %}" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      get_review_raised_graph();
+      get_peer_testing_graph();
+    });
+
+
+  </script>
+{% endblock %}
 {% block title %}
 	Home
 {% endblock %}
+
 {% block content %}
-	This is home page.
+	<div class="row justify-content-md-center">
+	<!--Latest notifications-->
+	</div>
+	<div class="row justify-content-md-center">
+		<!--Card to display number of peer review and peer testing-->
+		<div class="col-3">
+			<div class="card card-signin my-5">
+				<div class="card-header">
+					<div class='image_floating_card_red'>
+    				<span class="material-icons">arrow_circle_up</span>
+      		</div>
+      		<h5 class="card-title right_aligned_title">Peer testing raised by me</h5>
+				</div>
+    		<div class="card-body card_1em_padding">
+    			<a href="{% url 'peer_testing:peer_testing_list_view' %}">
+    				<p class='dasboard_count'>{{peer_testing_raised_by_me_count}}</p>
+    			</a>
+      	</div>
+      </div>
+		</div>
+		<div class="col-3">
+			<div class="card card-signin my-5">
+				<div class="card-header">
+					<div class='image_floating_card_green'>
+          				<span class="material-icons">arrow_circle_down</span>
+            		</div>
+            		<h5 class="card-title right_aligned_title">Peer testing raised to me</h5>
+				</div>
+          		<div class="card-body card_1em_padding">
+          			<a href="{% url 'peer_testing:peer_testing_raised_to_me' %}">
+          				<p class='dasboard_count'>{{peer_testing_raised_to_me_count}}</p>
+          			</a>
+            	</div>
+            </div>
+		</div>
+		<div class="col-3">
+			<div class="card card-signin my-5">
+				<div class="card-header">
+					<div class='image_floating_card_red'>
+          				<span class="material-icons">arrow_circle_up</span>
+            		</div>
+            		<h5 class="card-title right_aligned_title">Checklist review raised by me</h5>
+				</div>
+          		<div class="card-body card_1em_padding">
+          			<a href="{% url 'peer_review:review_list_view' %}">
+          				<p class='dasboard_count'>{{review_raised_by_me_count}}</p>
+          			</a>
+            	</div>
+            </div>
+		</div>
+		<div class="col-3">
+			<div class="card card-signin my-5">
+				<div class="card-header">
+					<div class='image_floating_card_green'>
+          				<span class="material-icons">arrow_circle_down</span>
+            		</div>
+            		<h5 class="card-title right_aligned_title">Checklist review raised to me</h5>
+				</div>
+          			<div class="card-body card_1em_padding">
+          			<a href="{% url 'peer_review:review_raised_to_me' %}">
+          				<p class='dasboard_count'>{{review_raised_to_me_count}}</p>
+          			</a>
+            	</div>
+            </div>
+		</div>
+	</div>
+	<div class="row justify-content-md-center">
+			<div class="card card-signin my-5 col">
+    		<div class="card-body">
+          <div class="container">
+            <canvas id="review_raised_by_me_graph" data-url="{% url 'configurations:ajax_review_raised_by_me_graph' %}" ></canvas>
+          </div>
+      	</div>
+      </div>
+	</div>
+	<div class="row justify-content-md-center">
+		<div class="card card-signin my-5 col">
+        <div class="card-body">
+          <div class="container">
+            <canvas id="peer_testing_graph" data-url="{% url 'configurations:ajax_peer_testing_graph' %}" ></canvas>
+          </div>
+        </div>
+      </div>
+
+	</div>
+{% endblock %}
+
+{% block js %}
+ 
 {% endblock %}
