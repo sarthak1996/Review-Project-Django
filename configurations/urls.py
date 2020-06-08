@@ -52,5 +52,6 @@ urlpatterns = [
     url(r'^question_update_view/(?P<obj_pk>\d+)$',QuestionUpdateView.as_view(),name='question_update_view'),
     path('question/create',QuestionCreateView.as_view(),name='question_create_view'),
     path('ajax/choices_for_questions',views.choices_dependent_region,name='ajax_choices_for_questions'),
-    
+    path('ajax/review_raised_by_me_graph',views.review_raised_graph,name='ajax_review_raised_by_me_graph'),
+    path('ajax/peer_testing_graph',views.peer_testing_graph,name='ajax_peer_testing_graph'),
 ]

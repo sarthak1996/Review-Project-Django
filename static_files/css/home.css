@@ -3,10 +3,10 @@
 	color:white;
 }
 
-.image_floating_card_orange{
+.image_floating_card_red{
 	padding: 15px;
 	transform: translateY(-50%);
-	background: linear-gradient(60deg, #ef5350, #e53935);
+	background: linear-gradient(80deg, #ff1744, #ff4081);
 	display: inline-flex;
 	border-radius: 3px;
 	float: right !important;
@@ -22,6 +22,33 @@
 	padding: 15px;
 	transform: translateY(-50%);
 	background: linear-gradient(60deg, #66bb6a, #43a047);
+	display: inline-flex;
+	border-radius: 3px;
+	float: right !important;
+}
+
+.image_floating_card_indigo{
+	padding: 15px;
+	transform: translateY(-50%);
+	background: linear-gradient(60deg, #3d5afe, #304ffe);
+	display: inline-flex;
+	border-radius: 3px;
+	float: right !important;
+}
+
+.image_floating_card_lime{
+	padding: 15px;
+	transform: translateY(-50%);
+	background: linear-gradient(60deg, #76ff03, #eeff41);
+	display: inline-flex;
+	border-radius: 3px;
+	float: right !important;
+}
+
+.image_floating_card_brown{
+	padding: 15px;
+	transform: translateY(-50%);
+	background: linear-gradient(60deg, #5d4037, #a1887f);
 	display: inline-flex;
 	border-radius: 3px;
 	float: right !important;

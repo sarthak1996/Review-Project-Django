@@ -14,6 +14,7 @@
 	
 	<link href="{% static 'css/base.css' %}"
       rel="stylesheet">
+    <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css">
       <script>
     $(document).ready(function(){
    		$('.toast_action_outcome').toast({ delay: 5000 });
@@ -75,4 +76,6 @@
     </div>
     {% endfor %}
 </body>
+{% block js %}
+{% endblock %}
 </html>

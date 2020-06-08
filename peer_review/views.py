@@ -23,8 +23,8 @@ def reviews_home(request):
 	reviews_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_review_question_type()).all().count()
 	
 	dashboard_objects=[]
-	raised_by_me_obj=ConfigurationDashboard('Reviews Raised by me','',reviews_raised_by_me_count,'peer_review:review_list_view')
-	raised_to_me_obj=ConfigurationDashboard('Reviews raised to me','',reviews_raised_to_me_count,'peer_review:review_raised_to_me')
+	raised_by_me_obj=ConfigurationDashboard('Reviews raised by me','arrow_circle_up',reviews_raised_by_me_count,'peer_review:review_list_view','image_floating_card_red')
+	raised_to_me_obj=ConfigurationDashboard('Reviews raised to me','arrow_circle_down',reviews_raised_to_me_count,'peer_review:review_raised_to_me','image_floating_card_lime')
 	dashboard_objects.append(raised_by_me_obj)
 	dashboard_objects.append(raised_to_me_obj)
 	context_dict={'dashboard_objects':dashboard_objects}
