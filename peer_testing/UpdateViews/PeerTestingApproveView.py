@@ -30,6 +30,5 @@ class PeerTestingApproveView(LoginRequiredMixin,UpdateView):
 	def form_valid(self, form):
 		review_instance=form.save(commit=False)
 		review_instance.last_update_by = self.request.user
-		review_instance.created_by=self.request.user
 		ApprovalHelper.approve_review(review_instance,self.request.user)
 		return redirect('peer_testing:peer_testing_raised_to_me')

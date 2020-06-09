@@ -93,8 +93,9 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 		if all_forms_valid:
 			if review_form.is_valid:
 				review_instance=review_form.save(commit=False)
-				review_instance.created_by=request.user
-				review_instance.creation_date=datetime.datetime.now()
+				if not edit:
+					review_instance.created_by=request.user
+					review_instance.creation_date=datetime.datetime.now()
 				review_instance.last_update_by=request.user
 				review_instance.approval_outcome=StatusCodes.get_pending_status()
 				review_instance.review_type=CommonLookups.get_peer_testing_question_type()
@@ -126,8 +127,6 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 						answer_row=Answer.objects.get(review=initial_review_instance,question=obj_instance.question)
 						question_choice_type=obj_instance.question.question_choice_type
 						answer_row.answer=form.cleaned_data['single_choice_field'] if question_choice_type==CommonLookups.get_single_choice_question_type() else form.cleaned_data['text_answer']
-						answer_row.creation_date=datetime.datetime.now()
-						answer_row.created_by=request.user
 						answer_row.last_update_by=request.user
 						answer_row.review=review_instance
 						answer_row.save()
