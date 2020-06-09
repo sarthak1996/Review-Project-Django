@@ -112,3 +112,22 @@
 .right_aligned_action{
   float: right;
 }
+
+.list-group{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important
+}
+
+.navbar-drop-down-filter{
+  flex-flow: row-reverse;
+  }
+
+.search_drp_lov{
+  margin-right: 1em;
+  display: inline-block;
+  float: right;
+}
+
+.pagination{
+  float: right;
+}

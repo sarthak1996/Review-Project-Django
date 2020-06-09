@@ -62,4 +62,6 @@ def get_priority_value(id):
 def get_series_type_value(id):
 	return ''.join([value for (item,value) in SERIES_TYPE if item==id])
 
+def get_pagination_value():
+	return 10
 	

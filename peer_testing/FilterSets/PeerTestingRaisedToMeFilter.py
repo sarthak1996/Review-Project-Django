@@ -8,7 +8,8 @@ class PeerTestingRaisedToMeFilter(django_filters.FilterSet):
 	class Meta:
 		model=Review
 		fields={'bug_number':['icontains'],
-		'priority':['exact']}
+		'priority':['exact'],
+		'approval_outcome':['exact']}
 
 	def filter_by_raised_by(self,queryset,name,value):
 		return queryset.filter(Q(created_by__first_name__contains=value)

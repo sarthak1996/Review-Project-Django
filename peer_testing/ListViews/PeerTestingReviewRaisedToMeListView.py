@@ -1,7 +1,7 @@
 from django.views.generic import ListView
 from peer_review.models import Review,Approval
 from peer_review.HelperClasses import StatusCodes,CommonLookups
-from configurations.HelperClasses import SearchFilterBadges,SearchDropDown
+from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_testing.FilterSets import PeerTestingRaisedToMeFilter
 from collections import OrderedDict
 
@@ -29,14 +29,28 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 		f_bug_number=get_request.get('filter_form-bug_number__icontains',None)
 		f_priority=get_request.get('filter_form-priority',None)
 		f_raised_by=get_request.get('filter_form-raised_by',None)
+		f_approval_outcome=get_request.get('filter_form-approval_outcome',None)
+		
 		# f_series_type=get_request.get('filter_form-series_type',None)
 		
 		print('Generating filter tags')
-		print(f_bug_number,f_raised_by,f_priority)
+		print(f_bug_number,f_raised_by,f_priority,f_approval_outcome)
+
+
+		applied_filter_dict={
+				'filter_form-bug_number__icontains':f_bug_number,
+				'filter_form-priority':f_priority,
+				'filter_form-raised_by':f_raised_by,
+				'filter_form-approval_outcome':f_approval_outcome
+		}
+		context['applied_filters_params']=PaginationHelper.get_applied_filters_url(applied_filter_dict)
+
+
 
 		filter_badge_dict=OrderedDict({'bug_number: %':f_bug_number,
 							'raised_by: %':f_raised_by,
-							'priority: ':f_priority
+							'priority: ':f_priority,
+							'approval_outcome: ': f_approval_outcome
 							})
 		print(filter_badge_dict)
 		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
@@ -45,12 +59,16 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 
 		context['filter']=PeerTestingRaisedToMeFilter(self.request.GET,queryset=self.get_queryset(),prefix='filter_form')
 		
+		context['page_obj']=PaginationHelper.get_page_obj(context['filter'],get_request)
+
+
 		context['other_filters']={'filter_form-bug_number__icontains':'Bug number contains',
 									'filter_form-raised_by':'Raised by contains'}.items()
 		
 
-		search_drop_downs_kwargs=OrderedDict({'filter_form-priority':CommonLookups.get_review_priorities()})
-		search_drop_downs_args=['Priority']
+		search_drop_downs_kwargs=OrderedDict({'filter_form-priority':CommonLookups.get_review_priorities(),
+									'filter_form-approval_outcome':CommonLookups.get_approval_outcomes()})
+		search_drop_downs_args=['Priority','Approval Outcome']
 		#mandatory search drop down
 		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
@@ -61,4 +79,4 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 		return context
 
 	def get_queryset(self):
-		return Review.objects.filter(approval_review_assoc__latest='True',approval_review_assoc__raised_to=self.request.user,approval_review_assoc__approval_outcome=StatusCodes.get_pending_status(),review_type=CommonLookups.get_peer_testing_question_type()).all()
+		return Review.objects.filter(approval_review_assoc__latest='True',approval_review_assoc__raised_to=self.request.user,review_type=CommonLookups.get_peer_testing_question_type()).all()

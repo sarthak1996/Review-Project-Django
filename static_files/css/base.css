@@ -2,11 +2,36 @@
 .toast_action_outcome{
 	opacity: 1 !important;
 	background-color:#a0e6b0 !important;
-	position: relative; 
-	bottom: 0; 
-	margin: 2em auto 2em auto;
+	position: absolute; 
+	top:0;
+	right: 0;
+	-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  	animation: fadein 0.5s, fadeout 0.5s 2.5s;
+	/*margin-right: 2em;*/
+	margin-top: 2em; 
+	/*margin: 2em auto 2em auto;*/
 }
 
 .parent_container{
 	word-break: break-all;
+}
+
+@-webkit-keyframes fadein {
+  from {right: 0; opacity: 0;} 
+  to {right: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {right: 0; opacity: 0;}
+  to {right: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {right: 30px; opacity: 1;} 
+  to {right: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {right: 30px; opacity: 1;}
+  to {right: 0; opacity: 0;}
 }

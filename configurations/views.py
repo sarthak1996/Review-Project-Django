@@ -28,7 +28,7 @@ def index(request):
 def logout_view(request):
 	logout(request)
 	messages.info(request, "Logged out successfully!")
-	return redirect("configurations:homepage")
+	return redirect("configurations:login")
 
 def login_view(request):
 	form=LoginForm(request.POST or None)
@@ -42,6 +42,7 @@ def login_view(request):
 			if user:
 				if user.is_active:
 					login(request,user)
+					messages.success(request,"Welcome "+username)
 					return redirect("configurations:homepage")
 				else:
 					form.add_error('username','User '+str(user.username)+' is not active')
@@ -75,7 +76,7 @@ def configurations_home(request):
 	dashboard_objects.append(series_obj)
 	dashboard_objects.append(choice_obj)
 	dashboard_objects.append(question_obj)
-	context_dict={'dashboard_objects':dashboard_objects}
+	context_dict={'dashboard_objects':dashboard_objects,'is_conf_active':'active'}
 	return render(request,'configurations/configuration_home.html',context_dict)
 
 
