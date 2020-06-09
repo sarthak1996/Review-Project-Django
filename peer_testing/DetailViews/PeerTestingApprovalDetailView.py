@@ -2,7 +2,9 @@ from django.views.generic.detail import DetailView
 from peer_review.HelperClasses import StatusCodes,ApprovalHelper
 from peer_review.models import Review
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
 class PeerTestingApprovalDetailView(LoginRequiredMixin,DetailView):
 	model=Review
@@ -39,3 +41,9 @@ class PeerTestingApprovalDetailView(LoginRequiredMixin,DetailView):
 		context['detail_view_type']='testing_review_approval'
 
 		return context
+
+
+	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(PeerTestingApprovalDetailView, self).dispatch(*args, **kwargs)
+

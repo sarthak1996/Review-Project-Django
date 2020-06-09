@@ -5,6 +5,9 @@ from django.views.generic.edit import UpdateView
 from peer_testing.forms.PeerTestingApprovalForm import PeerTestingApprovalForm
 from django.db import transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
 class PeerTestingApproveView(LoginRequiredMixin,UpdateView):
 	model=Review
@@ -32,3 +35,10 @@ class PeerTestingApproveView(LoginRequiredMixin,UpdateView):
 		review_instance.last_update_by = self.request.user
 		ApprovalHelper.approve_review(review_instance,self.request.user)
 		return redirect('peer_testing:peer_testing_raised_to_me')
+
+
+
+
+	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(PeerTestingApproveView, self).dispatch(*args, **kwargs)

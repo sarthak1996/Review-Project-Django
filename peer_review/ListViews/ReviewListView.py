@@ -5,7 +5,9 @@ from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,Pagin
 from peer_review.FilterSets import ReviewFilter
 from collections import OrderedDict
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
 class ReviewListView(LoginRequiredMixin,ListView):
 	model=Review
@@ -82,3 +84,8 @@ class ReviewListView(LoginRequiredMixin,ListView):
 		return Review.objects.filter(created_by=req.user,review_type=CommonLookups.get_peer_review_question_type()).all()
 
 		
+
+
+	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(ReviewListView, self).dispatch(*args, **kwargs)

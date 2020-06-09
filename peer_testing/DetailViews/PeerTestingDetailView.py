@@ -2,7 +2,9 @@ from django.views.generic.detail import DetailView
 from peer_review.HelperClasses import StatusCodes,Timeline,CommonLookups
 from peer_review.models import Review,Approval
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
 class PeerTestingDetailView(LoginRequiredMixin,DetailView):
 	model=Review
@@ -48,3 +50,12 @@ class PeerTestingDetailView(LoginRequiredMixin,DetailView):
 		context['approval_timeline_title']='Approval History'
 		context['detail_view_type']='review_user_view'
 		return context
+
+
+
+	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(PeerTestingDetailView, self).dispatch(*args, **kwargs)
+
+
+		

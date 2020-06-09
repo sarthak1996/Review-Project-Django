@@ -7,6 +7,9 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
 class ReviewUpdateView(LoginRequiredMixin,UpdateView):
 	model=Review
@@ -55,3 +58,9 @@ class ReviewUpdateView(LoginRequiredMixin,UpdateView):
 		kw = super(ReviewUpdateView, self).get_form_kwargs()
 		kw['request'] = self.request
 		return kw
+
+
+
+	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(ReviewUpdateView, self).dispatch(*args, **kwargs)

@@ -7,7 +7,9 @@ from peer_review.models import Review
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
 class DelegateReviewApprovalCreateView(LoginRequiredMixin,CreateView):
 	model=Approval
@@ -49,3 +51,8 @@ class DelegateReviewApprovalCreateView(LoginRequiredMixin,CreateView):
 		review=Review.objects.filter(pk=review_id).first()
 		kw['team_id'] = review.team.pk
 		return kw
+
+
+	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(DelegateReviewApprovalCreateView, self).dispatch(*args, **kwargs)
