@@ -6,7 +6,9 @@ from django.db import transaction
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from django.contrib import messages
-class ReviewUpdateView(UpdateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class ReviewUpdateView(LoginRequiredMixin,UpdateView):
 	model=Review
 	template_name='configurations/create_view.html'
 	# fields=[
@@ -14,6 +16,8 @@ class ReviewUpdateView(UpdateView):
 	# ]
 	form_class=ReviewForm
 	pk_url_kwarg='obj_pk'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	@transaction.atomic
 	def form_valid(self, form):

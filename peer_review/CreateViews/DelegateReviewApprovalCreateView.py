@@ -6,11 +6,15 @@ from peer_review.HelperClasses import ApprovalHelper,CommonValidations
 from peer_review.models import Review
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class DelegateReviewApprovalCreateView(CreateView):
+
+class DelegateReviewApprovalCreateView(LoginRequiredMixin,CreateView):
 	model=Approval
 	form_class=DelegateReviewApprovalFlowForm
 	template_name='configurations/create_view.html'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	@transaction.atomic
 	def form_valid(self, form):

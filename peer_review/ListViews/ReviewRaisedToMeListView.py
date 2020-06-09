@@ -4,10 +4,14 @@ from peer_review.HelperClasses import StatusCodes,CommonLookups
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_review.FilterSets import ReviewRaisedToMeFilter
 from collections import OrderedDict
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class ReviewRaisedToMeListView(ListView):
+
+class ReviewRaisedToMeListView(LoginRequiredMixin,ListView):
 	model=Review
 	template_name='configurations/list_view.html'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 	# queryset=Approval.objects.filter(latest='True',raised_to=self.request.user).approval_review_assoc.all()
 	def get_form_kwargs(self):
 		kw = super(ReviewListView, self).get_form_kwargs()

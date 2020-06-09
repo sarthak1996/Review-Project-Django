@@ -7,10 +7,14 @@ from configurations.models import Question
 from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,PrintObjs,CommonValidations
 from django.db import transaction
 from django.contrib.auth import get_user_model
-class ReviewCreateView(CreateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class ReviewCreateView(LoginRequiredMixin,CreateView):
 	model= Review
 	form_class=ReviewForm
 	template_name='configurations/create_view.html'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	@transaction.atomic
 	def form_valid(self, form):

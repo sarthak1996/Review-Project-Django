@@ -4,10 +4,14 @@ from peer_review.HelperClasses import StatusCodes,CommonLookups
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_review.FilterSets import ReviewFilter
 from collections import OrderedDict
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class ReviewListView(ListView):
+
+class ReviewListView(LoginRequiredMixin,ListView):
 	model=Review
 	template_name='configurations/list_view.html'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 
 	def get_context_data(self,**kwargs):
