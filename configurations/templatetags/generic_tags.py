@@ -1,4 +1,5 @@
 from django import template
+from configurations.HelperClasses.PermissionResolver import is_manager
 
 register = template.Library()
 class EnumeratedDictionaryObject():
@@ -17,3 +18,8 @@ def enumerate_objects(context,objects):
 													index=i))
 		i+=1
 	return return_obj
+
+
+@register.simple_tag
+def is_user_manager(user):
+	return is_manager(user)
