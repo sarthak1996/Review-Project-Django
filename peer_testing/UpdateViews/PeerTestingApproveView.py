@@ -17,6 +17,7 @@ class PeerTestingApproveView(UpdateView):
 		context=super(PeerTestingApproveView,self).get_context_data(**kwargs)
 		context['page_title']='Approve Peer Testing'
 		context['card_title']='Peer Testing'
+		context['is_peer_test_active']='active'
 		# context['dependent_raise_to']=True
 		# context['lov_raise_to_url']='peer_review:ajax_load_raise_to_lov'
 		return context

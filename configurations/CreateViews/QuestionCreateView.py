@@ -20,5 +20,6 @@ class QuestionCreateView(CreateView):
 		context['page_title']='Create Question'
 		context['card_title']='Question'
 		context['dependent_choice']=True
+		context['is_conf_active']='active'
 		context['choice_dependent_url']='configurations:ajax_choices_for_questions'
 		return context

@@ -21,4 +21,5 @@ class SeriesUpdateView(UpdateView):
 		context=super(SeriesUpdateView,self).get_context_data(**kwargs)
 		context['page_title']='Update Series'
 		context['card_title']='Series'
+		context['is_conf_active']='active'
 		return context

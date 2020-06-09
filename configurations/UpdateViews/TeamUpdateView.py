@@ -21,4 +21,5 @@ class TeamUpdateView(UpdateView):
 		context=super(TeamUpdateView,self).get_context_data(**kwargs)
 		context['page_title']='Update Team'
 		context['card_title']='Team'
+		context['is_conf_active']='active'
 		return context

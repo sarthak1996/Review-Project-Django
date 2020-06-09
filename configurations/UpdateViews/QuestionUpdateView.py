@@ -20,5 +20,5 @@ class QuestionUpdateView(UpdateView):
 		context['card_title']='Question'
 		context['dependent_choice']=True
 		context['choice_dependent_url']='configurations:ajax_choices_for_questions'
-		
+		context['is_conf_active']='active'
 		return context

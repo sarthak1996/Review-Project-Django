@@ -50,6 +50,7 @@ class ReviewCreateView(CreateView):
 		context['page_title']='Create Peer Review'
 		context['card_title']='Peer Review'
 		context['dependent_raise_to']=True
+		context['is_review_active']='active'
 		context['lov_raise_to_url']='peer_review:ajax_load_raise_to_lov'
 		return context
 

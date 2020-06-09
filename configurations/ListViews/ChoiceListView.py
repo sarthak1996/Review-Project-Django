@@ -14,6 +14,7 @@ class ChoiceListView(ListView):
 		context['detail_view_url']='configurations:choice_detail_view'
 		context['page_title']='Choice'
 		context['create_button_rendered']=True
+		context['is_conf_active']='active'
 		
 
 		get_request=self.request.GET

@@ -25,6 +25,7 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['invlidate_view_url']='peer_review:invalidate_review'
 		context['invalidate_label']='Invalidate'
 		context['detail_view_type']='review_approval'
+		context['is_review_active']='active'
 
 		#approval timeline
 		approval_timeline=Approval.objects.filter(review=review_obj).all()

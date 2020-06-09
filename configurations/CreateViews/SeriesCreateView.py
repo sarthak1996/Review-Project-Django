@@ -19,4 +19,5 @@ class SeriesCreateView(CreateView):
 		context=super(SeriesCreateView,self).get_context_data(**kwargs)
 		context['page_title']='Create Series'
 		context['card_title']='Series'
+		context['is_conf_active']='active'
 		return context

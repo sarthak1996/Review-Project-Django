@@ -60,6 +60,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 	context_dict['review_form']=review_form
 	context_dict['lov_raise_to_url']='peer_review:ajax_load_raise_to_lov'
 	context_dict['dependent_raise_to']=True
+	context_dict['is_peer_test_active']='active'
 	review_pk=None
 	if edit and not initial_review_instance:
 		print('Invalid call ! returning with null')

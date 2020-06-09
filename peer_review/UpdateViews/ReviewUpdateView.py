@@ -44,6 +44,7 @@ class ReviewUpdateView(UpdateView):
 		context['card_title']='Peer Review'
 		context['dependent_raise_to']=True
 		context['lov_raise_to_url']='peer_review:ajax_load_raise_to_lov'
+		context['is_review_active']='active'
 		return context
 	
 	def get_form_kwargs(self):

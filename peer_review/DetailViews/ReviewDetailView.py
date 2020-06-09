@@ -28,7 +28,7 @@ class ReviewDetailView(DetailView):
 		context['show_exemptions']=(exemptions.count()>0)
 		context['exemptions']=exemptions
 		context['detail_view_type']='review_user_view'
-
+		context['is_review_active']='active'
 		#approval timeline
 		approval_timeline=Approval.objects.filter(review=review_obj).all()
 		approval_history=[]

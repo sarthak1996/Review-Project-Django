@@ -20,6 +20,7 @@ class ChoiceDetailView(DetailView):
 		context['delegate_rendered']=False
 		context['delegate_label']='Delegate'
 		context['delegate_view_url']='peer_review:delegate_view'
+		context['is_conf_active']='active'
 
 		choice_questions=Question.objects.filter(choices=choice_obj)
 		question_url='configurations:question_detail_view'

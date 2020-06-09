@@ -19,6 +19,7 @@ class QuestionListView(ListView):
 		context['detail_view_url']='configurations:question_detail_view'
 		context['page_title']='Question'
 		context['create_button_rendered']=True
+		context['is_conf_active']='active'
 		# number_badges_dict=OrderedDict()
 		# number_badges_dict['Peer Review']=Question.objects.filter(question_type=CommonLookups.get_peer_review_question_type()).all().count()
 		# number_badges_dict['Peer Testing']=Question.objects.filter(question_type=CommonLookups.get_peer_testing_question_type()).all().count()

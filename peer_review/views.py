@@ -51,6 +51,7 @@ def peer_review_approval_form(request,**kwargs):
 	context_dict['name_first_letter']=context_dict['detail_name'][0]
 	context_dict['button_label']='Approve'
 	context_dict['review_object']=review
+	context_dict['is_review_active']='active'
 	
 	#approval timeline
 	approval_timeline=Approval.objects.filter(review=review).all()

@@ -19,6 +19,7 @@ class PeerTestingDetailView(DetailView):
 		context['update_view_url']='peer_testing:peer_testing_update'
 		context['button_label']='Update'
 		context['update_rendered']=(review_obj.approval_outcome!=StatusCodes.get_approved_status() and review_obj.created_by==self.request.user)
+		context['is_peer_test_active']='active'
 		# context['delegate_rendered']=False
 		# context['delegate_label']='Delegate'
 		# context['delegate_view_url']='peer_review:delegate_review'

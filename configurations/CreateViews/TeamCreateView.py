@@ -19,4 +19,5 @@ class TeamCreateView(CreateView):
 		context=super(TeamCreateView,self).get_context_data(**kwargs)
 		context['page_title']='Create Team'
 		context['card_title']='Team'
+		context['is_conf_active']='active'
 		return context

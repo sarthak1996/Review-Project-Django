@@ -15,7 +15,7 @@ class TeamListView(ListView):
 		context['detail_view_url']='configurations:team_detail_view'
 		context['page_title']='Teams'
 		context['create_button_rendered']=True
-
+		context['is_conf_active']='active'
 		get_request=self.request.GET
 		f_team_name=get_request.get('filter_form-team_name__icontains',None)
 		f_team_grp_mail=get_request.get('filter_form-team_grp_mail__icontains',None)

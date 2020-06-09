@@ -34,6 +34,7 @@ class DelegateReviewApprovalCreateView(CreateView):
 		context=super(DelegateReviewApprovalCreateView,self).get_context_data(**kwargs)
 		context['page_title']='Delegate Approval'
 		context['card_title']='Delegate Approval'
+		context['is_review_active']='active'
 		return context
 
 

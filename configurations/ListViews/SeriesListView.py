@@ -16,7 +16,7 @@ class SeriesListView(ListView):
 		context['detail_view_url']='configurations:series_detail_view'
 		context['page_title']='Series'
 		context['create_button_rendered']=True
-
+		context['is_conf_active']='active'
 		get_request=self.request.GET
 		f_series_name=get_request.get('filter_form-series_name__icontains',None)
 		f_series_type=get_request.get('filter_form-series_type',None)

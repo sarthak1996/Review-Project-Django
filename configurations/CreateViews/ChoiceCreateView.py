@@ -19,4 +19,5 @@ class ChoiceCreateView(CreateView):
 		context=super(ChoiceCreateView,self).get_context_data(**kwargs)
 		context['page_title']='Create Choice'
 		context['card_title']='Choice'
+		context['is_conf_active']='active'
 		return context
