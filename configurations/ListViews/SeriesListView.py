@@ -5,6 +5,9 @@ from collections import OrderedDict
 from peer_review.HelperClasses import CommonLookups
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager
 
 class SeriesListView(LoginRequiredMixin,ListView):
 	model=Series
@@ -57,3 +60,10 @@ class SeriesListView(LoginRequiredMixin,ListView):
 		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:series_update_view')
 
 		return context
+
+
+
+	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(SeriesListView, self).dispatch(*args, **kwargs)
+		

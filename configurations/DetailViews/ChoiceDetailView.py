@@ -2,6 +2,9 @@ from django.views.generic.detail import DetailView
 from configurations.models import Choice,Question
 from peer_review.HelperClasses import Timeline
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager
 
 class ChoiceDetailView(LoginRequiredMixin,DetailView):
 	model=Choice
@@ -44,3 +47,11 @@ class ChoiceDetailView(LoginRequiredMixin,DetailView):
 
 
 		return context
+
+
+	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(ChoiceDetailView, self).dispatch(*args, **kwargs)
+
+
+

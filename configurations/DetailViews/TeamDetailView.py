@@ -2,6 +2,9 @@ from django.views.generic.detail import DetailView
 
 from configurations.models import Team
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager
 
 class TeamDetailView(LoginRequiredMixin,DetailView):
 	model=Team
@@ -26,3 +29,7 @@ class TeamDetailView(LoginRequiredMixin,DetailView):
 		context['delegate_view_url']='peer_review:delegate_view'
 		context['is_conf_active']='active'
 		return context
+
+	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(TeamDetailView, self).dispatch(*args, **kwargs)

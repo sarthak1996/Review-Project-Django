@@ -3,6 +3,9 @@ from configurations.models import Series
 from configurations.forms.SeriesForm import SeriesForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager
 
 class SeriesUpdateView(LoginRequiredMixin,UpdateView):
 	model=Series
@@ -27,3 +30,11 @@ class SeriesUpdateView(LoginRequiredMixin,UpdateView):
 		context['card_title']='Series'
 		context['is_conf_active']='active'
 		return context
+
+
+	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(SeriesUpdateView, self).dispatch(*args, **kwargs)
+
+
+		

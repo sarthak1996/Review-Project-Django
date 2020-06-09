@@ -3,6 +3,9 @@ from configurations.models import Choice
 from configurations.HelperClasses import SearchFilterBadges,PaginationHelper
 from configurations.FilterSets import ChoiceFilter
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager
 
 class ChoiceListView(LoginRequiredMixin,ListView):
 	model=Choice
@@ -47,3 +50,9 @@ class ChoiceListView(LoginRequiredMixin,ListView):
 		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:choice_update_view')
 
 		return context
+
+
+	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(ChoiceListView, self).dispatch(*args, **kwargs)
+

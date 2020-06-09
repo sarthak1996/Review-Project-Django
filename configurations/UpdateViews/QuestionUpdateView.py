@@ -3,6 +3,9 @@ from configurations.models import Question
 from configurations.forms.QuestionForm import QuestionForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager
 
 class QuestionUpdateView(LoginRequiredMixin,UpdateView):
 	model=Question
@@ -26,3 +29,11 @@ class QuestionUpdateView(LoginRequiredMixin,UpdateView):
 		context['choice_dependent_url']='configurations:ajax_choices_for_questions'
 		context['is_conf_active']='active'
 		return context
+
+
+	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(QuestionUpdateView, self).dispatch(*args, **kwargs)
+
+
+		

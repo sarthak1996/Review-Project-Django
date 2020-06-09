@@ -3,6 +3,9 @@ from configurations.models import Team
 from configurations.forms.TeamForm import TeamForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager
 
 class TeamUpdateView(LoginRequiredMixin,UpdateView):
 	model=Team
@@ -27,3 +30,10 @@ class TeamUpdateView(LoginRequiredMixin,UpdateView):
 		context['card_title']='Team'
 		context['is_conf_active']='active'
 		return context
+
+	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
+	def dispatch(self, *args, **kwargs):
+		return super(TeamUpdateView, self).dispatch(*args, **kwargs)
+
+
+		
