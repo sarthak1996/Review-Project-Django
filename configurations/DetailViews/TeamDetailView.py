@@ -1,12 +1,15 @@
 from django.views.generic.detail import DetailView
 
 from configurations.models import Team
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class TeamDetailView(DetailView):
+class TeamDetailView(LoginRequiredMixin,DetailView):
 	model=Team
 	template_name='configurations/detail_view.html'
 	context_object_name ='detail_obj'
 	pk_url_kwarg='obj_pk'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def get_context_data(self, **kwargs):
 		context=super(TeamDetailView,self).get_context_data(**kwargs)

@@ -3,10 +3,14 @@ from configurations.models import Series
 import datetime 
 from configurations.forms.SeriesForm import SeriesForm
 from django.contrib import messages
-class SeriesCreateView(CreateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class SeriesCreateView(LoginRequiredMixin,CreateView):
 	model= Series
 	form_class=SeriesForm
 	template_name='configurations/create_view.html'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user

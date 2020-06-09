@@ -3,11 +3,15 @@ from configurations.models import Question
 import datetime 
 from configurations.forms.QuestionForm import QuestionForm
 from django.contrib import messages
-class QuestionCreateView(CreateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class QuestionCreateView(LoginRequiredMixin,CreateView):
 	model= Question
 	form_class=QuestionForm
 	template_name='configurations/create_view.html'
-
+	redirect_field_name = None
+	login_url ='/reviews/login'
+	
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user

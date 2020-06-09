@@ -12,19 +12,18 @@ from peer_review.HelperClasses import CommonLookups,StatusCodes,CommonCounts
 from django.db.models.functions import ExtractMonth,ExtractYear
 from django.db.models import Count
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 # Create your views here.
-def index(request):
-	if request.user.is_authenticated:
-		context={}
-		context['review_raised_by_me_count']=CommonCounts.get_review_raised_by_me(request.user).count()
-		context['peer_testing_raised_by_me_count']=CommonCounts.get_peer_testing_raised_by_me(request.user).count()
-		context['peer_testing_raised_to_me_count']=CommonCounts.get_peer_testing_raised_to_me(request.user).count()
-		context['review_raised_to_me_count']=CommonCounts.get_review_raised_to_me(request.user).count()
-		return render(request,'site_pages/home_page.html',context)
-	else:
-		messages.error(request,'You must login first')
-		return redirect("configurations:login")
+@login_required(login_url='/reviews/login')
+def index(request):	
+	context={}
+	context['review_raised_by_me_count']=CommonCounts.get_review_raised_by_me(request.user).count()
+	context['peer_testing_raised_by_me_count']=CommonCounts.get_peer_testing_raised_by_me(request.user).count()
+	context['peer_testing_raised_to_me_count']=CommonCounts.get_peer_testing_raised_to_me(request.user).count()
+	context['review_raised_to_me_count']=CommonCounts.get_review_raised_to_me(request.user).count()
+	return render(request,'site_pages/home_page.html',context)
 
+@login_required(login_url='/reviews/login')
 def logout_view(request):
 	logout(request)
 	messages.success(request, "Logged out successfully!")
@@ -63,6 +62,7 @@ def user_registration_view(request):
 	form.check_for_field_errors()
 	return render(request,'registration/userRegistration.html',{'form':form})
 
+@login_required(login_url='/reviews/login')
 def configurations_home(request):
 	team_count=Team.objects.all().count()
 	series_count=Series.objects.all().count()
@@ -80,7 +80,7 @@ def configurations_home(request):
 	context_dict={'dashboard_objects':dashboard_objects,'is_conf_active':'active'}
 	return render(request,'configurations/configuration_home.html',context_dict)
 
-
+@login_required(login_url='/reviews/login')
 def choices_dependent_region(request):
 	choice_type=request.GET.get('choice_type')
 	print('Choice type ajax')
@@ -93,7 +93,7 @@ def choices_dependent_region(request):
 		choices_lov[choice.pk]=choice.choice_text
 	return render(request,'lov/choices_dependent_region.html',{'objects':choices_lov.items()})
 
-
+@login_required(login_url='/reviews/login')
 def review_raised_graph(request):
 	labels=[]
 	data=[]
@@ -159,7 +159,7 @@ def review_raised_graph(request):
     })
 
 
-
+@login_required(login_url='/reviews/login')
 def peer_testing_graph(request):
 	labels=[]
 	data=[]

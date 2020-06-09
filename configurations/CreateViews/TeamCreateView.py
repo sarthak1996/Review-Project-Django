@@ -3,11 +3,15 @@ from configurations.models import Team
 import datetime 
 from configurations.forms.TeamForm import TeamForm
 from django.contrib import messages
-class TeamCreateView(CreateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class TeamCreateView(LoginRequiredMixin,CreateView):
 	model= Team
 	form_class=TeamForm
 	template_name='configurations/create_view.html'
-
+	redirect_field_name = None
+	login_url ='/reviews/login'
+	
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user

@@ -5,11 +5,13 @@ from collections import OrderedDict
 from peer_review.HelperClasses import CommonLookups
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class QuestionListView(ListView):
+class QuestionListView(LoginRequiredMixin,ListView):
 	model=Question
 	template_name='configurations/list_view.html'
-
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def get_context_data(self,**kwargs):
 		# print('Helo')

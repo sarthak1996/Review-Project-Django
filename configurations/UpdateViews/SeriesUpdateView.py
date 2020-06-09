@@ -2,7 +2,9 @@ from django.views.generic.edit import UpdateView
 from configurations.models import Series
 from configurations.forms.SeriesForm import SeriesForm
 from django.contrib import messages
-class SeriesUpdateView(UpdateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class SeriesUpdateView(LoginRequiredMixin,UpdateView):
 	model=Series
 	template_name='configurations/create_view.html'
 	# fields=[
@@ -11,6 +13,8 @@ class SeriesUpdateView(UpdateView):
 	# ]
 	form_class=SeriesForm
 	pk_url_kwarg='obj_pk'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user

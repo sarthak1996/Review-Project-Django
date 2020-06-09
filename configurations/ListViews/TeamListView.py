@@ -3,9 +3,13 @@ from configurations.models import Team
 from collections import OrderedDict
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from configurations.FilterSets import TeamFilter
-class TeamListView(ListView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class TeamListView(LoginRequiredMixin,ListView):
 	model=Team
 	template_name='configurations/list_view.html'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 
 	def get_context_data(self,**kwargs):

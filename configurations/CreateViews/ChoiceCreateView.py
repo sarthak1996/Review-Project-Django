@@ -3,11 +3,13 @@ from configurations.models import Choice
 import datetime 
 from configurations.forms.ChoiceForm import ChoiceForm
 from django.contrib import messages
-class ChoiceCreateView(CreateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+class ChoiceCreateView(LoginRequiredMixin,CreateView):
 	model= Choice
 	form_class=ChoiceForm
 	template_name='configurations/create_view.html'
-
+	redirect_field_name = None
+	login_url ='/reviews/login'
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user

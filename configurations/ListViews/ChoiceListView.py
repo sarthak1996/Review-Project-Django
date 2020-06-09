@@ -2,10 +2,13 @@ from django.views.generic import ListView
 from configurations.models import Choice
 from configurations.HelperClasses import SearchFilterBadges,PaginationHelper
 from configurations.FilterSets import ChoiceFilter
-class ChoiceListView(ListView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class ChoiceListView(LoginRequiredMixin,ListView):
 	model=Choice
 	template_name='configurations/list_view.html'
-
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def get_context_data(self,**kwargs):
 		context = super().get_context_data(**kwargs)

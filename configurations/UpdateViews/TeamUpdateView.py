@@ -2,7 +2,9 @@ from django.views.generic.edit import UpdateView
 from configurations.models import Team
 from configurations.forms.TeamForm import TeamForm
 from django.contrib import messages
-class TeamUpdateView(UpdateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class TeamUpdateView(LoginRequiredMixin,UpdateView):
 	model=Team
 	template_name='configurations/create_view.html'
 	# fields=[
@@ -11,6 +13,8 @@ class TeamUpdateView(UpdateView):
 	# ]
 	form_class=TeamForm
 	pk_url_kwarg='obj_pk'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user

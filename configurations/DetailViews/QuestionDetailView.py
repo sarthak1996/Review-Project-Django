@@ -1,12 +1,15 @@
 from django.views.generic.detail import DetailView
 
 from configurations.models import Question
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class QuestionDetailView(DetailView):
+class QuestionDetailView(LoginRequiredMixin,DetailView):
 	model=Question
 	template_name='configurations/detail_view.html'
 	context_object_name ='detail_obj'
 	pk_url_kwarg='obj_pk'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def get_context_data(self, **kwargs):
 		context=super(QuestionDetailView,self).get_context_data(**kwargs)

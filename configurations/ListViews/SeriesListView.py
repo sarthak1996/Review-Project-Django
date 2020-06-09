@@ -4,10 +4,13 @@ from configurations.FilterSets import SeriesFilter
 from collections import OrderedDict
 from peer_review.HelperClasses import CommonLookups
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
-class SeriesListView(ListView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class SeriesListView(LoginRequiredMixin,ListView):
 	model=Series
 	template_name='configurations/list_view.html'
-
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def get_context_data(self,**kwargs):
 		context = super().get_context_data(**kwargs)

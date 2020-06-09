@@ -2,12 +2,16 @@ from django.views.generic.edit import UpdateView
 from configurations.models import Question
 from configurations.forms.QuestionForm import QuestionForm
 from django.contrib import messages
-class QuestionUpdateView(UpdateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class QuestionUpdateView(LoginRequiredMixin,UpdateView):
 	model=Question
 	template_name='configurations/create_view.html'
 	# fields=['question_text','question_choice_type','mandatory','series_type','question_type','choices']
 	form_class=QuestionForm
 	pk_url_kwarg='obj_pk'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
