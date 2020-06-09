@@ -27,7 +27,7 @@ def index(request):
 
 def logout_view(request):
 	logout(request)
-	messages.info(request, "Logged out successfully!")
+	messages.success(request, "Logged out successfully!")
 	return redirect("configurations:login")
 
 def login_view(request):
@@ -58,6 +58,7 @@ def user_registration_view(request):
 			user_created=form.save(commit=False)
 			user_created.set_password(form.cleaned_data['password'])
 			form.save()
+			messages.success('User '+form.cleaned_data['username']+ ' created sucessfully')
 			return redirect("configurations:login")
 	form.check_for_field_errors()
 	return render(request,'registration/userRegistration.html',{'form':form})
