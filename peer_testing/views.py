@@ -11,10 +11,12 @@ from django.urls import reverse_lazy
 from peer_testing.models import Answer
 from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
 from peer_testing.forms.PeerTestingReviewForm import PeerTestingReviewForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager
 # Create your views here.
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def peer_testing_home(request):
 	peer_testing_raised_by_me_count=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_testing_question_type()).count()
 	peer_testing_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_testing_question_type()).all().count()
@@ -28,6 +30,7 @@ def peer_testing_home(request):
 	return render(request,'configurations/configuration_home.html',context_dict)
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 @transaction.atomic 
 def raise_peer_testing(request):
 	initial_questions=PeerTestingQuestions.get_answer_form_sets_for_peer_testing()
@@ -37,6 +40,7 @@ def raise_peer_testing(request):
 								edit=False)
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 @transaction.atomic
 def update_peer_testing_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
@@ -49,6 +53,7 @@ def update_peer_testing_review(request,**kwargs):
 		edit=True)
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def create_or_update_review(request,initial_questions,initial_review_instance=None,edit=True):
 	model_formset=modelformset_factory(Answer, form=PeerReviewAnswerForm, extra=len(initial_questions))
 	formset=model_formset(request.POST or None,queryset=Answer.objects.none(),initial=initial_questions,prefix='answer')

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block static_head_files %}
+	<link href="{% static 'css/unauthorized.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block title %}
+	Access Denied
+{% endblock %}
+
+
+{% block content %}
+	<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Uh! oh!!</h1>
+    <p class="lead">You don't have access to this page. Please check with administrator if this is not expected.</p>
+  </div>
+</div>
+{% endblock %}

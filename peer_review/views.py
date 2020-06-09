@@ -14,11 +14,13 @@ from django.db import transaction
 from peer_review.Formsets import RequiredFormSet
 from configurations.models import Team
 from collections import OrderedDict
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager
 
 # Create your views here.
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def reviews_home(request):
 	reviews_raised_by_me_count=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_review_question_type()).count()
 	reviews_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_review_question_type()).all().count()
@@ -32,6 +34,7 @@ def reviews_home(request):
 	return render(request,'configurations/configuration_home.html',context_dict)
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 @transaction.atomic 
 def peer_review_approval_form(request,**kwargs):
 	# form=PeerReviewAnswerForm(request.POST or None)
@@ -161,6 +164,7 @@ def peer_review_approval_form(request,**kwargs):
 	return render(request, 'peer_review/review_approval.html', context_dict)
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def invalidate_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
@@ -168,6 +172,7 @@ def invalidate_review(request,**kwargs):
 	return redirect(review.get_absolute_url())
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def reject_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
@@ -175,6 +180,7 @@ def reject_review(request,**kwargs):
 	return redirect(review.get_absolute_url())
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def load_users_based_on_team(request):
 	# review=request.GET.get('review')
 	# print('Review request url')

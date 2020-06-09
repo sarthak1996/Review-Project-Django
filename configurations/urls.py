@@ -54,4 +54,5 @@ urlpatterns = [
     path('ajax/choices_for_questions',views.choices_dependent_region,name='ajax_choices_for_questions'),
     path('ajax/review_raised_by_me_graph',views.review_raised_graph,name='ajax_review_raised_by_me_graph'),
     path('ajax/peer_testing_graph',views.peer_testing_graph,name='ajax_peer_testing_graph'),
+    path('unauthorized',views.unauthorized_message_view,name='unauthorized_common')
 ]

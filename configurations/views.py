@@ -12,7 +12,8 @@ from peer_review.HelperClasses import CommonLookups,StatusCodes,CommonCounts
 from django.db.models.functions import ExtractMonth,ExtractYear
 from django.db.models import Count
 from datetime import datetime
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
+from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager
 # Create your views here.
 @login_required(login_url='/reviews/login')
 def index(request):	
@@ -63,6 +64,7 @@ def user_registration_view(request):
 	return render(request,'registration/userRegistration.html',{'form':form})
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_manager,login_url='/reviews/unauthorized')
 def configurations_home(request):
 	team_count=Team.objects.all().count()
 	series_count=Series.objects.all().count()
@@ -81,6 +83,7 @@ def configurations_home(request):
 	return render(request,'configurations/configuration_home.html',context_dict)
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def choices_dependent_region(request):
 	choice_type=request.GET.get('choice_type')
 	print('Choice type ajax')
@@ -94,6 +97,7 @@ def choices_dependent_region(request):
 	return render(request,'lov/choices_dependent_region.html',{'objects':choices_lov.items()})
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def review_raised_graph(request):
 	labels=[]
 	data=[]
@@ -160,6 +164,7 @@ def review_raised_graph(request):
 
 
 @login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def peer_testing_graph(request):
 	labels=[]
 	data=[]
@@ -224,3 +229,6 @@ def peer_testing_graph(request):
         'data1': data,
         'data2':data2
     })
+
+def unauthorized_message_view(request):
+	return render(request,'site_pages/access_denied.html')
