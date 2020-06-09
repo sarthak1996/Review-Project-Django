@@ -1,13 +1,16 @@
 from django.views.generic.detail import DetailView
 from peer_review.HelperClasses import StatusCodes,ApprovalHelper
 from peer_review.models import Review
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class PeerTestingApprovalDetailView(DetailView):
+class PeerTestingApprovalDetailView(LoginRequiredMixin,DetailView):
 	model=Review
 	template_name='configurations/detail_view.html'
 	context_object_name ='detail_obj'
 	pk_url_kwarg='obj_pk'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def get_context_data(self, **kwargs):
 		context=super(PeerTestingApprovalDetailView,self).get_context_data(**kwargs)

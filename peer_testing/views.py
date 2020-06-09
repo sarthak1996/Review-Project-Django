@@ -11,7 +11,10 @@ from django.urls import reverse_lazy
 from peer_testing.models import Answer
 from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
 from peer_testing.forms.PeerTestingReviewForm import PeerTestingReviewForm
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+
+@login_required(login_url='/reviews/login')
 def peer_testing_home(request):
 	peer_testing_raised_by_me_count=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_testing_question_type()).count()
 	peer_testing_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_testing_question_type()).all().count()
@@ -24,6 +27,7 @@ def peer_testing_home(request):
 	context_dict={'dashboard_objects':dashboard_objects,'is_peer_test_active':'active'}
 	return render(request,'configurations/configuration_home.html',context_dict)
 
+@login_required(login_url='/reviews/login')
 @transaction.atomic 
 def raise_peer_testing(request):
 	initial_questions=PeerTestingQuestions.get_answer_form_sets_for_peer_testing()
@@ -32,6 +36,7 @@ def raise_peer_testing(request):
 								initial_review_instance=None,
 								edit=False)
 
+@login_required(login_url='/reviews/login')
 @transaction.atomic
 def update_peer_testing_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
@@ -43,6 +48,7 @@ def update_peer_testing_review(request,**kwargs):
 		initial_review_instance=review,
 		edit=True)
 
+@login_required(login_url='/reviews/login')
 def create_or_update_review(request,initial_questions,initial_review_instance=None,edit=True):
 	model_formset=modelformset_factory(Answer, form=PeerReviewAnswerForm, extra=len(initial_questions))
 	formset=model_formset(request.POST or None,queryset=Answer.objects.none(),initial=initial_questions,prefix='answer')

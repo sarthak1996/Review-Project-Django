@@ -4,7 +4,9 @@ from peer_review.HelperClasses import ApprovalHelper
 from django.views.generic.edit import UpdateView 
 from peer_testing.forms.PeerTestingApprovalForm import PeerTestingApprovalForm
 from django.db import transaction
-class PeerTestingApproveView(UpdateView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class PeerTestingApproveView(LoginRequiredMixin,UpdateView):
 	model=Review
 	template_name='configurations/create_view.html'
 	# fields=[
@@ -12,6 +14,8 @@ class PeerTestingApproveView(UpdateView):
 	# ]
 	form_class=PeerTestingApprovalForm
 	pk_url_kwarg='obj_pk'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 	def get_context_data(self, **kwargs):
 		context=super(PeerTestingApproveView,self).get_context_data(**kwargs)

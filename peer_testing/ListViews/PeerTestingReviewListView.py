@@ -5,9 +5,13 @@ from collections import OrderedDict
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_testing.FilterSets import PeerTestingFilter
 from collections import OrderedDict
-class PeerTestingReviewListView(ListView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class PeerTestingReviewListView(LoginRequiredMixin,ListView):
 	model=Review
 	template_name='configurations/list_view.html'
+	redirect_field_name = None
+	login_url ='/reviews/login'
 
 
 	def get_context_data(self,**kwargs):
