@@ -3,7 +3,7 @@ from configurations.models import Series
 from configurations.FilterSets import SeriesFilter
 from collections import OrderedDict
 from peer_review.HelperClasses import CommonLookups
-from configurations.HelperClasses import SearchFilterBadges,SearchDropDown
+from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 class SeriesListView(ListView):
 	model=Series
 	template_name='configurations/list_view.html'
@@ -22,6 +22,12 @@ class SeriesListView(ListView):
 		f_series_type=get_request.get('filter_form-series_type',None)
 		print('Generating filter tags')
 		print(f_series_type,f_series_name)
+		
+		applied_filter_dict={
+				'filter_form-series_name__icontains':f_series_name,
+				'filter_form-series_type':f_series_type
+		}
+		context['applied_filters_params']=PaginationHelper.get_applied_filters_url(applied_filter_dict)
 
 		filter_badge_dict=OrderedDict({'series_name: %':f_series_name,
 							'series_type: ':f_series_type
@@ -33,6 +39,9 @@ class SeriesListView(ListView):
 
 		context['filter']=SeriesFilter(self.request.GET,queryset=self.get_queryset(),prefix='filter_form')
 		
+
+		context['page_obj']=PaginationHelper.get_page_obj(context['filter'],get_request)
+
 		context['initial_filter']='Series name'
 		context['other_filters']=None
 

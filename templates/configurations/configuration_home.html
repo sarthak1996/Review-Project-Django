@@ -19,7 +19,7 @@
             <h5 class="card-title right_aligned_title">{{dashboard_obj.card_name}}</h5>
           </div>
           <div class="card-body card_1em_padding">
-            <a href="{% url 'peer_testing:peer_testing_list_view' %}">
+            <a href="{% url dashboard_obj.card_link %}{{dashboard_obj.default_filters}}">
               <p class='dasboard_count'>{{dashboard_obj.card_count}}</p>
             </a>
           </div>

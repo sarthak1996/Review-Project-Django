@@ -2,7 +2,7 @@ from django.views.generic import ListView
 from peer_review.models import Review
 from peer_review.HelperClasses import StatusCodes,CommonLookups
 from collections import OrderedDict
-from configurations.HelperClasses import SearchFilterBadges,SearchDropDown
+from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_testing.FilterSets import PeerTestingFilter
 from collections import OrderedDict
 class PeerTestingReviewListView(ListView):
@@ -26,8 +26,19 @@ class PeerTestingReviewListView(ListView):
 		f_team=get_request.get('filter_form-team',None)
 		# f_review_type=get_request.get('filter_form-review_type',None)
 		# f_series_type=get_request.get('filter_form-series_type',None)
+
 		print('Generating filter tags')
 		print(f_bug_number,f_raised_to,f_priority,f_approval_outcome,f_team)
+
+
+		applied_filter_dict={
+				'filter_form-bug_number__icontains':f_bug_number,
+				'filter_form-raised_to':f_raised_to,
+				'filter_form-priority':f_priority,
+				'filter_form-approval_outcome':f_approval_outcome,
+				'filter_form-team':f_team
+		}
+		context['applied_filters_params']=PaginationHelper.get_applied_filters_url(applied_filter_dict)
 
 
 		filter_badge_dict=OrderedDict({'bug_number: %':f_bug_number,
@@ -42,7 +53,9 @@ class PeerTestingReviewListView(ListView):
 		context['text_filters_drop_down_icon']='dropdown-toggle'
 
 		context['filter']=PeerTestingFilter(self.request.GET,queryset=self.get_queryset(),prefix='filter_form')
-		
+		context['page_obj']=PaginationHelper.get_page_obj(context['filter'],get_request)
+
+
 		# context['initial_filter']=''
 		context['other_filters']={'filter_form-bug_number__icontains':'Bug number contains',
 									'filter_form-raised_to':'Raised to contains'}.items()

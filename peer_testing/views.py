@@ -17,11 +17,11 @@ def peer_testing_home(request):
 	peer_testing_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_testing_question_type()).all().count()
 	
 	dashboard_objects=[]
-	raised_by_me_obj=ConfigurationDashboard('Peer testing raised by me','arrow_circle_up',peer_testing_raised_by_me_count,'peer_testing:peer_testing_list_view','image_floating_card_red')
-	raised_to_me_obj=ConfigurationDashboard('Peer testing raised to me','arrow_circle_down',peer_testing_raised_to_me_count,'peer_testing:peer_testing_raised_to_me','image_floating_card_lime')
+	raised_by_me_obj=ConfigurationDashboard('Raised by me','arrow_circle_up',peer_testing_raised_by_me_count,'peer_testing:peer_testing_list_view','image_floating_card_red','?filter_form-approval_outcome=PND')
+	raised_to_me_obj=ConfigurationDashboard('Raised to me','arrow_circle_down',peer_testing_raised_to_me_count,'peer_testing:peer_testing_raised_to_me','image_floating_card_lime','?filter_form-approval_outcome=PND')
 	dashboard_objects.append(raised_by_me_obj)
 	dashboard_objects.append(raised_to_me_obj)
-	context_dict={'dashboard_objects':dashboard_objects}
+	context_dict={'dashboard_objects':dashboard_objects,'is_peer_test_active':'active'}
 	return render(request,'configurations/configuration_home.html',context_dict)
 
 @transaction.atomic 

@@ -1,7 +1,7 @@
 from django.views.generic import ListView
 from configurations.models import Team
 from collections import OrderedDict
-from configurations.HelperClasses import SearchFilterBadges,SearchDropDown
+from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from configurations.FilterSets import TeamFilter
 class TeamListView(ListView):
 	model=Team
@@ -21,6 +21,14 @@ class TeamListView(ListView):
 		f_team_grp_mail=get_request.get('filter_form-team_grp_mail__icontains',None)
 		print('Generating filter tags')
 		print(f_team_name,f_team_grp_mail)
+		
+		applied_filter_dict={
+				'filter_form-team_name__icontains':f_team_name,
+				'filter_form-team_grp_mail__icontains':f_team_grp_mail
+		}
+		context['applied_filters_params']=PaginationHelper.get_applied_filters_url(applied_filter_dict)
+
+
 
 		filter_badge_dict=OrderedDict({'team_name: %':f_team_name,
 							'team_grp_mail: %':f_team_grp_mail
@@ -32,6 +40,8 @@ class TeamListView(ListView):
 
 		context['filter']=TeamFilter(self.request.GET,queryset=self.get_queryset(),prefix='filter_form')
 		
+		context['page_obj']=PaginationHelper.get_page_obj(context['filter'],get_request)
+
 		context['initial_filter']='Team name'
 		context['other_filters']={'filter_form-team_name__icontains':'Team name contains',
 									'filter_form-team_grp_mail__icontains':'Team grp mail contains'}.items()

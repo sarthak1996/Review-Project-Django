@@ -9,6 +9,7 @@ class ReviewRaisedToMeFilter(django_filters.FilterSet):
 		model=Review
 		fields={'bug_number':['icontains'],
 		'priority':['exact'],
+		'approval_outcome':['exact'],
 		'series_type':['exact']}
 
 	def filter_by_raised_by(self,queryset,name,value):

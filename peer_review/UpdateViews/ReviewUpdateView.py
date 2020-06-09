@@ -5,7 +5,7 @@ from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,C
 from django.db import transaction
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
-
+from django.contrib import messages
 class ReviewUpdateView(UpdateView):
 	model=Review
 	template_name='configurations/create_view.html'
@@ -34,6 +34,7 @@ class ReviewUpdateView(UpdateView):
 												raise_to=form.cleaned_data['raise_to'],
 												approval_outcome=review_obj.approval_outcome,
 												delegated=False)
+		messages.success(self.request,'Review Update Sucessfully - Pending approval')
 		return redirect(review_obj.get_absolute_url())
 		
 

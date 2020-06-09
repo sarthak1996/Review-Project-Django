@@ -3,7 +3,9 @@ from configurations.models import Question,Choice
 from configurations.FilterSets import QuestionFilter 
 from collections import OrderedDict
 from peer_review.HelperClasses import CommonLookups
-from configurations.HelperClasses import SearchFilterBadges,SearchDropDown
+from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 class QuestionListView(ListView):
 	model=Question
 	template_name='configurations/list_view.html'
@@ -35,6 +37,16 @@ class QuestionListView(ListView):
 		print('Generating filter tags')
 		print(f_question_text,f_mandatory,f_question_choice_type,f_series_type,f_question_type)
 		
+		#generating applied filter params url
+		applied_filter_dict={
+				'filter_form-question_text__icontains':f_question_text,
+				'filter_form-mandatory':f_mandatory,
+				'filter_form-question_choice_type':f_question_choice_type,
+				'filter_form-series_type':f_series_type,
+				'filter_form-question_type':f_question_type
+		}
+		context['applied_filters_params']=PaginationHelper.get_applied_filters_url(applied_filter_dict)
+
 		filter_badge_dict=OrderedDict({'question_text: %':f_question_text,
 							'mandatory: ':f_mandatory,
 							'question_choice_type: ':f_question_choice_type,
@@ -47,6 +59,7 @@ class QuestionListView(ListView):
 		context['text_filters_drop_down_icon']=''
 
 		context['filter']=QuestionFilter(self.request.GET,queryset=self.get_queryset(),prefix='filter_form')
+		context['page_obj']=PaginationHelper.get_page_obj(context['filter'],get_request)
 		
 		context['initial_filter']='Question text'
 		context['other_filters']=None

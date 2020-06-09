@@ -1,6 +1,6 @@
 from django.views.generic import ListView
 from configurations.models import Choice
-from configurations.HelperClasses import SearchFilterBadges
+from configurations.HelperClasses import SearchFilterBadges,PaginationHelper
 from configurations.FilterSets import ChoiceFilter
 class ChoiceListView(ListView):
 	model=Choice
@@ -21,6 +21,11 @@ class ChoiceListView(ListView):
 		print('Generating filter tags')
 		print(f_choice_text)
 		
+		applied_filter_dict={
+			'filter_form-choice_text__icontains':f_choice_text
+		}
+		context['applied_filters_params']=PaginationHelper.get_applied_filters_url(applied_filter_dict)
+
 		filter_badge_dict={'choice_text: %':f_choice_text}
 		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
 		context['filter_badges']=filter_badges_list
@@ -28,6 +33,8 @@ class ChoiceListView(ListView):
 
 		context['filter']=ChoiceFilter(self.request.GET,queryset=self.get_queryset(),prefix='filter_form')
 		
+		context['page_obj']=PaginationHelper.get_page_obj(context['filter'],get_request)
+
 		context['initial_filter']='Choice text'
 		context['other_filters']=None
 		context['search_drop_downs']=None

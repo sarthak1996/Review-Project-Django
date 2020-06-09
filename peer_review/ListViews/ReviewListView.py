@@ -1,7 +1,7 @@
 from django.views.generic import ListView
 from peer_review.models import Review
 from peer_review.HelperClasses import StatusCodes,CommonLookups
-from configurations.HelperClasses import SearchFilterBadges,SearchDropDown
+from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_review.FilterSets import ReviewFilter
 from collections import OrderedDict
 
@@ -28,6 +28,14 @@ class ReviewListView(ListView):
 		f_series_type=get_request.get('filter_form-series_type',None)
 		print('Generating filter tags')
 		print(f_bug_number,f_raised_to,f_priority,f_approval_outcome,f_team,f_series_type)
+		applied_filter_dict={
+				'filter_form-bug_number__icontains':f_bug_number,
+				'filter_form-raised_to':f_raised_to,
+				'filter_form-priority':f_priority,
+				'filter_form-approval_outcome':f_approval_outcome,
+				'filter_form-team':f_team
+		}
+		context['applied_filters_params']=PaginationHelper.get_applied_filters_url(applied_filter_dict)
 
 
 		filter_badge_dict=OrderedDict({'bug_number: %':f_bug_number,
@@ -44,6 +52,8 @@ class ReviewListView(ListView):
 
 		context['filter']=ReviewFilter(self.request.GET,queryset=self.get_queryset(),prefix='filter_form')
 		
+		context['page_obj']=PaginationHelper.get_page_obj(context['filter'],get_request)
+
 		# context['initial_filter']=''
 		context['other_filters']={'filter_form-bug_number__icontains':'Bug number contains',
 									'filter_form-raised_to':'Raised to contains'}.items()
@@ -66,3 +76,5 @@ class ReviewListView(ListView):
 	def get_queryset(self):
 		req=self.request 
 		return Review.objects.filter(created_by=req.user,review_type=CommonLookups.get_peer_review_question_type()).all()
+
+		

@@ -5,7 +5,7 @@ from django.forms.utils import ErrorDict
 
 class ExemptionForm(ModelForm):
 	exemption_for=forms.CharField(required=True,label='Exemption for',widget=forms.TextInput(attrs={'placeholder': 'Exemption for','class':'form-control'}))
-	exemption_explanation=forms.CharField(required=True,label='Exemption explanation',widget=forms.TextInput(attrs={'placeholder': 'Exemption explanation','class':'form-control'}))
+	exemption_explanation=forms.CharField(required=True,label='Exemption explanation',widget=forms.Textarea(attrs={'placeholder': 'Exemption explanation','class':'form-control text_area'}))
 	
 	class Meta:
 		model=Exemption

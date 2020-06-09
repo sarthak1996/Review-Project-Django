@@ -24,20 +24,22 @@
 	{{review_approval_title}}
 {% endblock %}
 {% block content%}
-	
+	{% get_action_values review_object 'review_approval' as actions_drop%}
+	<!--{% include 'lov/action_modal.html' %}-->
     <div class="row justify-content-md-center">
         
 			<div class="card border-dark col-6" >
 				
 				<div class="card-header row">
 					<div class="horizontal_title col align-middle"><h4 class="card_header_title">{{detail_view_card_title}}</h4></div>
-					{% get_action_values review_object 'review_approval' as actions_drop%}
+					
     				{% if actions_drop %}
 	    				<div class="horizontal_right_action col-2">
 		    				<div class="dropdown">
 								<button class="btn btn-danger dropdown-toggle right_aligned_action" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 									{% for action_name,action_url in actions_drop %}
+									<!--data-toggle="modal" data-target="#action_modal"-->
 									<a class="dropdown-item" href="{% url action_url obj_pk=review_object.pk%}">{{action_name}}</a>
 									{% endfor %}
 								</div>
@@ -63,6 +65,18 @@
 									{% if 'choice_select' in field.field.widget.attrs.class %}
 										<div class="form-group">
 											<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+											{{ field }}
+											
+											{% if field.errors %}
+												<div class="list-group">
+													{% for err in field.errors %}
+														<li class="list-group-item list-group-item-danger">{{err}}</li>
+													{% endfor %}
+												</div>
+											{% endif %}
+										</div>
+									{% elif 'text_area' in field.field.widget.attrs.class %}
+										<div class="form-group">
 											{{ field }}
 											
 											{% if field.errors %}
@@ -117,9 +131,8 @@
 											{% endif %}
 
 								        </div>
-								        <div class="form-label-group">
+								        <div class="form-group">
 								        	{{form2.exemption_explanation}}
-								        	{{form2.exemption_explanation.label_tag}}
 								        	
 								        	{% if form2.exemption_explanation.errors %}
 												<div class="list-group">
@@ -142,9 +155,8 @@
 							        	{{exemption_formset.empty_form.exemption_for}}
 							        	{{exemption_formset.empty_form.exemption_for.label_tag}}
 							        </div>
-							        <div class="form-label-group">
+							        <div class="form-group">
 							        	{{exemption_formset.empty_form.exemption_explanation}}
-							        	{{exemption_formset.empty_form.exemption_explanation.label_tag}}
 							        </div>
 							        <div class="delete_checkbox_form" hidden>{{ exemption_formset.empty_form.DELETE }}</div>
 							        <a class="btn btn-lg btn-register btn-block text-uppercase text-decoration-none delete_exemption_button"   href="javascript:void(0)" > Delete Exemption</a>
