@@ -1,6 +1,6 @@
 from django.views.generic import ListView
 from peer_review.models import Review,Approval
-from peer_review.HelperClasses import StatusCodes,CommonLookups
+from peer_review.HelperClasses import StatusCodes,CommonLookups,CommonCounts
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_review.FilterSets import ReviewRaisedToMeFilter
 from collections import OrderedDict
@@ -76,6 +76,12 @@ class ReviewRaisedToMeListView(LoginRequiredMixin,ListView):
 		context['search_drop_downs']=search_drop_downs
 		
 		context['reset_filters']='peer_review:review_raised_to_me'
+
+		context['progressbar']=True
+		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(user=self.request.user,
+																		review_type=CommonLookups.get_peer_review_question_type(),
+																		raised_to_me=True)
+		context={**context,**progress_dict}
 		
 		# print()
 		# print(Approval.objects.filter(latest='True',raised_to=self.request.user).approval_review_assoc.all())

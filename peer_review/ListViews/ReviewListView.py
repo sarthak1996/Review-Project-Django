@@ -1,6 +1,6 @@
 from django.views.generic import ListView
 from peer_review.models import Review
-from peer_review.HelperClasses import StatusCodes,CommonLookups
+from peer_review.HelperClasses import StatusCodes,CommonLookups,CommonCounts
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_review.FilterSets import ReviewFilter
 from collections import OrderedDict
@@ -77,6 +77,14 @@ class ReviewListView(LoginRequiredMixin,ListView):
 		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:team_update_view')
 
 							
+		context['progressbar']=True
+		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(user=self.request.user,
+																		review_type=CommonLookups.get_peer_review_question_type(),
+																		raised_to_me=False)
+		context={**context,**progress_dict}
+		# print('Progress bar:')
+		# print(context)
+
 		return context
 
 	def get_queryset(self):
