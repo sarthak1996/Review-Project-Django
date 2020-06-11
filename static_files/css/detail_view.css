@@ -176,3 +176,13 @@ hr {
 #exemption_form_set{
   margin-bottom: 1em;
 }
+
+.green_text{
+  color: green;
+  font-weight: 700;
+}
+
+.red_text{
+  color: red;
+  font-weight: 700;
+}

@@ -104,15 +104,15 @@
 											{% if timeline_obj.is_url %}
 												<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
 												{% if timeline_obj.title_right_floater %}
-													<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+													<span class="float-right red_text">{{ timeline_obj.title_right_floater }}</span>
 												{% endif %}
 												
 												
 											{% else %}
 												<!-- <h6  >{{timeline_obj.title}}</h6> -->
-												<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+												<a target="_blank" href="#" class="disabled_url green_text">{{timeline_obj.title}}</a>
 												{% if timeline_obj.title_right_floater %}
-													<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+													<span class="float-right red_text">{{ timeline_obj.title_right_floater }}</span>
 												{% endif %}
 											{% endif %}
 
@@ -137,15 +137,15 @@
 										{% if timeline_obj.is_url %}
 											<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
 											{% if timeline_obj.title_right_floater %}
-												<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+												<span class="float-right red_text">{{ timeline_obj.title_right_floater }}</span>
 											{% endif %}
 											
 											
 										{% else %}
 											<!-- <h6  >{{timeline_obj.title}}</h6> -->
-											<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+											<a target="_blank" href="#" class="disabled_url green_text">{{timeline_obj.title}}</a>
 											{% if timeline_obj.title_right_floater %}
-												<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+												<span class="float-right red_text">{{ timeline_obj.title_right_floater }}</span>
 											{% endif %}
 										{% endif %}
 
@@ -175,15 +175,15 @@
 									{% if timeline_obj.is_url %}
 										<a target="_blank" href="{% url timeline_obj.timeline_url obj_pk=timeline_obj.obj_pk %}">{{timeline_obj.title}}</a>
 										{% if timeline_obj.title_right_floater %}
-											<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+											<span class="float-right red_text">{{ timeline_obj.title_right_floater }}</span>
 										{% endif %}
 										
 										
 									{% else %}
 										<!-- <h6  >{{timeline_obj.title}}</h6> -->
-										<a target="_blank" href="#" class="disabled_url">{{timeline_obj.title}}</a>
+										<a target="_blank" href="#" class="disabled_url green_text">{{timeline_obj.title}}</a>
 										{% if timeline_obj.title_right_floater %}
-											<span class="float-right">{{ timeline_obj.title_right_floater }}</span>
+											<span class="float-right red_text">{{ timeline_obj.title_right_floater }}</span>
 										{% endif %}
 									{% endif %}
 

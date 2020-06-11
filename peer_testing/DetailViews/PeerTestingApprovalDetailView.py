@@ -1,6 +1,6 @@
 from django.views.generic.detail import DetailView
-from peer_review.HelperClasses import StatusCodes,ApprovalHelper
-from peer_review.models import Review
+from peer_review.HelperClasses import StatusCodes,ApprovalHelper,ApprovalTimeline
+from peer_review.models import Review,Approval
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
@@ -40,6 +40,13 @@ class PeerTestingApprovalDetailView(LoginRequiredMixin,DetailView):
 		context['reject_label']='Reject'
 		context['detail_view_type']='testing_review_approval'
 
+		approval_timeline=Approval.objects.filter(review=review_obj).all()
+		approval_history=ApprovalTimeline.get_approval_timeline(review_obj)
+		print('\n'.join([str(usage) for usage in approval_history]))
+		# context['right_aligned_timeline_title']='Approval History'
+		context['right_aligned_timeline']=True
+		context['approval_timeline']=approval_history
+		context['approval_timeline_title']='Approval History'
 		return context
 
 
