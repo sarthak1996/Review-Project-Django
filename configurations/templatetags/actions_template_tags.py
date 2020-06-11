@@ -10,11 +10,6 @@ def get_action_values(context,*args):
 	print('Actions')
 	print(args)
 	if isinstance(args[0],Review):
-		if len(args)==1:
-			if isinstance(context['filter'],ReviewRaisedToMeFilter):
-				return args[0].get_review_raised_to_me_actions()
-			elif isinstance(context['filter'],ReviewFilter):
-				return args[0].get_reviews_raised_by_me_actions()
 		if len(args)==2:
 			if args[1]=='review_approval':
 				return args[0].get_review_raised_to_me_actions(exclude=['approve'])
@@ -22,7 +17,7 @@ def get_action_values(context,*args):
 				return args[0].get_peer_testing_raised_to_me_actions()
 			elif args[1]=='review_user_view':
 				return args[0].get_reviews_raised_by_me_actions()
-			elif args[1]==None:
-				return args[0].get_actions_drop()
+			elif args[1]=='testing_review_user_view':
+				return args[0].get_peer_testing_raised_by_me_actions()
 	else:
 		return args[0].get_actions_drop()

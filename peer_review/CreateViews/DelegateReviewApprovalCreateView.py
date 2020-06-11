@@ -32,6 +32,7 @@ class DelegateReviewApprovalCreateView(LoginRequiredMixin,CreateView):
 											user=self.request.user,
 											raised_to=form.cleaned_data['raised_to'])
 		return redirect('peer_review:review_raised_to_me')
+		
 		# return redirect('peer_review:review_raised_to_me')
 		# return super().form_valid(form)
 
@@ -47,7 +48,7 @@ class DelegateReviewApprovalCreateView(LoginRequiredMixin,CreateView):
 	def get_form_kwargs(self):
 		kw = super(DelegateReviewApprovalCreateView, self).get_form_kwargs()
 		kw['request'] = self.request
-		review_id=self.kwargs['review_obj']
+		review_id=self.kwargs['obj_pk']
 		review=Review.objects.filter(pk=review_id).first()
 		kw['team_id'] = review.team.pk
 		return kw

@@ -33,14 +33,11 @@ class ReviewUpdateView(LoginRequiredMixin,UpdateView):
 			form.add_error('raise_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
 			return super(ReviewUpdateView,self).form_invalid(form)
 		review_obj=form.save(commit=False)
-		review_obj.approval_outcome=StatusCodes.get_pending_status()
 		print('Review approval:'+ review_obj.approval_outcome)
 		review_obj.save()
-		ApprovalHelper.create_new_approval_row(review_obj=review_obj,
-												user=self.request.user,
-												raise_to=form.cleaned_data['raise_to'],
-												approval_outcome=review_obj.approval_outcome,
-												delegated=False)
+		ApprovalHelper.mark_review_pending(review=review_obj,
+							user=self.request.user,
+							raised_to=form.cleaned_data['raise_to'])
 		messages.success(self.request,'Review Update Sucessfully - Pending approval')
 		return redirect(review_obj.get_absolute_url())
 		

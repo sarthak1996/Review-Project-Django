@@ -28,6 +28,7 @@ class PeerTestingReviewRaisedToMeListView(LoginRequiredMixin,ListView):
 		context['page_title']='Peer Testing'
 		context['create_button_rendered']=False
 		context['is_peer_test_active']='active'
+		context['list_view_type']='testing_review_approval'
 		# print()
 		# print(Approval.objects.filter(latest='True',raised_to=self.request.user).approval_review_assoc.all())
 		

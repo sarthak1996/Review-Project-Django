@@ -153,7 +153,9 @@ def peer_review_approval_form(request,**kwargs):
 															)
 				#save answer model from formset
 				formset.save()
-				ApprovalHelper.approve_review(review,user)
+				ApprovalHelper.approve_review(review=review,
+											user=user,
+											approver_comment=None)
 				return redirect("peer_review:review_raised_to_me")
 			print('Exemption Formset errors (if any)')
 			print(exemption_formset.errors)
@@ -171,13 +173,13 @@ def invalidate_review(request,**kwargs):
 	ApprovalHelper.invalidate_review(review,request.user)
 	return redirect(review.get_absolute_url())
 
-@login_required(login_url='/reviews/login')
-@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
-def reject_review(request,**kwargs):
-	review_id=kwargs['obj_pk']
-	review=Review.objects.filter(pk=review_id).first()
-	ApprovalHelper.reject_review(review,request.user)
-	return redirect(review.get_absolute_url())
+# @login_required(login_url='/reviews/login')
+# @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
+# def reject_review(request,**kwargs):
+# 	review_id=kwargs['obj_pk']
+# 	review=Review.objects.filter(pk=review_id).first()
+# 	ApprovalHelper.reject_review(review,request.user)-->to create cbv to cpture comment
+# 	return redirect(review.get_absolute_url())
 
 @login_required(login_url='/reviews/login')
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')

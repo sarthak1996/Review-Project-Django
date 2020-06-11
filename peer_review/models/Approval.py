@@ -6,7 +6,7 @@ class Approval(models.Model):
 	review=models.ForeignKey(Review,related_name='approval_review_assoc',on_delete=models.PROTECT)
 	raised_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='approval_raised_by',on_delete=models.PROTECT)
 	raised_to=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='approval_raised_to',on_delete=models.PROTECT)
-	approver_comment=models.CharField(max_length=1000,blank=True)
+	approver_comment=models.CharField(max_length=1000,blank=True,null=True)
 	approval_outcome=models.CharField(max_length=4,blank=False,choices=Review.get_review_priority_approval_types()['approval_outcome'])
 	delegated=models.BooleanField(blank=True)
 	latest=models.BooleanField(blank=True)

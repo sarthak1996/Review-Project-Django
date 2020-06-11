@@ -7,4 +7,7 @@ class Timeline():
 		self.obj_pk=obj_pk
 		self.title_right_floater=title_right_floater
 	def __str__(self):
-		return self.title + ' : ' + '\n\t-'.join([desc for desc in self.description]) + '=>' + str(self.is_url)
+		print('Description')
+		print(self.description)
+		desc_str='\n\t-'.join([desc for desc in self.description]) if self.description else '***Description None***'
+		return self.title + ' : ' + desc_str + '=>' + str(self.is_url)

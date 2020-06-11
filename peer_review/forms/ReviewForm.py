@@ -3,12 +3,12 @@ from django import forms
 from peer_review.models import Review
 from django.contrib.auth import get_user_model
 from configurations.models import Team,Series
-from peer_review.HelperClasses import ApprovalHelper
+from peer_review.HelperClasses import ApprovalHelper,CommonLookups
 from configurations.ModelChoiceFields import UserModelChoiceField
 
 class ReviewForm(ModelForm):
 	bug_number=forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder': 'Bug number','class':'form-control'}))
-	priority=forms.ChoiceField(required=False,choices=Review.get_review_priority_approval_types()['review_priority'],widget=forms.Select(attrs={'class':'form-control choice_select','label':'Priority'}))
+	priority=forms.ChoiceField(required=False,initial=CommonLookups.get_review_normal_priority(),choices=Review.get_review_priority_approval_types()['review_priority'],widget=forms.Select(attrs={'class':'form-control choice_select','label':'Priority'}))
 	team=forms.ModelChoiceField(queryset=Team.objects.all(),empty_label='Choose a Team',widget=forms.Select(attrs={'class':'form-control choice_select'}))
 	raise_to=UserModelChoiceField(queryset=get_user_model().objects.all(),empty_label='Choose a User',widget=forms.Select(attrs={'class':'form-control choice_select'}))
 	# num_of_exemption=forms.IntegerField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Bug number','class':'form-control'}))
