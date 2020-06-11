@@ -45,8 +45,8 @@ def get_peer_testing_raised_to_me(user,year=None):
 						ex_year=year)
 
 
-def get_perct_num_reviews_by_apr_outcome(user,review_type,raised_to_me):
-	total_reviews=user.reviews_created_by.count()
+def get_perct_num_reviews_by_apr_outcome(qs,user,review_type,raised_to_me):
+	total_reviews=qs.count()
 	filtered_reviews=None
 	if review_type==CommonLookups.get_peer_testing_question_type():
 		if raised_to_me:
@@ -84,7 +84,8 @@ def get_perct_num_reviews_by_apr_outcome(user,review_type,raised_to_me):
 			'perct_inv':0,
 			'perct_rej':0,
 			'perct_apr':0}
-
+	print('Progress bar dict')
+	print({**num_dict,**perct_dict})
 	return {**num_dict,**perct_dict}
 
 
@@ -94,6 +95,8 @@ def normalize_pcts(perct_dict):
 	# remove 0 entries from cloned dict
 	# find min of 0 eliminated clone
 	# normalize min element to 100 - (rest sum)
+	print('Perct dictionary:')
+	print(perct_dict)
 	zero_removed_dict={key:val for key, val in perct_dict.items() if val != 0}
 	if zero_removed_dict:
 		min_element=min(zero_removed_dict,key=zero_removed_dict.get)

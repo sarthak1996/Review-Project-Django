@@ -83,10 +83,12 @@ class PeerTestingReviewRaisedToMeListView(LoginRequiredMixin,ListView):
 		
 		context['reset_filters']='peer_testing:peer_testing_raised_to_me'
 		context['progressbar']=True
-		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(user=self.request.user,
+		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=CommonCounts.get_peer_testing_raised_to_me(self.request.user),
+																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_testing_question_type(),
 																		raised_to_me=True)		
 
+		context={**context,**progress_dict}
 		return context
 
 	def get_queryset(self):

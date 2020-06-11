@@ -79,7 +79,8 @@ class ReviewListView(LoginRequiredMixin,ListView):
 
 							
 		context['progressbar']=True
-		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(user=self.request.user,
+		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=CommonCounts.get_review_raised_by_me(self.request.user),
+																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_review_question_type(),
 																		raised_to_me=False)
 		context={**context,**progress_dict}
