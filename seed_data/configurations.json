@@ -1,0 +1,426 @@
+[
+  {
+    "model": "configurations.choice",
+    "pk": 5,
+    "fields": {
+      "choice_text": "Yes",
+      "creation_date": "2020-05-19T15:43:14.087Z",
+      "last_update_date": "2020-06-05T22:11:57.814Z",
+      "created_by": 1,
+      "last_update_by": 6
+    }
+  },
+  {
+    "model": "configurations.choice",
+    "pk": 6,
+    "fields": {
+      "choice_text": "No",
+      "creation_date": "2020-05-19T15:43:29.269Z",
+      "last_update_date": "2020-05-19T15:43:29.269Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.choice",
+    "pk": 7,
+    "fields": {
+      "choice_text": "Success",
+      "creation_date": "2020-05-19T15:43:50.020Z",
+      "last_update_date": "2020-05-19T15:43:50.020Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.choice",
+    "pk": 8,
+    "fields": {
+      "choice_text": "Fail",
+      "creation_date": "2020-05-19T15:44:05.731Z",
+      "last_update_date": "2020-05-19T15:44:05.731Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.choice",
+    "pk": 9,
+    "fields": {
+      "choice_text": "Failure",
+      "creation_date": "2020-05-19T15:44:16.061Z",
+      "last_update_date": "2020-05-19T15:44:16.061Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.choice",
+    "pk": 10,
+    "fields": {
+      "choice_text": "Build Successful",
+      "creation_date": "2020-05-19T15:44:42.891Z",
+      "last_update_date": "2020-05-19T15:44:42.891Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.choice",
+    "pk": 11,
+    "fields": {
+      "choice_text": "Build Failure",
+      "creation_date": "2020-05-19T15:44:58.038Z",
+      "last_update_date": "2020-05-19T15:44:58.038Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.choice",
+    "pk": 12,
+    "fields": {
+      "choice_text": "Approved",
+      "creation_date": "2020-05-19T15:49:15.635Z",
+      "last_update_date": "2020-05-19T15:49:15.635Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.choice",
+    "pk": 13,
+    "fields": {
+      "choice_text": "Not approved",
+      "creation_date": "2020-05-19T15:49:31.377Z",
+      "last_update_date": "2020-05-19T15:49:31.377Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 6,
+    "fields": {
+      "question_text": "Private files",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:46:07.886Z",
+      "last_update_date": "2020-05-19T15:46:07.886Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 7,
+    "fields": {
+      "question_text": "GSCC check",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:46:38.156Z",
+      "last_update_date": "2020-05-19T15:46:38.157Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        7,
+        9
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 8,
+    "fields": {
+      "question_text": "Jpr Files",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:47:09.145Z",
+      "last_update_date": "2020-05-19T15:47:09.146Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 9,
+    "fields": {
+      "question_text": "Seed data files",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:47:32.469Z",
+      "last_update_date": "2020-05-19T15:48:35.643Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 10,
+    "fields": {
+      "question_text": "Central files",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:47:54.212Z",
+      "last_update_date": "2020-05-19T15:47:54.213Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 11,
+    "fields": {
+      "question_text": "All Success in PMC",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:49:03.476Z",
+      "last_update_date": "2020-05-19T15:49:03.476Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 12,
+    "fields": {
+      "question_text": "Orareview",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:49:52.412Z",
+      "last_update_date": "2020-05-19T15:49:52.413Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        12,
+        13
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 13,
+    "fields": {
+      "question_text": "Proper Bug Closure Template",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:50:22.396Z",
+      "last_update_date": "2020-05-19T15:50:30.401Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 14,
+    "fields": {
+      "question_text": "Comp.Version, Fix By, Tags, Fix ETA in bug",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:50:57.228Z",
+      "last_update_date": "2020-05-19T15:50:57.229Z",
+      "series_type": "",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 15,
+    "fields": {
+      "question_text": "Ant Patch",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:51:27.414Z",
+      "last_update_date": "2020-05-19T15:51:27.415Z",
+      "series_type": "ARU",
+      "created_by": 1,
+      "last_update_by": 1,
+      "question_type": "MRGCHK",
+      "choices": [
+        10,
+        11
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 16,
+    "fields": {
+      "question_text": "Snowball",
+      "question_choice_type": "SCH",
+      "mandatory": true,
+      "creation_date": "2020-05-19T15:51:52.361Z",
+      "last_update_date": "2020-05-28T22:43:17.178Z",
+      "series_type": "ARU",
+      "created_by": 1,
+      "last_update_by": 5,
+      "question_type": "MRGCHK",
+      "choices": [
+        7,
+        9
+      ]
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 17,
+    "fields": {
+      "question_text": "Orareview Link/ Transaction Name",
+      "question_choice_type": "TXT",
+      "mandatory": true,
+      "creation_date": "2020-05-31T07:56:09.248Z",
+      "last_update_date": "2020-05-31T07:56:09.256Z",
+      "series_type": "",
+      "created_by": 5,
+      "last_update_by": 5,
+      "question_type": "PRTEST",
+      "choices": []
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 18,
+    "fields": {
+      "question_text": "Issue description",
+      "question_choice_type": "TXT",
+      "mandatory": true,
+      "creation_date": "2020-06-11T20:55:23.265Z",
+      "last_update_date": "2020-06-11T20:55:23.274Z",
+      "series_type": "ARU",
+      "created_by": 5,
+      "last_update_by": 5,
+      "question_type": "PRTEST",
+      "choices": []
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 19,
+    "fields": {
+      "question_text": "Issue Reproduction Steps",
+      "question_choice_type": "TXT",
+      "mandatory": true,
+      "creation_date": "2020-06-11T20:55:47.056Z",
+      "last_update_date": "2020-06-11T20:55:47.056Z",
+      "series_type": "ARU",
+      "created_by": 5,
+      "last_update_by": 5,
+      "question_type": "PRTEST",
+      "choices": []
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 20,
+    "fields": {
+      "question_text": "Environment details",
+      "question_choice_type": "TXT",
+      "mandatory": true,
+      "creation_date": "2020-06-11T20:56:17.344Z",
+      "last_update_date": "2020-06-11T20:56:17.345Z",
+      "series_type": "ARU",
+      "created_by": 5,
+      "last_update_by": 5,
+      "question_type": "PRTEST",
+      "choices": []
+    }
+  },
+  {
+    "model": "configurations.question",
+    "pk": 21,
+    "fields": {
+      "question_text": "Comments (if any)",
+      "question_choice_type": "TXT",
+      "mandatory": false,
+      "creation_date": "2020-06-11T20:59:03.254Z",
+      "last_update_date": "2020-06-11T20:59:03.255Z",
+      "series_type": "ARU",
+      "created_by": 5,
+      "last_update_by": 5,
+      "question_type": "PRTEST",
+      "choices": []
+    }
+  },
+  {
+    "model": "configurations.series",
+    "pk": 4,
+    "fields": {
+      "series_name": "Bronze",
+      "series_type": "",
+      "creation_date": "2020-05-19T15:35:53.903Z",
+      "last_update_date": "2020-06-05T22:26:03.827Z",
+      "created_by": 1,
+      "last_update_by": 6
+    }
+  },
+  {
+    "model": "configurations.team",
+    "pk": 1,
+    "fields": {
+      "team_name": "Absences",
+      "team_grp_mail": "anc12@gmail.com",
+      "creation_date": "2020-05-10T15:53:07.532Z",
+      "last_update_date": "2020-05-17T10:28:39.733Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  },
+  {
+    "model": "configurations.team",
+    "pk": 2,
+    "fields": {
+      "team_name": "Time and Labor",
+      "team_grp_mail": "wfmq@gmail.cosm",
+      "creation_date": "2020-05-17T11:46:05.888Z",
+      "last_update_date": "2020-05-17T11:46:05.891Z",
+      "created_by": 1,
+      "last_update_by": 1
+    }
+  }
+]
