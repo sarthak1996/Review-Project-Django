@@ -138,15 +138,9 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 
 				
 					
-				if edit:
-					ApprovalHelper.mark_review_pending(review=review_instance,user=request.user)
-				else:
-					ApprovalHelper.create_new_approval_row(review_obj=review_instance,
-												user=request.user,
-												raise_to=review_form.cleaned_data['raise_to'],
-												approval_outcome=review_instance.approval_outcome,
-												delegated=False,
-												is_create=True)
+				ApprovalHelper.mark_review_pending(review=review_instance,
+													user=request.user,
+													raised_to=review_form.cleaned_data['raise_to'])
 				if not edit:
 					formset.save()
 			else:

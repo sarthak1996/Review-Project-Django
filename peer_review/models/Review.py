@@ -18,9 +18,9 @@ class Review(models.Model):
 	last_update_date=models.DateTimeField(auto_now=True)
 	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='reviews_created_by',on_delete=models.PROTECT)
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='reviews_last_update_by',on_delete=models.PROTECT)
-	review_type=models.CharField(max_length=10, blank=False,choices=Question.get_questions_choice_types()['question_type'])
+	review_type=models.CharField(max_length=10, blank=False,choices=CommonLookups.get_question_types())
 	# num_of_exemption=models.IntegerField(blank=True,default=0) 
-	series_type=models.CharField(max_length=3,blank=True,null=True,choices = Series.get_choices_models()['series_type'])
+	series_type=models.CharField(max_length=3,blank=True,null=True,choices = CommonLookups.get_series_types())
 	
 	class Meta:
 		verbose_name_plural = "Reviews"
@@ -34,8 +34,8 @@ class Review(models.Model):
 
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()
-		QUESTION_TYPE=Question.get_questions_choice_types()['question_type']
-		SERIES_TYPE=Series.get_choices_models()['series_type']
+		QUESTION_TYPE=CommonLookups.get_question_types()
+		SERIES_TYPE=CommonLookups.get_series_types()
 		# field_dict['Team Name']=self.team_name
 		# field_dict['Bug number']=self.bug_number
 		field_dict['Priority']=''.join([value for (item,value) in REVIEW_PRIORITY if item==self.priority])
@@ -85,8 +85,9 @@ class Review(models.Model):
 		return desc.items()
 
 	def get_display_list_continuous_tags(self):
-		QUESTION_TYPE=Question.get_questions_choice_types()['question_type']
-		SERIES_TYPE=Series.get_choices_models()['series_type']
+
+		QUESTION_TYPE=CommonLookups.get_question_types()
+		SERIES_TYPE=CommonLookups.get_series_types()
 		review_type=''.join([value for (item,value) in QUESTION_TYPE if item==self.review_type])
 		series_type=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		return [review_type,series_type]
@@ -129,5 +130,18 @@ class Review(models.Model):
 			actions['Reject']='peer_review:reject_review'
 		if not exclude or (exclude and 'delegate' not in exclude):
 			actions['Delegate']='peer_review:delegate_review'
+		return actions.items()
+
+
+	def get_peer_testing_raised_by_me_actions(self,exclude=None):
+		if self.approval_outcome==StatusCodes.get_approved_status():
+			return None
+		actions=OrderedDict()
+		print('Fetching actions allowed on raised by me review')
+		print(exclude)
+		if not exclude or (exclude and 'update' not in exclude):
+			actions['Update']='peer_testing:peer_testing_update'
+		if not exclude or (exclude and 'invalidate' not in exclude):
+			actions['Invalidate']='peer_review:invalidate_review'
 		return actions.items()
 

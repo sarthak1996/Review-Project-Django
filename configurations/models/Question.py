@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 from collections import OrderedDict 
 from django.urls import reverse_lazy
-from .Series import Series
 from .Choice import Choice
 from peer_review.HelperClasses import CommonLookups
 
@@ -12,7 +11,7 @@ class Question(models.Model):
 	mandatory=models.BooleanField(blank=True)
 	creation_date=models.DateTimeField(blank=False)
 	last_update_date=models.DateTimeField(auto_now=True)
-	series_type=models.CharField(max_length=3,blank=True,null=True,choices = Series.get_choices_models()['series_type'])
+	series_type=models.CharField(max_length=3,blank=True,null=True,choices = CommonLookups.get_series_types())
 	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='questions_created_by',on_delete=models.PROTECT)
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='question_last_update_by',on_delete=models.PROTECT)
 	choices=models.ManyToManyField(Choice,blank=True,related_name='question_choices_assoc')
@@ -30,7 +29,7 @@ class Question(models.Model):
 
 	def get_values_for_fields(self):
 		field_dict=OrderedDict()
-		SERIES_TYPE=Series.get_choices_models()['series_type']
+		SERIES_TYPE=CommonLookups.get_series_types()
 		QUESTION_CHOICE_TYPE=CommonLookups.get_question_choice_types()
 		QUESTION_TYPE=CommonLookups.get_question_types()
 		# field_dict['Team Name']=self.team_name
@@ -69,7 +68,7 @@ class Question(models.Model):
 	def get_display_list_description(self):
 		QUESTION_CHOICE_TYPE=CommonLookups.get_question_choice_types()
 		QUESTION_TYPE=CommonLookups.get_question_types()
-		SERIES_TYPE=Series.get_choices_models()['series_type']
+		SERIES_TYPE=CommonLookups.get_series_types()
 		desc=OrderedDict()
 		idx='Series: '+ SERIES_TYPE[1][1] if not self.series_type else self.series_type
 		desc[idx]=None

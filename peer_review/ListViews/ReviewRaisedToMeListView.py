@@ -28,6 +28,7 @@ class ReviewRaisedToMeListView(LoginRequiredMixin,ListView):
 		context['page_title']='Peer Review'
 		context['create_button_rendered']=False
 		context['is_review_active']='active'
+		context['list_view_type']='review_approval'
 		get_request=self.request.GET
 		f_bug_number=get_request.get('filter_form-bug_number__icontains',None)
 		f_priority=get_request.get('filter_form-priority',None)

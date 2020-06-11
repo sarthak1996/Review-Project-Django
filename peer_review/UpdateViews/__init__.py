@@ -1,1 +1,2 @@
 from .ReviewUpdateView import ReviewUpdateView
+from .RejectReviewUpdateView import RejectReviewUpdateView
