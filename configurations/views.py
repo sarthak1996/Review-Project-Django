@@ -117,8 +117,9 @@ def review_raised_graph(request):
 	}
 	curr_year=datetime.today().year
 	review_queryset=CommonCounts.get_review_raised_by_me(user=request.user,year=curr_year)\
-				.annotate(month=ExtractMonth('creation_date'),count_review=Count('pk'))\
-				.values('month','count_review')\
+				.annotate(month=ExtractMonth('creation_date'))\
+				.values('month')\
+				.annotate(count_review=Count('pk'))\
 				.distinct()
 	# labels.append(1)
 	# labels.append(2)
@@ -140,8 +141,9 @@ def review_raised_graph(request):
 	print(labels,data)
 
 	raised_to_me_review=CommonCounts.get_review_raised_to_me(user=request.user,year=curr_year)\
-										.annotate(month=ExtractMonth('creation_date'),count_review=Count('pk'))\
-										.values('month','count_review')\
+										.annotate(month=ExtractMonth('creation_date'))\
+										.values('month')\
+										.annotate(count_review=Count('pk'))\
 										.distinct()
 	already_present_months=[]
 	raised_to_me_months_all=[]
@@ -184,8 +186,9 @@ def peer_testing_graph(request):
 	}
 	curr_year=datetime.today().year
 	peer_testing_queryset=CommonCounts.get_peer_testing_raised_by_me(user=request.user,year=curr_year)\
-				.annotate(month=ExtractMonth('creation_date'),count_review=Count('pk'))\
-				.values('month','count_review')\
+				.annotate(month=ExtractMonth('creation_date'))\
+				.values('month')\
+				.annotate(count_review=Count('pk'))\
 				.distinct()
 	# labels.append(1)
 	# labels.append(2)
@@ -208,9 +211,10 @@ def peer_testing_graph(request):
 	print(labels,data)
 
 	raised_to_me_review=CommonCounts.get_peer_testing_raised_to_me(user=request.user,year=curr_year)\
-										.annotate(month=ExtractMonth('creation_date'),count_review=Count('pk'))\
-										.values('month','count_review')\
-										.distinct()
+									.annotate(month=ExtractMonth('creation_date'))\
+									.values('month')\
+									.annotate(count_review=Count('pk'))\
+									.distinct()
 	already_present_months=[]
 	raised_to_me_months_all=[]
 	for item in raised_to_me_review:
