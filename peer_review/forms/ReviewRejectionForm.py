@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from peer_review.models import Review
 class ReviewRejectionForm(ModelForm):
-	approver_comment=forms.CharField(required=True,label='Comment',widget=forms.TextInput(attrs={'placeholder': 'Comment','class':'form-control'}))
+	approver_comment=forms.CharField(required=True,label='Comment',widget=forms.Textarea(attrs={'placeholder': 'Comment','class':'form-control text_area'}))
 	class Meta:
 		model=Review
 		fields=[]

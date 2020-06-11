@@ -25,3 +25,7 @@
     from { opacity: 1; }
     to { opacity: 0; }
 }
+
+textarea{
+	height: 150px !important;
+}

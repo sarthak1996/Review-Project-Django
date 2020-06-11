@@ -7,7 +7,7 @@ from configurations.models import Choice,Question
 class PeerReviewAnswerForm(ModelForm):
 
 	single_choice_field=forms.ModelChoiceField(required=False,queryset=Choice.objects.all(),empty_label='Choose a value',widget=forms.Select(attrs={'class':'form-control not_rendered choice_select'}))
-	text_answer = forms.CharField(required=False,label='Answer Text',widget=forms.TextInput(attrs={'placeholder': 'Answer Text','class':'form-control not_rendered'}))
+	text_answer = forms.CharField(required=False,label='Answer Text',widget=forms.Textarea(attrs={'placeholder': 'Answer Text','class':'form-control text_area not_rendered'}))
 	question=forms.ModelChoiceField(required=False,queryset=Question.objects.all(),empty_label="Choose a Question",widget=forms.Select(attrs={'class':'form-control choice_select not_rendered'}))
 	class Meta:
 		model=Answer

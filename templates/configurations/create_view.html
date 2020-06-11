@@ -59,6 +59,19 @@
 									</div>
 								{% endif %}
 							</div>
+						{% elif 'text_area' in field.field.widget.attrs.class %}
+							<div class="form-group">
+								{{field.label_tag}}
+								{{ field }}
+								
+								{% if field.errors %}
+									<div class="list-group">
+										{% for err in field.errors %}
+											<li class="list-group-item list-group-item-danger">{{err}}</li>
+										{% endfor %}
+									</div>
+								{% endif %}
+							</div>
 						{% elif 'choice_check_box_select' in field.field.widget.attrs.class %}
 							<div class="form-check">
 								{{ field }}
