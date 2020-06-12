@@ -20,8 +20,36 @@
 {% endblock %}
 
 {% block content %}
+
+
+
 	<div class="row justify-content-md-center">
 	<!--Latest notifications-->
+     <ul class="list-group col-6">
+        {% for key,val in toast_pending.get_peer_testing_to_me_pending_count %}
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">{{key}}&nbsp;pending on me
+            <span class="badge badge-primary badge-pill">{{val}}</span>
+          </li>
+        {% endfor %}
+        {% for key,val in toast_pending.get_peer_review_to_me_pending_count %}
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">{{key}}&nbsp;pending on me
+            <span class="badge badge-primary badge-pill">{{val}}</span>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <ul class="list-group col-6">
+        {% for key,val in toast_pending.get_peer_testing_by_me_pending_count %}
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">My&nbsp;{{key}}&nbsp;in pending
+            <span class="badge badge-primary badge-pill">{{val}}</span>
+          </li>
+        {% endfor %}
+        {% for key,val in toast_pending.get_peer_review_by_me_pending_count %}
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">My&nbsp;{{key}}&nbsp;in pending
+            <span class="badge badge-primary badge-pill">{{val}}</span>
+          </li>
+        {% endfor %}
+      </ul>
 	</div>
 	<div class="row justify-content-md-center">
 		<!--Card to display number of peer review and peer testing-->

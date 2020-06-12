@@ -8,7 +8,7 @@ from configurations.HelperClasses import ConfigurationDashboard
 from django.contrib.auth.hashers import make_password
 from collections import OrderedDict
 from peer_review.models import Review,Approval
-from peer_review.HelperClasses import CommonLookups,StatusCodes,CommonCounts
+from peer_review.HelperClasses import CommonLookups,StatusCodes,CommonCounts,CombinedPendingReviewCount
 from django.db.models.functions import ExtractMonth,ExtractYear
 from django.db.models import Count
 from datetime import datetime
@@ -22,6 +22,7 @@ def index(request):
 	context['peer_testing_raised_by_me_count']=CommonCounts.get_peer_testing_raised_by_me(request.user).count()
 	context['peer_testing_raised_to_me_count']=CommonCounts.get_peer_testing_raised_to_me(request.user).count()
 	context['review_raised_to_me_count']=CommonCounts.get_review_raised_to_me(request.user).count()
+	context['toast_pending']=CombinedPendingReviewCount(request.user)
 	return render(request,'site_pages/home_page.html',context)
 
 @login_required(login_url='/reviews/login')
@@ -236,3 +237,4 @@ def peer_testing_graph(request):
 
 def unauthorized_message_view(request):
 	return render(request,'site_pages/access_denied.html')
+
