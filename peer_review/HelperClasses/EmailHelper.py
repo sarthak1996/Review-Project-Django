@@ -37,28 +37,46 @@ def get_review_email_content(request,review,is_updated):
 	if latest_appr_row.delegated:
 		mail_dict['to']=latest_appr_row.raised_to.email
 		mail_dict['cc']=' -c '+latest_appr_row.raised_by.email
-		mail_dict['body']=get_delegated_review_body(request,review,latest_appr_row.raised_by)
+		mail_dict['body']=get_delegated_review_body(request=request,
+													review=review,
+													delegated_by=latest_appr_row.raised_by,
+													addressee=latest_appr_row.raised_to.first_name)
 		#send email to new raise_to mentioning old raised_to and review details
 	elif latest_appr_row.approval_outcome==StatusCodes.get_pending_status():
 		#send email to approver to approve
 		mail_dict['to']=latest_appr_row.raised_to.email
 		mail_dict['cc']=' -c '+review.created_by.email
-		mail_dict['body']=get_pending_review_body(request,review,review.created_by,is_updated)
+		mail_dict['body']=get_pending_review_body(request=request,
+												review=review,
+												action_by=review.created_by,
+												is_updated=is_updated,
+												addressee=latest_appr_row.raised_to.first_name)
 	elif latest_appr_row.approval_outcome==StatusCodes.get_invalid_status():
 		#send email to approver - FYI review has been invalidated
 		mail_dict['to']=latest_appr_row.raised_to.email
 		mail_dict['cc']=' -c '+review.created_by.email
-		mail_dict['body']=get_invalidated_review_body(request,review,review.created_by)
+		mail_dict['body']=get_invalidated_review_body(request=request,
+													review=review,
+													action_by=review.created_by,
+													addressee=latest_appr_row.raised_to.first_name)
 	elif latest_appr_row.approval_outcome==StatusCodes.get_approved_status():
 		#send email to raised_by - FYI review has been approved
 		mail_dict['to']=review.created_by.email
 		mail_dict['cc']=' -c '+latest_appr_row.raised_to.email
-		mail_dict['body']=get_approved_review_body(request,review,latest_appr_row.raised_to,latest_appr_row.approver_comment)
+		mail_dict['body']=get_approved_review_body(request=request,
+													review=review,
+													action_by=latest_appr_row.raised_to,
+													comment=latest_appr_row.approver_comment,
+													addressee=review.created_by.first_name)
 	elif latest_appr_row.approval_outcome==StatusCodes.get_rejected_status():
 		#send email to raised_by - Action Required (review is rejected)
 		mail_dict['to']=review.created_by.email
 		mail_dict['cc']=' -c '+latest_appr_row.raised_to.email
-		mail_dict['body']=get_rejected_review_body(request,review,latest_appr_row.raised_to,latest_appr_row.approver_comment)
+		mail_dict['body']=get_rejected_review_body(request=request,
+													review=review,
+													action_by=latest_appr_row.raised_to,
+													comment=latest_appr_row.approver_comment,
+													addressee=review.created_by.first_name)
 	return mail_dict
 
 
@@ -71,57 +89,63 @@ def get_mail_subject(review):
 	elif review.review_type==CommonLookups.get_peer_testing_question_type():
 		return 'Peer testing raised for review: '+review.bug_number
 
-def get_delegated_review_body(request,review,delegated_by):
+def get_delegated_review_body(request,review,delegated_by,addressee):
 	string_response=str(get_outcome_complete_response(request=request,
 								review=review,
 								action='delegated',
-								action_by=delegated_by).content.decode('utf-8'))
+								action_by=delegated_by,
+								addressee=addressee).content.decode('utf-8'))
 	# print(string_response)
 	return string_response
 
-def get_rejected_review_body(request,review,rejected_by,comment):
+def get_rejected_review_body(request,review,rejected_by,comment,addressee):
 	string_response=str(get_outcome_complete_response(request=request,
 								review=review,
 								action='rejected',
 								action_by=rejected_by,
-								comment=comment).content.decode('utf-8'))
+								comment=comment,
+								addressee=addressee).content.decode('utf-8'))
 	# print(string_response)
 	return string_response
 
-def get_approved_review_body(request,review,approved_by,comment):
+def get_approved_review_body(request,review,approved_by,comment,addressee):
 	string_response=str(get_outcome_complete_response(request=request,
 								review=review,
 								action='approved',
 								action_by=approved_by,
-								comment=comment).content.decode('utf-8'))
+								comment=comment,
+								addressee=addressee).content.decode('utf-8'))
 	# print(string_response)
 	return string_response
 
-def get_invalidated_review_body(request,review,invalidated_by):
+def get_invalidated_review_body(request,review,invalidated_by,addressee):
 	string_response=str(get_outcome_complete_response(request=request,
 								review=review,
 								action='invalidated',
-								action_by=invalidated_by).content.decode('utf-8'))
+								action_by=invalidated_by,
+								addressee=addressee).content.decode('utf-8'))
 	return string_response
 
 
-def get_pending_review_body(request,review,action_by,is_updated):
+def get_pending_review_body(request,review,action_by,is_updated,addressee):
 	context={}
 	context['review']=review
 	context['action_by']=action_by
 	context['is_updated']=is_updated
 	context['peer_review']=True if review.review_type==CommonLookups.get_peer_review_question_type() else False
 	context['high_priority']=True if review.priority == CommonLookups.get_review_high_priority() else False
+	context['addressee']=addressee
 	response=render(request,'email/pending_review_email.html',context)
 	return str(response.content.decode('utf-8'))
 
-def get_outcome_complete_response(request,review,action,action_by,comment=None):
+def get_outcome_complete_response(request,review,action,action_by,addressee,comment=None):
 	context={}
 	context['review']=review
 	context['action']=action
 	context['high_priority']=True if review.priority == CommonLookups.get_review_high_priority() else False
 	context['action_by']=action_by.get_full_name()
 	context['comment']=comment
+	context['addressee']=addressee
 	context['peer_review']=True if review.review_type==CommonLookups.get_peer_review_question_type() else False
 	response=render(request,'email/outcome_complete_review_email.html',context)
 	
