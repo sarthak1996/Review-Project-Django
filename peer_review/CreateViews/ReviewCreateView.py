@@ -4,8 +4,9 @@ import datetime
 from django.shortcuts import render,redirect
 from peer_review.forms.ReviewForm import ReviewForm
 from configurations.models import Question
-from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,PrintObjs,CommonValidations
+from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,PrintObjs,CommonValidations,EmailHelper
 from django.db import transaction
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
@@ -43,6 +44,12 @@ class ReviewCreateView(LoginRequiredMixin,CreateView):
 		ApprovalHelper.mark_review_pending(review=review_obj,
 							user=self.request.user,
 							raised_to=form.cleaned_data['raise_to'])
+
+		EmailHelper.send_email(request=self.request,
+							user=self.request.user,
+							review=review_obj,
+							is_updated=False)
+		messages.success(self.request,'Review ' + review_obj.bug_number + ' sucessfully created - Pending approval')
 		return redirect(review_obj.get_absolute_url())
 		# return redirect(v)
 

@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from peer_review.models import Approval,Review,Exemption
 from configurations.HelperClasses import ConfigurationDashboard
-from peer_review.HelperClasses import PeerReviewApprovalQuestions,StatusCodes,ApprovalHelper,ExemptionHelper,CommonLookups,Timeline
+from peer_review.HelperClasses import PeerReviewApprovalQuestions,StatusCodes,ApprovalHelper,ExemptionHelper,CommonLookups,Timeline,EmailHelper
 from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
 from peer_review.forms.ExemptionForm import ExemptionForm
 from django.forms import modelformset_factory
@@ -154,8 +154,13 @@ def peer_review_approval_form(request,**kwargs):
 				#save answer model from formset
 				formset.save()
 				ApprovalHelper.approve_review(review=review,
-											user=user,
+											user=request.user,
 											approver_comment=None)
+				EmailHelper.send_email(request=request,
+							user=request.user,
+							review=review,
+							is_updated=False)
+				messages.success(request,'Review '+review.bug_number+' successfully approved!')
 				return redirect("peer_review:review_raised_to_me")
 			print('Exemption Formset errors (if any)')
 			print(exemption_formset.errors)
@@ -171,6 +176,11 @@ def invalidate_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
 	ApprovalHelper.invalidate_review(review,request.user)
+	EmailHelper.send_email(request=request,
+							user=request.user,
+							review=review,
+							is_updated=False)
+	messages.success(request,'Review '+review.bug_number+' successfully invalidated!')
 	return redirect(review.get_absolute_url())
 
 # @login_required(login_url='/reviews/login')

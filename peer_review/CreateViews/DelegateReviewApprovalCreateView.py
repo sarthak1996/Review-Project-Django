@@ -2,12 +2,13 @@ from django.views.generic.edit import CreateView
 from peer_review.models import Approval
 from peer_review.forms.DelegateReviewApprovalFlowForm import DelegateReviewApprovalFlowForm
 from django.db import transaction
-from peer_review.HelperClasses import ApprovalHelper,CommonValidations
+from peer_review.HelperClasses import ApprovalHelper,CommonValidations,EmailHelper
 from peer_review.models import Review
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
@@ -31,6 +32,11 @@ class DelegateReviewApprovalCreateView(LoginRequiredMixin,CreateView):
 		ApprovalHelper.delegate_approval(review=review,
 											user=self.request.user,
 											raised_to=form.cleaned_data['raised_to'])
+		EmailHelper.send_email(request=request,
+							user=self.request.user,
+							review=review,
+							is_updated=False)
+		messages.success(self.request,'Review '+review.bug_number+' sucessfully delegated!')
 		return redirect('peer_review:review_raised_to_me')
 		
 		# return redirect('peer_review:review_raised_to_me')

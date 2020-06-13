@@ -1,7 +1,7 @@
 from django.views.generic.edit import UpdateView 
 from peer_review.models import Review
 from peer_review.forms.ReviewForm import ReviewForm
-from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,CommonValidations
+from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper,CommonValidations,EmailHelper
 from django.db import transaction
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
@@ -38,7 +38,11 @@ class ReviewUpdateView(LoginRequiredMixin,UpdateView):
 		ApprovalHelper.mark_review_pending(review=review_obj,
 							user=self.request.user,
 							raised_to=form.cleaned_data['raise_to'])
-		messages.success(self.request,'Review Update Sucessfully - Pending approval')
+		EmailHelper.send_email(request=self.request,
+							user=self.request.user,
+							review=review_obj,
+							is_updated=True)
+		messages.success(self.request,'Review '+review_obj.bug_number+' Updated Sucessfully - Pending approval')
 		return redirect(review_obj.get_absolute_url())
 		
 

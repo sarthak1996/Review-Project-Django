@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from peer_review.models import Review
-from peer_review.HelperClasses import ApprovalHelper
+from peer_review.HelperClasses import ApprovalHelper,EmailHelper
 from django.views.generic.edit import UpdateView 
 from peer_review.forms.ReviewRejectionForm import ReviewRejectionForm
 from django.db import transaction
@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
+from django.contrib import messages
 
 class RejectReviewUpdateView(LoginRequiredMixin,UpdateView):
 	model=Review
@@ -37,7 +38,11 @@ class RejectReviewUpdateView(LoginRequiredMixin,UpdateView):
 		ApprovalHelper.reject_review(review=review_instance,
 										user=self.request.user,
 										approver_comment=form.cleaned_data['approver_comment'])
-		
+		EmailHelper.send_email(request=self.request,
+							user=self.request.user,
+							review=review_instance,
+							is_updated=False)
+		messages.success(self.request,'Review '+review_instance.bug_number+' sucessfully rejected!')
 		return redirect('peer_review:review_raised_to_me')
 
 

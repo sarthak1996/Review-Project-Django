@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
 from peer_review.models import Review
-from peer_review.HelperClasses import ApprovalHelper
+from peer_review.HelperClasses import ApprovalHelper,EmailHelper
 from django.views.generic.edit import UpdateView 
 from peer_testing.forms.PeerTestingApprovalForm import PeerTestingApprovalForm
 from django.db import transaction
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
@@ -36,7 +37,11 @@ class PeerTestingApproveView(LoginRequiredMixin,UpdateView):
 		ApprovalHelper.approve_review(review=review_instance,
 										user=self.request.user,
 										approver_comment=form.cleaned_data['approver_comment'])
-		
+		EmailHelper.send_email(request=self.request,
+							user=self.request.user,
+							review=review_instance,
+							is_updated=False)
+		messages.success(self.request,'Peer testing for '+review_instance.bug_number+ ' approved successfully!')
 		return redirect('peer_testing:peer_testing_raised_to_me')
 
 

@@ -21,7 +21,8 @@ class Review(models.Model):
 	review_type=models.CharField(max_length=10, blank=False,choices=CommonLookups.get_question_types())
 	# num_of_exemption=models.IntegerField(blank=True,default=0) 
 	series_type=models.CharField(max_length=3,blank=True,null=True,choices = CommonLookups.get_series_types())
-	
+	email_subject=models.CharField(max_length=100,blank=True,null=True)
+	email_exceptions=models.CharField(max_length=1000,blank=True,null=True)
 	class Meta:
 		verbose_name_plural = "Reviews"
 	def __str__(self):
@@ -144,4 +145,14 @@ class Review(models.Model):
 		if not exclude or (exclude and 'invalidate' not in exclude):
 			actions['Invalidate']='peer_review:invalidate_review'
 		return actions.items()
+
+
+	def get_email_review_details(self):
+		display_email=OrderedDict()
+		display_email['Bug number']=self.bug_number
+		display_email['Priority']=self.priority
+		display_email['Team']=self.team.team_name
+		display_email['Series']=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
+		return display_email.items()
+
 

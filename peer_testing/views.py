@@ -2,11 +2,12 @@ from django.shortcuts import render,redirect
 from peer_review.HelperClasses import CommonLookups
 from peer_review.models import Approval,Review
 from configurations.HelperClasses import ConfigurationDashboard
-from peer_review.HelperClasses import StatusCodes,PrintObjs,ApprovalHelper,CommonValidations
+from peer_review.HelperClasses import StatusCodes,PrintObjs,ApprovalHelper,CommonValidations,EmailHelper
 from peer_testing.HelperClasses import PeerTestingQuestions
 from django.forms import modelformset_factory
 from django.db import transaction
 import datetime
+from django.contrib import messages
 from django.urls import reverse_lazy
 from peer_testing.models import Answer
 from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
@@ -96,7 +97,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 		print(formset.non_form_errors())
 
 		if all_forms_valid:
-			if review_form.is_valid:
+			if review_form.is_valid():
 				review_instance=review_form.save(commit=False)
 				if not edit:
 					review_instance.created_by=request.user
@@ -143,9 +144,15 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 													raised_to=review_form.cleaned_data['raise_to'])
 				if not edit:
 					formset.save()
-			else:
-				pass
-			return redirect(reverse_lazy('peer_testing:peer_testing_detail_view',kwargs={'obj_pk':review_pk}))
+				EmailHelper.send_email(request=request,
+							user=request.user,
+							review=review_instance,
+							is_updated=edit)
+				if edit:
+					messages.success(request,'Peer testing review '+review_instance.bug_number+' sucessfully updated!')
+				else:
+					messages.success(request,'Peer testing review '+review_instance.bug_number+' sucessfully raised!')
+				return redirect(reverse_lazy('peer_testing:peer_testing_detail_view',kwargs={'obj_pk':review_pk}))
 	return render(request,'peer_testing/raise_peer_testing.html',context_dict)
 
 

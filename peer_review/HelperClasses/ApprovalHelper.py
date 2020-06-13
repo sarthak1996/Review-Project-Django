@@ -98,7 +98,7 @@ class ApprovalHelper():
 		# raised_by = user (since delegation action taken by user)
 		# raised_to = raised to ( passed as raised_to from delegation form)
 		# created_by = user (to preserve history integrity)
-		__create_new_approval_row(review_obj=review,
+		ApprovalHelper.__create_new_approval_row(review_obj=review,
 								raised_by=user,
 								raised_to=raised_to,
 								approval_outcome=StatusCodes.get_pending_status(),
