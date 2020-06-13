@@ -35,6 +35,8 @@ class ReviewDetailView(LoginRequiredMixin,DetailView):
 		context['exemptions']=exemptions
 		context['detail_view_type']='review_user_view'
 		context['is_review_active']='active'
+		context['logged_in_user']=self.request.user
+		context['created_by_user']=review_obj.created_by
 		
 		#approval timeline
 		approval_timeline=Approval.objects.filter(review=review_obj).all()

@@ -15,7 +15,7 @@
 			<div class="card border-dark col-6" >
 				<div class="card-header row">
 					<div class="horizontal_title col align-middle"><h4 class="card_header_title">{{detail_view_card_title}}</h4></div>
-					{% get_action_values detail_obj detail_view_type as actions_drop%}
+					{% get_action_values detail_obj detail_view_type False True as actions_drop%}
     				{% if actions_drop %}
 	    				<div class="horizontal_right_action col-2">
 		    				<div class="dropdown">

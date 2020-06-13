@@ -33,6 +33,8 @@ class ReviewRaisedToMeDetailView(LoginRequiredMixin,DetailView):
 		context['invalidate_label']='Invalidate'
 		context['detail_view_type']='review_approval'
 		context['is_review_active']='active'
+		context['logged_in_user']=self.request.user
+		context['created_by_user']=review_obj.created_by
 
 		#approval timeline
 		approval_timeline=Approval.objects.filter(review=review_obj).all()

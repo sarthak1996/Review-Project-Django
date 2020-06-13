@@ -28,6 +28,8 @@ class PeerTestingApprovalDetailView(LoginRequiredMixin,DetailView):
 		context['delegate_label']='Delegate'
 		context['delegate_view_url']='peer_review:delegate_review'
 		context['is_peer_test_active']='active'
+		context['logged_in_user']=self.request.user
+		context['created_by_user']=review_obj.created_by
 		# context['invalidate_review']=(review_obj.approval_outcome==StatusCodes.get_pending_status())
 		# context['invlidate_view_url']='peer_review:invalidate_review'
 		# context['invalidate_label']='Invalidate'
