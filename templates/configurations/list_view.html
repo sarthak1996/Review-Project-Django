@@ -29,7 +29,7 @@
 	{{page_title}}
 {% endblock %}
 {% block content%}
-
+	
 		
 	
 			<form method="GET">
@@ -198,7 +198,7 @@
 								<button class="btn btn-danger dropdown-toggle right_aligned_action" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 									{% for action_name,action_url in actions_drop %}
-									<a class="dropdown-item" href="{% url action_url obj_pk=obj.pk%}">{{action_name}}</a>
+										<a class="dropdown-item" href="{% url action_url obj_pk=obj.pk%}">{{action_name}}</a>
 									{% endfor %}
 								</div>
 		    				</div>	

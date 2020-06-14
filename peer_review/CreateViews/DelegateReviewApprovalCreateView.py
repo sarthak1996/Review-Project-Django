@@ -6,13 +6,12 @@ from peer_review.HelperClasses import ApprovalHelper,CommonValidations,EmailHelp
 from peer_review.models import Review
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
-class DelegateReviewApprovalCreateView(LoginRequiredMixin,CreateView):
+class DelegateReviewApprovalCreateView(CreateView):
 	model=Approval
 	form_class=DelegateReviewApprovalFlowForm
 	template_name='configurations/create_view.html'
@@ -60,6 +59,7 @@ class DelegateReviewApprovalCreateView(LoginRequiredMixin,CreateView):
 		return kw
 
 
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(DelegateReviewApprovalCreateView, self).dispatch(*args, **kwargs)

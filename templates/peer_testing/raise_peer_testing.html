@@ -3,6 +3,7 @@
 {% block static_head_files %}
 	<link href="{% static 'css/detail_view.css' %}" rel="stylesheet" type="text/css">
 	<script src="{% static 'js/dependent_raise_to_lov.js' %}" type="text/javascript"></script>
+	<script src="{% static 'js/loading_and_disabling_buttons_on_form_submit.js' %}" type="text/javascript"></script>
 	<script>
 		$(document).ready(function(){
 		    $("#id_team").change(function () {
@@ -28,6 +29,7 @@
 	            	{%if dependent_raise_to %}
 	            		data-raise_to-url="{% url lov_raise_to_url %}" 
 	            	{% endif %}
+	            	onsubmit="load_and_disable_button_form_submit();"
 	            	>
 						{% csrf_token %}
 						{% if review_form.non_field_errors %}

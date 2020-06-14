@@ -23,3 +23,5 @@ def enumerate_objects(context,objects):
 @register.simple_tag
 def is_user_manager(user):
 	return is_manager(user)
+
+

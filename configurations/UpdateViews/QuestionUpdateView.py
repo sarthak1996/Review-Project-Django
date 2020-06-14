@@ -2,12 +2,11 @@ from django.views.generic.edit import UpdateView
 from configurations.models import Question
 from configurations.forms.QuestionForm import QuestionForm
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 
-class QuestionUpdateView(LoginRequiredMixin,UpdateView):
+class QuestionUpdateView(UpdateView):
 	model=Question
 	template_name='configurations/create_view.html'
 	# fields=['question_text','question_choice_type','mandatory','series_type','question_type','choices']
@@ -31,6 +30,7 @@ class QuestionUpdateView(LoginRequiredMixin,UpdateView):
 		return context
 
 
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(QuestionUpdateView, self).dispatch(*args, **kwargs)

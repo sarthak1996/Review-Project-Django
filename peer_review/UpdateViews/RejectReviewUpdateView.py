@@ -4,13 +4,12 @@ from peer_review.HelperClasses import ApprovalHelper,EmailHelper
 from django.views.generic.edit import UpdateView 
 from peer_review.forms.ReviewRejectionForm import ReviewRejectionForm
 from django.db import transaction
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 from django.contrib import messages
 
-class RejectReviewUpdateView(LoginRequiredMixin,UpdateView):
+class RejectReviewUpdateView(UpdateView):
 	model=Review
 	template_name='configurations/create_view.html'
 	# fields=[
@@ -48,6 +47,7 @@ class RejectReviewUpdateView(LoginRequiredMixin,UpdateView):
 
 
 
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(RejectReviewUpdateView, self).dispatch(*args, **kwargs)

@@ -1,12 +1,11 @@
 from django.views.generic.detail import DetailView
 
 from configurations.models import Series
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 
-class SeriesDetailView(LoginRequiredMixin,DetailView):
+class SeriesDetailView(DetailView):
 	model=Series
 	template_name='configurations/detail_view.html'
 	context_object_name ='detail_obj'
@@ -30,6 +29,8 @@ class SeriesDetailView(LoginRequiredMixin,DetailView):
 		context['is_conf_active']='active'
 		return context
 
+
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(SeriesDetailView, self).dispatch(*args, **kwargs)

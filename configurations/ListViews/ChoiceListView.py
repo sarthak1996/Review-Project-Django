@@ -2,12 +2,11 @@ from django.views.generic import ListView
 from configurations.models import Choice
 from configurations.HelperClasses import SearchFilterBadges,PaginationHelper
 from configurations.FilterSets import ChoiceFilter
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 
-class ChoiceListView(LoginRequiredMixin,ListView):
+class ChoiceListView(ListView):
 	model=Choice
 	template_name='configurations/list_view.html'
 	redirect_field_name = None
@@ -52,6 +51,7 @@ class ChoiceListView(LoginRequiredMixin,ListView):
 		return context
 
 
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(ChoiceListView, self).dispatch(*args, **kwargs)

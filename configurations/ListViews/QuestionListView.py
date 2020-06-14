@@ -5,12 +5,11 @@ from collections import OrderedDict
 from peer_review.HelperClasses import CommonLookups
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 
-class QuestionListView(LoginRequiredMixin,ListView):
+class QuestionListView(ListView):
 	model=Question
 	template_name='configurations/list_view.html'
 	redirect_field_name = None
@@ -86,6 +85,7 @@ class QuestionListView(LoginRequiredMixin,ListView):
 		return context
 
 
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(QuestionListView, self).dispatch(*args, **kwargs)

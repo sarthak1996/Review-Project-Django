@@ -5,12 +5,11 @@ from collections import OrderedDict
 from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,PaginationHelper
 from peer_testing.FilterSets import PeerTestingFilter
 from collections import OrderedDict
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 
-class PeerTestingReviewListView(LoginRequiredMixin,ListView):
+class PeerTestingReviewListView(ListView):
 	model=Review
 	template_name='configurations/list_view.html'
 	redirect_field_name = None
@@ -92,7 +91,7 @@ class PeerTestingReviewListView(LoginRequiredMixin,ListView):
 
 
 
-
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(PeerTestingReviewListView, self).dispatch(*args, **kwargs)

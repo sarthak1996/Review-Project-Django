@@ -186,3 +186,8 @@ hr {
   color: red;
   font-weight: 700;
 }
+
+.progress-bar{
+  height: 1em;
+  border-radius: 8px;
+}

@@ -27,7 +27,7 @@ def send_email(request,user,review,is_updated=False):
 		review.last_updated_by=user
 		review.save()
 		print(e)
-		messages.error(request,'Email could not be sent : '+e) #to check if custom error should be thrown
+		messages.error(request,'Email could not be sent : '+str(e)) #to check if custom error should be thrown
 	messages.success(request,'Email has been sent')
 
 def get_review_email_content(request,review,is_updated):
@@ -57,7 +57,7 @@ def get_review_email_content(request,review,is_updated):
 		mail_dict['cc']=' -c '+review.created_by.email
 		mail_dict['body']=get_invalidated_review_body(request=request,
 													review=review,
-													action_by=review.created_by,
+													invalidated_by=review.created_by,
 													addressee=latest_appr_row.raised_to.first_name)
 	elif latest_appr_row.approval_outcome==StatusCodes.get_approved_status():
 		#send email to raised_by - FYI review has been approved
@@ -65,7 +65,7 @@ def get_review_email_content(request,review,is_updated):
 		mail_dict['cc']=' -c '+latest_appr_row.raised_to.email
 		mail_dict['body']=get_approved_review_body(request=request,
 													review=review,
-													action_by=latest_appr_row.raised_to,
+													approved_by=latest_appr_row.raised_to,
 													comment=latest_appr_row.approver_comment,
 													addressee=review.created_by.first_name)
 	elif latest_appr_row.approval_outcome==StatusCodes.get_rejected_status():
@@ -74,7 +74,7 @@ def get_review_email_content(request,review,is_updated):
 		mail_dict['cc']=' -c '+latest_appr_row.raised_to.email
 		mail_dict['body']=get_rejected_review_body(request=request,
 													review=review,
-													action_by=latest_appr_row.raised_to,
+													rejected_by=latest_appr_row.raised_to,
 													comment=latest_appr_row.approver_comment,
 													addressee=review.created_by.first_name)
 	return mail_dict

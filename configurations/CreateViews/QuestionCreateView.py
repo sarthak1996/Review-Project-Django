@@ -3,12 +3,11 @@ from configurations.models import Question
 import datetime 
 from configurations.forms.QuestionForm import QuestionForm
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 
-class QuestionCreateView(LoginRequiredMixin,CreateView):
+class QuestionCreateView(CreateView):
 	model= Question
 	form_class=QuestionForm
 	template_name='configurations/create_view.html'
@@ -31,6 +30,7 @@ class QuestionCreateView(LoginRequiredMixin,CreateView):
 		context['choice_dependent_url']='configurations:ajax_choices_for_questions'
 		return context
 		
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(QuestionCreateView, self).dispatch(*args, **kwargs)

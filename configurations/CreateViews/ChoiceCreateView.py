@@ -3,12 +3,11 @@ from configurations.models import Choice
 import datetime 
 from configurations.forms.ChoiceForm import ChoiceForm
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 
-class ChoiceCreateView(LoginRequiredMixin,CreateView):
+class ChoiceCreateView(CreateView):
 	model= Choice
 	form_class=ChoiceForm
 	template_name='configurations/create_view.html'
@@ -28,6 +27,7 @@ class ChoiceCreateView(LoginRequiredMixin,CreateView):
 		context['is_conf_active']='active'
 		return context
 
+	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(ChoiceCreateView, self).dispatch(*args, **kwargs)
