@@ -24,7 +24,8 @@ class PeerTestingReviewListView(ListView):
 		context['page_title']='Peer Testing'
 		context['create_button_rendered']=True
 		context['is_peer_test_active']='active'
-		context['list_view_type']='testing_review_user_view'
+		context['list_view_type']='peer_testing_list_view'
+		context['logged_in_user']=self.request.user
 
 		get_request=self.request.GET
 		f_bug_number=get_request.get('filter_form-bug_number__icontains',None)

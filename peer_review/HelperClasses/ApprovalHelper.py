@@ -73,7 +73,7 @@ class ApprovalHelper():
 								approver_comment=None,
 								created_by=user)
 	@staticmethod
-	def mark_review_pending(review,user,raised_to):
+	def mark_review_pending(review,user,raised_to,comment=None):
 		# latest_approval_row=ApprovalHelper.get_latest_approval_row(review)
 		# raised_by = user (since pending mark action taken by user)
 		# raised_to = raised to (since this method is only called if 
@@ -85,7 +85,7 @@ class ApprovalHelper():
 								raised_to=raised_to,
 								approval_outcome=StatusCodes.get_pending_status(),
 								delegated=False,
-								approver_comment=None,
+								approver_comment=comment,
 								created_by=user)
 
 	@staticmethod

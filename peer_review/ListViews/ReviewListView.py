@@ -23,7 +23,9 @@ class ReviewListView(ListView):
 		context['page_title']='Peer Review'
 		context['create_button_rendered']=True
 		context['is_review_active']='active'
-		context['list_view_type']='review_user_view'
+		context['list_view_type']='review_list_view'
+		context['logged_in_user']=self.request.user
+		
 		get_request=self.request.GET
 		f_bug_number=get_request.get('filter_form-bug_number__icontains',None)
 		f_raised_to=get_request.get('filter_form-raised_to',None)

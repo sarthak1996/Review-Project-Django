@@ -103,6 +103,8 @@ class Review(models.Model):
 			actions['Update']='peer_review:review_update_view'
 		if not exclude or (exclude and 'invalidate' not in exclude):
 			actions['Invalidate']='peer_review:invalidate_review'
+		if not exclude or (exclude and 'follow_up' not in exclude):
+			actions['Follow up']='peer_review:follow_up_review'
 		return actions.items()
 
 	def get_review_raised_to_me_actions(self,exclude=None):
@@ -144,6 +146,8 @@ class Review(models.Model):
 			actions['Update']='peer_testing:peer_testing_update'
 		if not exclude or (exclude and 'invalidate' not in exclude):
 			actions['Invalidate']='peer_review:invalidate_review'
+		if not exclude or (exclude and 'follow_up' not in exclude):
+			actions['Follow up']='peer_review:follow_up_review'
 		return actions.items()
 
 
