@@ -1,5 +1,5 @@
 from django.db.models.functions import ExtractYear
-from peer_review.models import Approval
+from peer_review.models import Approval,Review
 from peer_review.HelperClasses import CommonLookups,StatusCodes
 
 def get_review_raised_by_me(user,year=None):
@@ -45,10 +45,12 @@ def get_peer_testing_raised_to_me(user,year=None):
 						ex_year=year)
 
 
-def get_perct_num_reviews_by_apr_outcome(qs,user,review_type,raised_to_me):
+def get_perct_num_reviews_by_apr_outcome(qs,user,review_type,raised_to_me,from_manager=False):
 	total_reviews=qs.count()
 	filtered_reviews=None
-	if review_type==CommonLookups.get_peer_testing_question_type():
+	if from_manager:
+		filtered_reviews=qs
+	elif review_type==CommonLookups.get_peer_testing_question_type():
 		if raised_to_me:
 			filtered_reviews=get_peer_testing_raised_to_me(user)
 		else:
@@ -105,7 +107,8 @@ def normalize_pcts(perct_dict):
 	return perct_dict
 
 
+def get_review_raised_by_my_team(user,teams):
+	return Review.objects.filter(created_by__team__in = teams,review_type=CommonLookups.get_peer_review_question_type()).all()
 
-
-
-
+def get_peer_testing_by_my_team(user,teams):
+	return Review.objects.filter(created_by__team__in=teams,review_type=CommonLookups.get_peer_testing_question_type()).all()

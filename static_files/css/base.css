@@ -29,3 +29,7 @@
 textarea{
 	height: 150px !important;
 }
+
+.stretched_card{
+  display: inline-flex;
+}

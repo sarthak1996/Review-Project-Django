@@ -24,8 +24,16 @@ def get_action_values(context,*args):
 			if args[2]:
 				exclude=None
 		if args[1]=='review_approval':
+			if len(args)>=4: #only check for review objects (configuration objects are already secured via manager perm and not via individual created objects)
+				if args[3] : #to check if logged in user = created by
+					if context['logged_in_user']!=context['raised_to_user']:
+						return None
 			return args[0].get_review_raised_to_me_actions(exclude=exclude)
 		elif args[1]=='testing_review_approval':
+			if len(args)>=4: #only check for review objects (configuration objects are already secured via manager perm and not via individual created objects)
+				if args[3] : #to check if logged in user = created by
+					if context['logged_in_user']!=context['raised_to_user']:
+						return None
 			return args[0].get_peer_testing_raised_to_me_actions()
 		elif args[1]=='review_user_view':
 			if len(args)>=4: #only check for review objects (configuration objects are already secured via manager perm and not via individual created objects)

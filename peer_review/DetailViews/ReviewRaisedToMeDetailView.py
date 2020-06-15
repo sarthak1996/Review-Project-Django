@@ -1,5 +1,5 @@
 from django.views.generic.detail import DetailView
-from peer_review.HelperClasses import StatusCodes,ApprovalTimeline
+from peer_review.HelperClasses import StatusCodes,ApprovalTimeline,ApprovalHelper
 from peer_review.models import Review
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
@@ -34,6 +34,7 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['is_review_active']='active'
 		context['logged_in_user']=self.request.user
 		context['created_by_user']=review_obj.created_by
+		context['raised_to_user']=ApprovalHelper.get_latest_approval_row().raised_to
 
 		#approval timeline
 		approval_timeline=Approval.objects.filter(review=review_obj).all()

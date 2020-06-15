@@ -38,6 +38,11 @@
 		  
 		  <div class="collapse navbar-collapse" id="navbarNav">
 		    <ul class="navbar-nav mr-auto">
+		      {% if manager %}
+			      <li class="nav-item {{is_man_home_active}}">
+			        <a class="nav-link" href="{% url 'manager_activities:manager_home' %}">My Team</a>
+			      </li>
+		      {% endif %}
 		      <li class="nav-item {{is_peer_test_active}}">
 		        <a class="nav-link" href="{% url 'peer_testing:peer_testing_home' %}">Peer testing</a>
 		      </li>

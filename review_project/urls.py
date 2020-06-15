@@ -21,4 +21,5 @@ urlpatterns = [
     path('reviews/',include('configurations.urls')),
     path('peer_reviews/',include('peer_review.urls')),
     path('peer_testing/',include('peer_testing.urls')),
+    path('manager_activities/',include('manager_activities.urls'))
 ]

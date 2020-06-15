@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'configurations.apps.ConfigurationsConfig',
     'peer_review.apps.PeerReviewConfig',
     'peer_testing.apps.PeerTestingConfig',
+    'manager_activities.apps.ManagerActivitiesConfig',
     'django_filters',
     'bootstrapform'
 ]
