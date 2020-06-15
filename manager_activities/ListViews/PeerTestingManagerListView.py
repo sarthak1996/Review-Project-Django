@@ -21,7 +21,9 @@ class PeerTestingManagerListView(ListView):
 		context['detail_view_url']='manager_activities:manager_peer_testing_view'
 		context['page_title']='Peer Testing - Manager'
 		context['is_man_home_active']='active'
-		context['list_view_type']='testing_review_user_view'
+		context['list_view_type']='peer_testing_list_view'
+		context['restrict_by_user_prop']=True
+		context['logged_in_user']=self.request.user
 
 		get_request=self.request.GET
 		f_bug_number=get_request.get('filter_form-bug_number__icontains',None)

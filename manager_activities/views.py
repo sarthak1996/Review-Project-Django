@@ -39,5 +39,6 @@ def manager_view_landing_page(request):
 													))
 
 	context['manager_counts']=manager_counts
+	context['is_man_home_active']='active'
 	context['toast_pending']=CombinedPendingReviewCount(request.user)
 	return render(request,'manager_activities/manager_home.html',context)
