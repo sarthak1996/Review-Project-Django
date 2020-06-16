@@ -7,6 +7,7 @@ from collections import OrderedDict
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
+from configurations.models import Team
 
 class PeerReviewManagerListView(ListView):
 	model=Review
@@ -49,7 +50,7 @@ class PeerReviewManagerListView(ListView):
 							'raised_to: %':f_raised_to,
 							'priority: ':f_priority,
 							'approval_outcome: ':f_approval_outcome,
-							'team: ':f_team,
+							'team: ':Team.objects.get(pk=f_team).team_name if f_team else None,
 							'series_type: ':f_series_type
 							})
 		print(filter_badge_dict)
@@ -67,9 +68,10 @@ class PeerReviewManagerListView(ListView):
 
 		search_drop_downs_kwargs=OrderedDict({'filter_form-priority':CommonLookups.get_review_priorities(),
 									'filter_form-approval_outcome':CommonLookups.get_approval_outcomes(),
-									'filter_form-series_type':CommonLookups.get_series_types()
+									'filter_form-series_type':CommonLookups.get_series_types(),
+									'filter_form-team':CommonLookups.get_team_lov(Team.objects.all())
 									})
-		search_drop_downs_args=['Priority','Approval outcome','Series type']
+		search_drop_downs_args=['Priority','Approval outcome','Series type','Team']
 		#mandatory search drop down
 		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs

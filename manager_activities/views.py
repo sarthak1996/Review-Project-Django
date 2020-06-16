@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from peer_review.HelperClasses import CommonCounts,CombinedPendingReviewCount
+from peer_review.HelperClasses import CommonCounts,CombinedPendingReviewCount,StatusCodes
 from manager_activities.HelperClasses import ManagerDashboardCount
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
@@ -17,10 +17,10 @@ def manager_view_landing_page(request):
 	colors=['image_floating_card_red','image_floating_card_green','image_floating_card_indigo','image_floating_card_lime','image_floating_card_brown']
 	manager_counts=[]
 	for idx,team in enumerate(teams):
-		count=CommonCounts.get_review_raised_by_my_team(request.user,[team]).count()
+		count=CommonCounts.get_review_raised_by_my_team(request.user,[team]).filter(approval_outcome=StatusCodes.get_pending_status()).count()
 		title='Peer Reviews'
 		url='manager_activities:peer_review_manager_list'
-		filter='?filter_form-approval_outcome=PND&filter_form-team='+team.team_name#add team and pending filter
+		filter='?filter_form-approval_outcome=PND&filter_form-team='+str(team.pk)#add team and pending filter
 		manager_counts.append(ManagerDashboardCount(title=title,
 													team=team.team_name,
 													count=count,
@@ -29,10 +29,10 @@ def manager_view_landing_page(request):
 													color=colors[idx%len(colors)],
 													url=url
 													))
-		count=CommonCounts.get_peer_testing_by_my_team(request.user,[team]).count()
+		count=CommonCounts.get_peer_testing_by_my_team(request.user,[team]).filter(approval_outcome=StatusCodes.get_pending_status()).count()
 		title='Peer Testings'
 		url='manager_activities:peer_testing_manager_list'
-		filter='?filter_form-approval_outcome=PND&filter_form-team='+team.team_name#add team and pending filter
+		filter='?filter_form-approval_outcome=PND&filter_form-team='+str(team.pk)#add team and pending filter
 		manager_counts.append(ManagerDashboardCount(title=title,
 													team=team.team_name,
 													count=count,

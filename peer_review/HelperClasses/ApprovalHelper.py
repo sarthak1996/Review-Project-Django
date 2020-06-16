@@ -141,5 +141,3 @@ class ApprovalHelper():
 		PrintObjs.print_approval_obj(approval_obj)
 		approval_obj.save()
 
-
-
