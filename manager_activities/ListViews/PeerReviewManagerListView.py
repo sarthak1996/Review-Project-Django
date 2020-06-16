@@ -6,10 +6,10 @@ from peer_review.FilterSets import ReviewFilter
 from collections import OrderedDict
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
-from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
+from configurations.HelperClasses.PermissionResolver import is_manager
 from configurations.models import Team
 
-class ReviewListView(ListView):
+class PeerReviewManagerListView(ListView):
 	model=Review
 	template_name='configurations/list_view.html'
 	redirect_field_name = None
@@ -18,14 +18,13 @@ class ReviewListView(ListView):
 
 	def get_context_data(self,**kwargs):
 		context = super().get_context_data(**kwargs)
-		context['create_url']='peer_review:review_create_view'
-		context['create_object_button_title']='Create Peer Review'
-		context['detail_view_url']='peer_review:review_detail_view'
-		context['page_title']='Peer Review'
-		context['create_button_rendered']=True
-		context['is_review_active']='active'
-		context['list_view_type']='review_list_view'
+		context['detail_view_url']='manager_activities:manager_review_view'
+		context['page_title']='Peer Review - Manager'
+		context['create_button_rendered']=False
+		context['is_man_home_active']='active'
+		context['list_view_type']='manager_view'
 		context['logged_in_user']=self.request.user
+		# context['restrict_by_user_prop']=True
 		
 		get_request=self.request.GET
 		f_bug_number=get_request.get('filter_form-bug_number__icontains',None)
@@ -77,15 +76,16 @@ class ReviewListView(ListView):
 		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		
-		context['reset_filters']='peer_review:review_list_view'
+		context['reset_filters']='manager_activities:peer_review_manager_list'
 		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:team_update_view')
 
 							
 		context['progressbar']=True
-		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=CommonCounts.get_review_raised_by_me(self.request.user),
+		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=self.get_queryset(),
 																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_review_question_type(),
-																		raised_to_me=False)
+																		raised_to_me=False,
+																		from_manager=True)
 		context={**context,**progress_dict}
 		# print('Progress bar:')
 		# print(context)
@@ -94,12 +94,12 @@ class ReviewListView(ListView):
 
 	def get_queryset(self):
 		req=self.request 
-		return Review.objects.filter(created_by=req.user,review_type=CommonLookups.get_peer_review_question_type()).all()
-
+		teams=[team for team in req.user.managed_teams.all()]
+		return CommonCounts.get_review_raised_by_my_team(req.user,teams)
 		
 
 
 	@method_decorator(login_required(login_url='/reviews/login'))
-	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
+	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
-		return super(ReviewListView, self).dispatch(*args, **kwargs)
+		return super(PeerReviewManagerListView, self).dispatch(*args, **kwargs)

@@ -13,7 +13,7 @@ def get_approval_timeline(review):
 	timeline=[]
 	for apr in distinct_approval_objs:
 		timeline.append(Timeline(title=apr.raised_to.get_full_name(),
-								description=['Approver comment: '+apr.approver_comment,'Delegated: '+apr.delegated] if apr.approver_comment else None,
+								description=['Approver comment: '+apr.approver_comment,'Delegated: '+str(apr.delegated)] if apr.approver_comment else None,
 								is_url=False,
 								title_right_floater=CommonLookups.get_approval_value(apr.approval_outcome))
 						)

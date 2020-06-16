@@ -1,0 +1,2 @@
+from .PeerReviewManagerDetailView import PeerReviewManagerDetailView
+from .PeerTestingManagerDetailView import PeerTestingManagerDetailView

@@ -103,6 +103,8 @@ class Review(models.Model):
 			actions['Update']='peer_review:review_update_view'
 		if not exclude or (exclude and 'invalidate' not in exclude):
 			actions['Invalidate']='peer_review:invalidate_review'
+		if not exclude or (exclude and 'follow_up' not in exclude):
+			actions['Follow up']='peer_review:follow_up_review'
 		return actions.items()
 
 	def get_review_raised_to_me_actions(self,exclude=None):
@@ -144,6 +146,8 @@ class Review(models.Model):
 			actions['Update']='peer_testing:peer_testing_update'
 		if not exclude or (exclude and 'invalidate' not in exclude):
 			actions['Invalidate']='peer_review:invalidate_review'
+		if not exclude or (exclude and 'follow_up' not in exclude):
+			actions['Follow up']='peer_review:follow_up_review'
 		return actions.items()
 
 
@@ -155,4 +159,8 @@ class Review(models.Model):
 		display_email['Series']=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		return display_email.items()
 
+	def get_follow_up_action(self):
+		if self.approval_outcome==StatusCodes.get_pending_status():
+			return {'Follow up':'peer_review:follow_up_review'}.items()
+		return None
 
