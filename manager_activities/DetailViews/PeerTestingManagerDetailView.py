@@ -43,7 +43,7 @@ class PeerTestingManagerDetailView(DetailView):
 		context['right_aligned_timeline']=True
 		context['approval_timeline']=approval_history
 		context['approval_timeline_title']='Approval History'
-		context['detail_view_type']='testing_review_user_view'
+		context['detail_view_type']='manager_view'
 		return context
 
 

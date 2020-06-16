@@ -44,8 +44,12 @@ def get_review_email_content(request,review,is_updated,follow_up):
 		#send email to new raise_to mentioning old raised_to and review details
 	elif latest_appr_row.approval_outcome==StatusCodes.get_pending_status():
 		#send email to approver to approve
-		mail_dict['to']=latest_appr_row.raised_to.email
-		mail_dict['cc']=' -c '+review.created_by.email
+		if follow_up:
+			mail_dict['to']=latest_appr_row.raised_to.email.trim()+','+review.created_by.email.trim()
+			mail_dict['cc']=request.user.email
+		else:
+			mail_dict['to']=latest_appr_row.raised_to.email
+			mail_dict['cc']=' -c '+review.created_by.email
 		mail_dict['body']=get_pending_review_body(request=request,
 												review=review,
 												action_by=review.created_by,
@@ -135,8 +139,21 @@ def get_pending_review_body(request,review,action_by,is_updated,addressee,follow
 	context['is_updated']=is_updated
 	context['peer_review']=True if review.review_type==CommonLookups.get_peer_review_question_type() else False
 	context['high_priority']=True if review.priority == CommonLookups.get_review_high_priority() else False
-	context['addressee']=addressee
+	context['from']=request.user.first_name
+	if not follow_up:
+		context['addressee']=addressee
 	context['follow_up']=follow_up
+	if follow_up:
+		if context['peer_review']:
+			context['apr_url']='peer_review:review_detail_view'
+		else:
+			context['apr_url']='peer_testing:peer_testing_detail_view'
+	else:
+		if context['peer_review']:
+			context['apr_url']='peer_review:review_detail_approve_view'
+		else:
+			context['apr_url']='peer_testing:peer_testing_approve_detail_view'
+
 	latest_apr_row=ApprovalHelper.get_latest_approval_row(review)
 	context['follow_up_comment']=latest_apr_row.approver_comment
 	response=render(request,'email/pending_review_email.html',context)
@@ -151,6 +168,20 @@ def get_outcome_complete_response(request,review,action,action_by,addressee,comm
 	context['comment']=comment
 	context['addressee']=addressee
 	context['peer_review']=True if review.review_type==CommonLookups.get_peer_review_question_type() else False
+	context['from']=request.user.first_name
+	if review.delegated:
+		if context['peer_review']:
+			context['apr_url']='peer_review:review_detail_approve_view'
+		else:
+			context['apr_url']='peer_testing:peer_testing_approve_detail_view'
+	elif review.approval_outcome in [StatusCodes.get_approved_status,
+										StatusCodes.get_rejected_status,
+										StatusCodes.get_invalid_status]:
+		if context['peer_review']:
+			context['apr_url']='peer_review:review_detail_view'
+		else:
+			context['apr_url']='peer_testing:peer_testing_detail_view'
+
 	response=render(request,'email/outcome_complete_review_email.html',context)
 	
 	return response

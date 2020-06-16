@@ -24,7 +24,7 @@ class PeerReviewManagerDetailView(DetailView):
 		exemptions=review_obj.exemption_review_assoc.all()
 		context['show_exemptions']=(exemptions.count()>0)
 		context['exemptions']=exemptions
-		context['detail_view_type']='review_user_view'
+		context['detail_view_type']='manager_view'
 		context['is_man_home_active']='active'
 		context['logged_in_user']=self.request.user
 		context['created_by_user']=review_obj.created_by
