@@ -64,4 +64,8 @@ def get_series_type_value(id):
 
 def get_pagination_value():
 	return 10
+
+def get_team_lov(teams):
+		return [(team.pk,team.team_name) for team in teams] if teams else None
+
 	

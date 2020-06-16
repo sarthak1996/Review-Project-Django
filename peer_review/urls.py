@@ -12,7 +12,8 @@ from peer_review.DetailViews import(
 	)
 from peer_review.UpdateViews import(
 	ReviewUpdateView,
-	RejectReviewUpdateView
+	RejectReviewUpdateView,
+	FollowUpUpdateView
 	)
 from peer_review.CreateViews import(
 	ReviewCreateView,
@@ -32,5 +33,6 @@ urlpatterns =[
    	url(r'^delegate_approval/(?P<obj_pk>\d+)$',DelegateReviewApprovalCreateView.as_view(),name='delegate_review'),
    	url(r'^invalidate_review/(?P<obj_pk>\d+)$',views.invalidate_review,name='invalidate_review'),
    	url(r'^reject_review/(?P<obj_pk>\d+)$',RejectReviewUpdateView.as_view(),name='reject_review'),
-   	path('ajax/load_raise_to_review',views.load_users_based_on_team,name='ajax_load_raise_to_lov')
+   	path('ajax/load_raise_to_review',views.load_users_based_on_team,name='ajax_load_raise_to_lov'),
+   	url(r'^follow_up/(?P<obj_pk>\d+)$',FollowUpUpdateView.as_view(),name='follow_up_review')
 ]

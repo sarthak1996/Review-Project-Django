@@ -4,11 +4,9 @@
 </head>
 <body>
 	<h2>Hi {{addressee}}</h2>
+	<h3> Email from: {{from}}</h3>
 	<h3> Review for bug: 
-		{% if peer_review %}<a href="http://127.0.0.1:8000{% url 'peer_review:review_detail_view' obj_pk=review.pk %}">{{review.bug_number}}</a>
-		{% else %}
-		<a href="http://127.0.0.1:8000{% url 'peer_testing:peer_testing_detail_view' obj_pk=review.pk %}">{{review.bug_number}}</a>
-		{% endif %} is {{action}} by {{action_by}}</h3>
+		<a href="http://127.0.0.1:8000{% url apr_url obj_pk=review.pk %}">{{review.bug_number}}</a> is {{action}} by {{action_by}}</h3>
 		{% if comment %}
 			<strong>Approver Comment: </strong>{{comment}}
 		{% endif %}
