@@ -107,8 +107,23 @@ def normalize_pcts(perct_dict):
 	return perct_dict
 
 
-def get_review_raised_by_my_team(user,teams):
-	return Review.objects.filter(created_by__team__in = teams,review_type=CommonLookups.get_peer_review_question_type()).all()
+def get_review_raised_by_my_team(user,teams,year=None):
+	if not year:
+		return Review.objects.filter(created_by__team__in = teams,
+			review_type=CommonLookups.get_peer_review_question_type()).all()
+	else:
+		return Review.objects.filter(created_by__team__in = teams,
+			review_type=CommonLookups.get_peer_review_question_type())\
+			.annotate(ex_year=ExtractYear('creation_date'))\
+			.filter(ex_year=year).all()
 
-def get_peer_testing_by_my_team(user,teams):
-	return Review.objects.filter(created_by__team__in=teams,review_type=CommonLookups.get_peer_testing_question_type()).all()
+
+def get_peer_testing_by_my_team(user,teams,year=None):
+	if not year:
+		return Review.objects.filter(created_by__team__in=teams,
+			review_type=CommonLookups.get_peer_testing_question_type()).all()
+	else: 
+		return Review.objects.filter(created_by__team__in=teams,
+			review_type=CommonLookups.get_peer_testing_question_type())\
+			.annotate(ex_year=ExtractYear('creation_date'))\
+			.filter(ex_year=year).all()

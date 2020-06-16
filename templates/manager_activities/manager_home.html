@@ -10,6 +10,8 @@
   <script src="{% static 'js/external/Chartjs.js' %}" type="text/javascript"></script>
   <script type="text/javascript">
     $(document).ready(function(){
+      get_peer_review_graph_manager();
+      get_peer_testing_graph_manager();
     });
 
 
@@ -70,6 +72,24 @@
     {% endfor %}
 		
   </div>
+
+  <div class="row justify-content-md-center">
+      <div class="card card-signin my-5 col">
+        <div class="card-body">
+          <div class="container">
+            <canvas id="review_graph" data-url="{% url 'manager_activities:ajax_peer_review_graph_manager' %}" ></canvas>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="row justify-content-md-center">
+    <div class="card card-signin my-5 col">
+        <div class="card-body">
+          <div class="container">
+            <canvas id="peer_testing_graph" data-url="{% url 'manager_activities:ajax_peer_testing_graph_manager' %}" ></canvas>
+          </div>
+        </div>
+      </div>
 		
 {% endblock %}
 

@@ -19,4 +19,6 @@ urlpatterns =[
 	path('peer_testing_manager_list',PeerTestingManagerListView.as_view(),name='peer_testing_manager_list'),
 	url(r'^manager_review_view/(?P<obj_pk>\d+)$',PeerReviewManagerDetailView.as_view(),name='manager_review_view'),
 	url(r'^manager_peer_testing_view/(?P<obj_pk>\d+)$',PeerTestingManagerDetailView.as_view(),name='manager_peer_testing_view'),
+	path('ajax_peer_testing_graph_manager',views.peer_testing_graph_manager,name='ajax_peer_testing_graph_manager'),
+	path('ajax_peer_review_graph_manager',views.peer_review_graph_manager,name='ajax_peer_review_graph_manager')
 ]
