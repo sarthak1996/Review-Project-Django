@@ -11,10 +11,12 @@ def send_email(request,user,review,is_updated=False,follow_up=False):
 	to,cc=mail_dict['to'],mail_dict['cc']
 	body,subject=mail_dict['body'],mail_dict['subject']
 	
-	if not review.email_subject or review.email_subject!=subject:
+	if not review.email_subject:
 		review.email_subject=subject
 		review.last_updated_by=user
 		review.save()
+	else:
+		subject='Re: '+subject.strip()
 	try:
 		a = subprocess.check_call('echo "'+ 
 									body +
