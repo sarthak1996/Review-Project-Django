@@ -11,6 +11,7 @@ class Series(models.Model):
 	last_update_date=models.DateTimeField(auto_now=True)
 	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='series_created_by',on_delete=models.PROTECT)
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='series_last_update_by',on_delete=models.PROTECT)
+	version = models.IntegerField(default=0)
 	class Meta:
 		verbose_name_plural = "Series"
 

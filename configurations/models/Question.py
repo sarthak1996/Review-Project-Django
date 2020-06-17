@@ -16,7 +16,7 @@ class Question(models.Model):
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='question_last_update_by',on_delete=models.PROTECT)
 	choices=models.ManyToManyField(Choice,blank=True,related_name='question_choices_assoc')
 	question_type=models.CharField(max_length=10, blank=False,choices=CommonLookups.get_question_types())
-	
+	version = models.IntegerField(default=0)
 	class Meta:
 		verbose_name_plural = "Questions"
 	def __str__(self):
