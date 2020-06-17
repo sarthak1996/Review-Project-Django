@@ -79,10 +79,13 @@ class PeerTestingManagerListView(ListView):
 		
 		context['reset_filters']='manager_activities:peer_testing_manager_list'
 		context['progressbar']=True
-		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=self.get_queryset(),
+		print('Manager list view')
+		print(context['filter'].qs)
+		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=context['filter'].qs,
 																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_testing_question_type(),
-																		raised_to_me=False)
+																		raised_to_me=False,
+																		from_manager=True)
 		context={**context,**progress_dict}
 		return context
 

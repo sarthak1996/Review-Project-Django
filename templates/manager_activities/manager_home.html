@@ -29,7 +29,7 @@
 	<!--Latest notifications-->
      <ul class="list-group col-6">
         {% for key,val in toast_pending.get_peer_review_to_my_team_pending_count %}
-          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">{{key}}&nbsp;in pending status
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-primary">{{key}}&nbsp;in pending status
             <span class="badge badge-primary badge-pill">{{val}}</span>
           </li>
         {% endfor %}
@@ -37,7 +37,7 @@
 
       <ul class="list-group col-6">
         {% for key,val in toast_pending.get_peer_testing_to_my_team_pending_count %}
-          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">{{key}}&nbsp;in pending status
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-info">{{key}}&nbsp;in pending status
             <span class="badge badge-primary badge-pill">{{val}}</span>
           </li>
         {% endfor %}

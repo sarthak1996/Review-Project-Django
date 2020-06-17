@@ -81,7 +81,7 @@ class PeerReviewManagerListView(ListView):
 
 							
 		context['progressbar']=True
-		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=self.get_queryset(),
+		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=context['filter'].qs,
 																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_review_question_type(),
 																		raised_to_me=False,
