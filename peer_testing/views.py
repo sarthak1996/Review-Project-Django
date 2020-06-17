@@ -157,4 +157,15 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 
 
 
-
+@login_required(login_url='/reviews/login')
+@user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
+def invalidate_peer_test(request,**kwargs):
+	review_id=kwargs['obj_pk']
+	review=Review.objects.filter(pk=review_id).first()
+	ApprovalHelper.invalidate_review(review,request.user)
+	EmailHelper.send_email(request=request,
+							user=request.user,
+							review=review,
+							is_updated=False)
+	messages.success(request,'Review '+review.bug_number+' successfully invalidated!')
+	return redirect(review.get_absolute_url())

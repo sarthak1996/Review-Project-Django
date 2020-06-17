@@ -1,1 +1,3 @@
 from .PeerTestingApproveView import PeerTestingApproveView
+from .RejectPeerTestingUpdateView import RejectPeerTestingUpdateView
+from .FollowUpPeerTestingUpdateView import FollowUpPeerTestingUpdateView

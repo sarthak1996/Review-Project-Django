@@ -104,7 +104,8 @@ class Review(models.Model):
 		if not exclude or (exclude and 'invalidate' not in exclude):
 			actions['Invalidate']='peer_review:invalidate_review'
 		if not exclude or (exclude and 'follow_up' not in exclude):
-			actions['Follow up']='peer_review:follow_up_review'
+			if self.approval_outcome != StatusCodes.get_invalid_status():
+				actions['Follow up']='peer_review:follow_up_review'
 		return actions.items()
 
 	def get_review_raised_to_me_actions(self,exclude=None):
@@ -130,9 +131,9 @@ class Review(models.Model):
 		if not exclude or (exclude and 'approve' not in exclude):
 			actions['Approve']='peer_testing:peer_testing_approve'
 		if not exclude or (exclude and 'reject' not in exclude):
-			actions['Reject']='peer_review:reject_review'
+			actions['Reject']='peer_testing:reject_peer_test'
 		if not exclude or (exclude and 'delegate' not in exclude):
-			actions['Delegate']='peer_review:delegate_review'
+			actions['Delegate']='peer_testing:delegate_peer_test'
 		return actions.items()
 
 
@@ -145,9 +146,10 @@ class Review(models.Model):
 		if not exclude or (exclude and 'update' not in exclude):
 			actions['Update']='peer_testing:peer_testing_update'
 		if not exclude or (exclude and 'invalidate' not in exclude):
-			actions['Invalidate']='peer_review:invalidate_review'
+			actions['Invalidate']='peer_testing:invalidate_peer_test'
 		if not exclude or (exclude and 'follow_up' not in exclude):
-			actions['Follow up']='peer_review:follow_up_review'
+			if self.approval_outcome != StatusCodes.get_invalid_status():
+				actions['Follow up']='peer_testing:follow_up_peer_test'
 		return actions.items()
 
 
@@ -159,8 +161,8 @@ class Review(models.Model):
 		display_email['Series']=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		return display_email.items()
 
-	def get_follow_up_action(self):
+	def get_follow_up_action_manager(self):
 		if self.approval_outcome==StatusCodes.get_pending_status():
-			return {'Follow up':'peer_review:follow_up_review'}.items()
+			return {'Follow up':'manager_activities:follow_up_manager'}.items()
 		return None
 

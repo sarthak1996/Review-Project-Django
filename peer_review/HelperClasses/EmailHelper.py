@@ -45,7 +45,7 @@ def get_review_email_content(request,review,is_updated,follow_up):
 	elif latest_appr_row.approval_outcome==StatusCodes.get_pending_status():
 		#send email to approver to approve
 		if follow_up:
-			mail_dict['to']=latest_appr_row.raised_to.email.trim()+','+review.created_by.email.trim()
+			mail_dict['to']=latest_appr_row.raised_to.email.strip()+','+review.created_by.email.strip()
 			mail_dict['cc']=request.user.email
 		else:
 			mail_dict['to']=latest_appr_row.raised_to.email
@@ -169,14 +169,18 @@ def get_outcome_complete_response(request,review,action,action_by,addressee,comm
 	context['addressee']=addressee
 	context['peer_review']=True if review.review_type==CommonLookups.get_peer_review_question_type() else False
 	context['from']=request.user.first_name
-	if review.delegated:
+	latest_appr_row=ApprovalHelper.get_latest_approval_row(review)
+	print('******Email Helper******')
+	print(latest_appr_row.delegated)
+	if latest_appr_row.delegated:
 		if context['peer_review']:
 			context['apr_url']='peer_review:review_detail_approve_view'
 		else:
 			context['apr_url']='peer_testing:peer_testing_approve_detail_view'
-	elif review.approval_outcome in [StatusCodes.get_approved_status,
-										StatusCodes.get_rejected_status,
-										StatusCodes.get_invalid_status]:
+	elif review.approval_outcome in [StatusCodes.get_approved_status(),
+										StatusCodes.get_rejected_status(),
+										StatusCodes.get_invalid_status()]:
+		print('Not delegated')
 		if context['peer_review']:
 			context['apr_url']='peer_review:review_detail_view'
 		else:

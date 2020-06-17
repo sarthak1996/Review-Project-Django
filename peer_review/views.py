@@ -57,6 +57,9 @@ def peer_review_approval_form(request,**kwargs):
 	context_dict['button_label']='Approve'
 	context_dict['review_object']=review
 	context_dict['is_review_active']='active'
+	context_dict['logged_in_user']=request.user
+	context_dict['created_by_user']=review.created_by
+	context_dict['raised_to_user']=ApprovalHelper.get_latest_approval_row(review).raised_to
 	
 	#approval timeline
 	approval_timeline=Approval.objects.filter(review=review).all()

@@ -34,7 +34,7 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['is_review_active']='active'
 		context['logged_in_user']=self.request.user
 		context['created_by_user']=review_obj.created_by
-		context['raised_to_user']=ApprovalHelper.get_latest_approval_row().raised_to
+		context['raised_to_user']=ApprovalHelper.get_latest_approval_row(review_obj).raised_to
 
 		#approval timeline
 		approval_timeline=Approval.objects.filter(review=review_obj).all()
