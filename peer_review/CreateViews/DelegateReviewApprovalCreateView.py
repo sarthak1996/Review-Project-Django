@@ -8,8 +8,9 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test,login_required
-from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_action_taker
 
 class DelegateReviewApprovalCreateView(CreateView):
 	model=Approval
@@ -20,9 +21,10 @@ class DelegateReviewApprovalCreateView(CreateView):
 
 	@transaction.atomic
 	def form_valid(self, form):
-		approval_instance=form.instance
 		review_id=self.kwargs['obj_pk']
 		review=Review.objects.filter(pk=review_id).first()
+		approval_instance=form.instance
+		
 		approval_instance.review=review
 		raised_to_user=get_user_model().objects.get(pk=form.cleaned_data['raised_to'].pk)
 		if not CommonValidations.user_exists_in_team(raised_to_user,review.team):
@@ -62,4 +64,8 @@ class DelegateReviewApprovalCreateView(CreateView):
 	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
+		review_id=self.kwargs['obj_pk']
+		review=Review.objects.filter(pk=review_id).first()
+		if not is_review_action_taker(self.request.user,review):
+			return redirect(reverse_lazy('configurations:unauthorized_common'))
 		return super(DelegateReviewApprovalCreateView, self).dispatch(*args, **kwargs)

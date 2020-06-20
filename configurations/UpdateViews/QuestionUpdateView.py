@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
+from configurations.Exceptions import OptimisticLockingException
+from django.urls import reverse_lazy
+from django.db import transaction
 
 class QuestionUpdateView(UpdateView):
 	model=Question
@@ -15,10 +18,19 @@ class QuestionUpdateView(UpdateView):
 	redirect_field_name = None
 	login_url ='/reviews/login'
 
+	@transaction.atomic
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
+		try :
+			redirect = super().form_valid(form)
+		except OptimisticLockingException as e:
+			form.add_error(None,'Some user has updated this object while you were trying to do the same. Please open the object again and update')
+			return super(QuestionUpdateView,self).form_invalid(form)
+		except Exception as e:
+			form.add_error(None,str(e))
+			return super(QuestionUpdateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully updated question : '+form.instance.question_text)
-		return super().form_valid(form)
+		return redirect
 
 	def get_context_data(self, **kwargs):
 		context=super(QuestionUpdateView,self).get_context_data(**kwargs)

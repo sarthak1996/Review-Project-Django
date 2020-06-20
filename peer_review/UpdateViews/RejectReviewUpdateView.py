@@ -4,9 +4,10 @@ from peer_review.HelperClasses import ApprovalHelper,EmailHelper
 from django.views.generic.edit import UpdateView 
 from peer_review.forms.ReviewRejectionForm import ReviewRejectionForm
 from django.db import transaction
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
-from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_action_taker
 from django.contrib import messages
 
 class RejectReviewUpdateView(UpdateView):
@@ -31,9 +32,10 @@ class RejectReviewUpdateView(UpdateView):
 
 	@transaction.atomic
 	def form_valid(self, form):
+		
 		review_instance=form.save(commit=False)
 		review_instance.last_update_by = self.request.user
-		review_instance.save()
+		# review_instance.save()
 		ApprovalHelper.reject_review(review=review_instance,
 										user=self.request.user,
 										approver_comment=form.cleaned_data['approver_comment'])
@@ -50,4 +52,6 @@ class RejectReviewUpdateView(UpdateView):
 	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
+		if not is_review_action_taker(self.request.user,self.get_object()):
+			return redirect(reverse_lazy('configurations:unauthorized_common'))
 		return super(RejectReviewUpdateView, self).dispatch(*args, **kwargs)

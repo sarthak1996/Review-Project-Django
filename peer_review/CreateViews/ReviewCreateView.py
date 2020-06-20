@@ -38,7 +38,7 @@ class ReviewCreateView(CreateView):
 		print('Review approval:'+ review_obj.approval_outcome)
 		PrintObjs.print_review_obj(review_obj)
 		
-		review_obj.save()
+		# review_obj.save()
 		
 		ApprovalHelper.mark_review_pending(review=review_obj,
 							user=self.request.user,

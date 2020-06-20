@@ -1,7 +1,8 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save,pre_save
 from django.dispatch import receiver
 from django.conf import settings
 from django.contrib.auth.models import Group
+from configurations.Exceptions import OptimisticLockingException
 from configurations.models import (
 	Choice,
 	Question,
@@ -25,15 +26,28 @@ def save_profile(sender, instance, created, **kwargs):
 			print('Something went wrong while adding default group!')
 			print(e)
 
-@receiver(post_save,sender=Choice)
-@receiver(post_save,sender=Question)
-@receiver(post_save,sender=Series)
-@receiver(post_save,sender=Team)
-@receiver(post_save,sender=Approval)
-@receiver(post_save,sender=Exemption)
-@receiver(post_save,sender=Review)
-@receiver(post_save,sender=Answer)
-def generic_post_save_attribute_initialization(sender,instance,created,**kwargs):
-	instance.version=instance.version+1
+
+
+@receiver(pre_save,sender=Choice)
+@receiver(pre_save,sender=Question)
+@receiver(pre_save,sender=Series)
+@receiver(pre_save,sender=Team)
+@receiver(pre_save,sender=Approval)
+@receiver(pre_save,sender=Exemption)
+@receiver(pre_save,sender=Review)
+@receiver(pre_save,sender=Answer)
+def optimistic_locking(sender,instance,**kwargs):
+	is_created=sender.objects.filter(pk=instance.pk).count()==0
+	print('Pre save signal')
+	print(is_created)
+	if not is_created:
+		row_count=sender.objects.filter(pk=instance.pk,
+									version=instance.version).count()
+		print(row_count,instance.version,sender.objects.filter(pk=instance.pk).first().version)
+		if row_count != 1:
+			raise OptimisticLockingException
+		else:
+			instance.version=instance.version+1
+
 
 

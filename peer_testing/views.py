@@ -13,7 +13,7 @@ from peer_testing.models import Answer
 from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
 from peer_testing.forms.PeerTestingReviewForm import PeerTestingReviewForm
 from django.contrib.auth.decorators import login_required,user_passes_test
-from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager
+from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager,is_review_raised_by_me,is_review_action_taker
 # Create your views here.
 
 @login_required(login_url='/reviews/login')
@@ -46,6 +46,8 @@ def raise_peer_testing(request):
 def update_peer_testing_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.get(pk=review_id)
+	if not is_review_raised_by_me(request.user,review):
+		return redirect(reverse_lazy('configurations:unauthorized_common'))
 	initial_answers=PeerTestingQuestions.construct_init_dictionary(review)
 	
 	return create_or_update_review(request=request,
@@ -162,6 +164,8 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 def invalidate_peer_test(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
+	if not is_review_action_taker(request.user,form.instance):
+		return redirect(reverse_lazy('configurations:unauthorized_common'))
 	ApprovalHelper.invalidate_review(review,request.user)
 	EmailHelper.send_email(request=request,
 							user=request.user,

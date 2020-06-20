@@ -1,0 +1,2 @@
+class OptimisticLockingException(Exception):
+	pass
