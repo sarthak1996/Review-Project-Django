@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from collections import OrderedDict 
 from django.urls import reverse_lazy
+from concurrency.fields import IntegerVersionField
 
 class Team(models.Model):
 	team_name=models.CharField(max_length=20,blank=False)
@@ -10,7 +11,7 @@ class Team(models.Model):
 	last_update_date=models.DateTimeField(auto_now_add=True)
 	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='teams_created_by',on_delete=models.PROTECT)
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='teams_last_update_by',on_delete=models.PROTECT)
-	version = models.IntegerField(default=0)
+	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Teams"
 	def __str__(self):

@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
-from configurations.Exceptions import OptimisticLockingException
 from django.urls import reverse_lazy
 from django.db import transaction
 
@@ -26,9 +25,6 @@ class SeriesUpdateView(UpdateView):
 		form.instance.last_update_by=self.request.user
 		try :
 			redirect = super().form_valid(form)
-		except OptimisticLockingException as e:
-			form.add_error(None,'Some user has updated this object while you were trying to do the same. Please open the object again and update')
-			return super(SeriesUpdateView,self).form_invalid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
 			return super(SeriesUpdateView,self).form_invalid(form)
