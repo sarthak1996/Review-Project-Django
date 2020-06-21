@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from .Review import Review
+from concurrency.fields import IntegerVersionField
 class Exemption(models.Model):
 	review=models.ForeignKey(Review,related_name='exemption_review_assoc',blank=False,on_delete=models.PROTECT)
 	exemption_for= models.CharField(max_length=250,blank=False)
@@ -9,7 +10,7 @@ class Exemption(models.Model):
 	last_update_date=models.DateTimeField(auto_now=True)
 	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='exemptions_created_by',on_delete=models.PROTECT)
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='exemptions_last_update_by',on_delete=models.PROTECT)
-	version = models.IntegerField(default=0)
+	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Exemptions"
 	def __str__(self):
