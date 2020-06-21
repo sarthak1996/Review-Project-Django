@@ -4,14 +4,16 @@ from peer_review.models import Review
 from django.contrib.auth import get_user_model
 from peer_testing.models import Answer
 from configurations.models import Choice,Question
+from concurrency.forms import VersionWidget
 class PeerReviewAnswerForm(ModelForm):
 
 	single_choice_field=forms.ModelChoiceField(required=False,queryset=Choice.objects.all(),empty_label='Choose a value',widget=forms.Select(attrs={'class':'form-control not_rendered choice_select'}))
 	text_answer = forms.CharField(required=False,label='Answer Text',widget=forms.Textarea(attrs={'placeholder': 'Answer Text','class':'form-control text_area not_rendered'}))
 	question=forms.ModelChoiceField(required=False,queryset=Question.objects.all(),empty_label="Choose a Question",widget=forms.Select(attrs={'class':'form-control choice_select not_rendered'}))
+	version=VersionWidget()
 	class Meta:
 		model=Answer
-		fields=['question']
+		fields=['question','version']
 
 	def __init__(self, *args, **kwargs):
 		super(PeerReviewAnswerForm, self).__init__(*args, **kwargs)

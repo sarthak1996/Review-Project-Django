@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from configurations.models import Team,Series
 from peer_review.HelperClasses import ApprovalHelper,CommonLookups
 from configurations.ModelChoiceFields import UserModelChoiceField
+from concurrency.forms import VersionWidget
 
 class ReviewForm(ModelForm):
 	bug_number=forms.CharField(required=True,widget=forms.TextInput(attrs={'placeholder': 'Bug number','class':'form-control'}))
@@ -13,9 +14,10 @@ class ReviewForm(ModelForm):
 	raise_to=UserModelChoiceField(queryset=get_user_model().objects.all(),empty_label='Choose a User',widget=forms.Select(attrs={'class':'form-control choice_select'}))
 	# num_of_exemption=forms.IntegerField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Bug number','class':'form-control'}))
 	series_type=forms.ChoiceField(required=False,choices=Series.get_choices_models()['series_type'],widget=forms.Select(attrs={'class':'form-control choice_select','label':'Series Type'}))
+	version=VersionWidget()
 	class Meta:
 		model=Review
-		fields=['bug_number','priority','team','series_type']
+		fields=['bug_number','priority','team','series_type','version']
 
 	def __init__(self, *args, **kwargs):
 		request_user= kwargs.pop('request').user
