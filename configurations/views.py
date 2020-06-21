@@ -58,7 +58,12 @@ def user_registration_view(request):
 		if form.is_valid():
 			user_created=form.save(commit=False)
 			user_created.set_password(form.cleaned_data['password'])
-			form.save()
+			try:
+				form.save()
+			except Exception as e:
+				form.add_error(None,str(e))
+				form.check_for_field_errors()
+				return render(request,'registration/userRegistration.html',{'form':form})
 			messages.success(request,'User '+form.cleaned_data['username']+ ' created sucessfully')
 			return redirect("configurations:login")
 	form.check_for_field_errors()

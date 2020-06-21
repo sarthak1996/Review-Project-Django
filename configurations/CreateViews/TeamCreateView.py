@@ -18,8 +18,13 @@ class TeamCreateView(CreateView):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user
 		form.instance.creation_date=datetime.datetime.now()
+		try:
+			redirect=super().form_valid(form)
+		except Exception as e:
+			form.add_error(None,str(e))
+			return super(TeamCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created team : '+form.instance.team_name)
-		return super().form_valid(form)
+		return redirect
 
 	def get_context_data(self, **kwargs):
 		context=super(TeamCreateView,self).get_context_data(**kwargs)
