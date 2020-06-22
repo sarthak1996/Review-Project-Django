@@ -34,16 +34,20 @@ class FollowUpManagerUpdateView(UpdateView):
 		review_instance.last_update_by = self.request.user
 		# review_instance.save()
 		latest_apr_row=ApprovalHelper.get_latest_approval_row(review_instance)
-
-		ApprovalHelper.mark_review_pending(review=review_instance,
-											user=self.request.user,
-											raised_to=latest_apr_row.raised_to,
-											comment=form.cleaned_data['approver_comment'])
+		try:
+			ApprovalHelper.mark_review_pending(review=review_instance,
+												user=self.request.user,
+												raised_to=latest_apr_row.raised_to,
+												comment=form.cleaned_data['approver_comment'])
+		except Exception as e:
+			form.add_error(None,str(e))
+			handle_exception()
+			return super(FollowUpManagerUpdateView,self).form_invalid(form)
 		EmailHelper.send_email(request=self.request,
-							user=self.request.user,
-							review=review_instance,
-							is_updated=False,
-							follow_up=True)
+								user=self.request.user,
+								review=review_instance,
+								is_updated=False,
+								follow_up=True)
 		return redirect('manager_activities:peer_testing_raised_to_me')
 
 

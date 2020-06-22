@@ -27,6 +27,7 @@ class SeriesUpdateView(UpdateView):
 			redirect = super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			handle_exception()
 			return super(SeriesUpdateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully updated series : '+form.instance.series_name)
 		return redirect

@@ -22,6 +22,7 @@ class TeamCreateView(CreateView):
 			redirect=super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			handle_exception()
 			return super(TeamCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created team : '+form.instance.team_name)
 		return redirect

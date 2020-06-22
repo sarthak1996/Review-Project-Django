@@ -33,10 +33,14 @@ class PeerTestingApproveView(UpdateView):
 	def form_valid(self, form):
 		review_instance=form.save(commit=False)
 		review_instance.last_update_by = self.request.user
-		
-		ApprovalHelper.approve_review(review=review_instance,
+		try:
+			ApprovalHelper.approve_review(review=review_instance,
 										user=self.request.user,
 										approver_comment=form.cleaned_data['approver_comment'])
+		except Exception as e:
+			form.add_error(None,str(e))
+			handle_exception()
+			return super(PeerTestingApproveView,self).form_invalid(form)
 		EmailHelper.send_email(request=self.request,
 							user=self.request.user,
 							review=review_instance,

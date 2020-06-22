@@ -30,9 +30,15 @@ class DelegateReviewApprovalCreateView(CreateView):
 		if not CommonValidations.user_exists_in_team(raised_to_user,review.team):
 			form.add_error('raised_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
 			return super(DelegateReviewApprovalCreateView,self).form_invalid(form)
-		ApprovalHelper.delegate_approval(review=review,
+		try:
+			ApprovalHelper.delegate_approval(review=review,
 											user=self.request.user,
 											raised_to=form.cleaned_data['raised_to'])
+		except Exception as e:
+			form.add_error(None,str(e))
+			handle_exception()
+			return super(DelegateReviewApprovalCreateView,self).form_invalid(form)
+
 		EmailHelper.send_email(request=request,
 							user=self.request.user,
 							review=review,

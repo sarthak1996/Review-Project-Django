@@ -21,6 +21,7 @@ class ChoiceCreateView(CreateView):
 			redirect=super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			handle_exception()
 			return super(ChoiceCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created choice : '+form.instance.choice_text)
 		return redirect

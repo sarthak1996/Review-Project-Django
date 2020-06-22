@@ -30,6 +30,7 @@ class TeamUpdateView(UpdateView):
 			redirect = super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			handle_exception()
 			return super(TeamUpdateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully updated team : '+form.instance.team_name)
 		return redirect

@@ -24,6 +24,7 @@ class QuestionUpdateView(UpdateView):
 			redirect = super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			handle_exception()
 			return super(QuestionUpdateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully updated question : '+form.instance.question_text)
 		return redirect

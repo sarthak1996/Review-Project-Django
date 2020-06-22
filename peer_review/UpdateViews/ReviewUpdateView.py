@@ -35,9 +35,15 @@ class ReviewUpdateView(UpdateView):
 		review_obj=form.save(commit=False)
 		print('Review approval:'+ review_obj.approval_outcome)
 		# review_obj.save()
-		ApprovalHelper.mark_review_pending(review=review_obj,
+		try:
+			ApprovalHelper.mark_review_pending(review=review_obj,
 							user=self.request.user,
 							raised_to=form.cleaned_data['raise_to'])
+		except Exception as e:
+			form.add_error(None,str(e))
+			handle_exception()
+			return super(ReviewUpdateView,self).form_invalid(form)
+
 		EmailHelper.send_email(request=self.request,
 							user=self.request.user,
 							review=review_obj,

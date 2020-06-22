@@ -22,6 +22,7 @@ class SeriesCreateView(CreateView):
 			redirect=super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			handle_exception()
 			return super(SeriesCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created series : '+form.instance.series_name)
 		return redirect

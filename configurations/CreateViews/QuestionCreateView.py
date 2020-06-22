@@ -22,6 +22,7 @@ class QuestionCreateView(CreateView):
 			redirect=super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			handle_exception()
 			return super(QuestionCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created question : '+form.instance.question_text)
 		return redirect
