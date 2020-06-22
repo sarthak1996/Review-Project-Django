@@ -6,7 +6,7 @@ from concurrency.forms import VersionWidget
 class ExemptionForm(ModelForm):
 	exemption_for=forms.CharField(required=True,label='Exemption for',widget=forms.TextInput(attrs={'placeholder': 'Exemption for','class':'form-control'}))
 	exemption_explanation=forms.CharField(required=True,label='Exemption explanation',widget=forms.Textarea(attrs={'placeholder': 'Exemption explanation','class':'form-control text_area'}))
-	version=VersionWidget()
+	version=VersionWidget(attrs={'placeholder': 'Object version number','class':'form-control version_widget',})
 	class Meta:
 		model=Exemption
 		fields=['exemption_for','exemption_explanation','version']

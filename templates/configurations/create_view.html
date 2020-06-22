@@ -106,6 +106,11 @@
 									</div>
 								{% endif %}
 							</div>
+						{% elif 'version_widget' in field.field.widget.attrs.class %}
+							<div class="form-label-group" hidden>
+								{{field}}
+								{{field.label_tag}}
+							</div>
 						{% else %}
 							<div class="form-label-group">
 								{{ field }}

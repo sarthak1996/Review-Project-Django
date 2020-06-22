@@ -5,7 +5,7 @@ from peer_review.models import Review
 from concurrency.forms import VersionWidget
 class FollowUpForm(ModelForm):
 	approver_comment=forms.CharField(required=False,label='Follow up comment',widget=forms.Textarea(attrs={'placeholder': 'If left empty then "Gentle Reminder" would be sent in email','class':'form-control text_area'}))
-	version=VersionWidget()
+	version=VersionWidget(attrs={'placeholder': 'Object version number','class':'form-control version_widget',})
 	class Meta:
 		model=Review
 		fields=['version']
