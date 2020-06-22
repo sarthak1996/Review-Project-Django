@@ -14,7 +14,7 @@ class ReviewForm(ModelForm):
 	raise_to=UserModelChoiceField(queryset=get_user_model().objects.all(),empty_label='Choose a User',widget=forms.Select(attrs={'class':'form-control choice_select'}))
 	# num_of_exemption=forms.IntegerField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Bug number','class':'form-control'}))
 	series_type=forms.ChoiceField(required=False,choices=Series.get_choices_models()['series_type'],widget=forms.Select(attrs={'class':'form-control choice_select','label':'Series Type'}))
-	version=VersionWidget()
+	version=VersionWidget(attrs={'placeholder': 'Object version number','class':'form-control version_widget',})
 	class Meta:
 		model=Review
 		fields=['bug_number','priority','team','series_type','version']

@@ -11,7 +11,7 @@ class QuestionForm(ModelForm):
 	series_type=forms.ChoiceField(required=False,initial='SCH',choices=Series.get_choices_models()['series_type'],widget=forms.Select(attrs={'class':'form-control choice_select','label':'Series type'}))
 	question_type=forms.ChoiceField(required=True,choices=Question.get_questions_choice_types()['question_type'],widget=forms.Select(attrs={'class':'form-control choice_select','label':'Question type'}))
 	choices=forms.ModelMultipleChoiceField(required=False,queryset=Choice.objects.all(),widget=forms.CheckboxSelectMultiple(attrs={'class':'no_bullets choice_check_box_multi_select','label':'Choices'}))
-	version=VersionWidget()
+	version=VersionWidget(attrs={'placeholder': 'Object version number','class':'form-control version_widget',})
 	#attrs={'label':'Choices','class':'form-check-input choice_check_box_multi_select'})
 	class Meta:
 		model=Question
