@@ -6,9 +6,10 @@ from django.db import transaction
 from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
-from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_raised_by_me
 
 class ReviewUpdateView(UpdateView):
 	model=Review
@@ -33,10 +34,16 @@ class ReviewUpdateView(UpdateView):
 			return super(ReviewUpdateView,self).form_invalid(form)
 		review_obj=form.save(commit=False)
 		print('Review approval:'+ review_obj.approval_outcome)
-		review_obj.save()
-		ApprovalHelper.mark_review_pending(review=review_obj,
+		# review_obj.save()
+		try:
+			ApprovalHelper.mark_review_pending(review=review_obj,
 							user=self.request.user,
 							raised_to=form.cleaned_data['raise_to'])
+		except Exception as e:
+			form.add_error(None,str(e))
+			handle_exception()
+			return super(ReviewUpdateView,self).form_invalid(form)
+
 		EmailHelper.send_email(request=self.request,
 							user=self.request.user,
 							review=review_obj,
@@ -63,4 +70,6 @@ class ReviewUpdateView(UpdateView):
 	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
+		if not is_review_raised_by_me(self.request.user,self.get_object()):
+			return redirect(reverse_lazy('configurations:unauthorized_common'))
 		return super(ReviewUpdateView, self).dispatch(*args, **kwargs)

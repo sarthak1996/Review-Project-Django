@@ -18,8 +18,14 @@ class QuestionCreateView(CreateView):
 		form.instance.last_update_by=self.request.user
 		form.instance.created_by=self.request.user
 		form.instance.creation_date=datetime.datetime.now()
+		try:
+			redirect=super().form_valid(form)
+		except Exception as e:
+			form.add_error(None,str(e))
+			handle_exception()
+			return super(QuestionCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created question : '+form.instance.question_text)
-		return super().form_valid(form)
+		return redirect
 
 	def get_context_data(self, **kwargs):
 		context=super(QuestionCreateView,self).get_context_data(**kwargs)

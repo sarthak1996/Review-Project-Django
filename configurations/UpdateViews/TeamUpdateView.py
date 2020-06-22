@@ -5,6 +5,11 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
+from django.urls import reverse_lazy
+from django.db import transaction
+from datetime import datetime
+from django.utils import timezone
+
 
 class TeamUpdateView(UpdateView):
 	model=Team
@@ -18,10 +23,17 @@ class TeamUpdateView(UpdateView):
 	redirect_field_name = None
 	login_url ='/reviews/login'
 
+	@transaction.atomic
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
+		try :
+			redirect = super().form_valid(form)
+		except Exception as e:
+			form.add_error(None,str(e))
+			handle_exception()
+			return super(TeamUpdateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully updated team : '+form.instance.team_name)
-		return super().form_valid(form)
+		return redirect
 
 	def get_context_data(self, **kwargs):
 		context=super(TeamUpdateView,self).get_context_data(**kwargs)
@@ -35,6 +47,7 @@ class TeamUpdateView(UpdateView):
 	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(TeamUpdateView, self).dispatch(*args, **kwargs)
+
 
 
 		

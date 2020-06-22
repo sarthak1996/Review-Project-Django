@@ -5,13 +5,13 @@ from django.contrib.auth import get_user_model
 from configurations.ModelChoiceFields import UserModelChoiceField
 from configurations.models import Team
 from peer_review.HelperClasses import PrintObjs
-
+from concurrency.forms import VersionWidget
 class DelegateReviewApprovalFlowForm(ModelForm):
 	raised_to=UserModelChoiceField(queryset=get_user_model().objects.all(),empty_label='Choose a User',widget=forms.Select(attrs={'class':'form-control choice_select'}))
-
+	version=VersionWidget()
 	class Meta:
 		model=Approval
-		fields=['raised_to']
+		fields=['raised_to','version']
 
 	def __init__(self, *args, **kwargs):
 		request_user= kwargs.pop('request').user

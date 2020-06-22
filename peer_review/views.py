@@ -14,8 +14,9 @@ from django.db import transaction
 from peer_review.Formsets import RequiredFormSet
 from configurations.models import Team
 from collections import OrderedDict
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required,user_passes_test
-from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager
+from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager,is_review_action_taker
 
 # Create your views here.
 
@@ -40,7 +41,8 @@ def peer_review_approval_form(request,**kwargs):
 	# form=PeerReviewAnswerForm(request.POST or None)
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
-
+	if not is_review_action_taker(request.user,review):
+		return redirect(reverse_lazy('configurations:unauthorized_common'))
 	initial_questions=PeerReviewApprovalQuestions.get_answer_form_sets_for_peer_review(review)
 	model_formset=modelformset_factory(Answer, form=PeerReviewAnswerForm, extra=len(initial_questions))
 	formset=model_formset(request.POST or None,queryset=Answer.objects.none(),initial=initial_questions,prefix='answer')
@@ -149,16 +151,28 @@ def peer_review_approval_form(request,**kwargs):
 						# print(form1.cleaned_data)
 						exemption_for=form1.cleaned_data['exemption_for']
 						exemption_explanation=form1.cleaned_data['exemption_explanation']
-						ExemptionHelper.create_exemption_row(review=review,
+						try:
+							ExemptionHelper.create_exemption_row(review=review,
 															user=request.user,
 															exemption_for=exemption_for,
 															exemption_explanation=exemption_explanation
 															)
+						except Exception as e:
+							form1.add_error(None,str(e))
+							handle_exception()
+							return render(request, 'peer_review/review_approval.html', context_dict)
+
 				#save answer model from formset
-				formset.save()
-				ApprovalHelper.approve_review(review=review,
-											user=request.user,
-											approver_comment=None)
+				try:
+					formset.save()
+					ApprovalHelper.approve_review(review=review,
+												user=request.user,
+												approver_comment=None)
+				except Exception as e:
+					messages.error(request,str(e))
+					handle_exception()
+					return render(request, 'peer_review/review_approval.html', context_dict)
+
 				EmailHelper.send_email(request=request,
 							user=request.user,
 							review=review,
@@ -170,15 +184,24 @@ def peer_review_approval_form(request,**kwargs):
 			print(exemption_formset.non_form_errors())
 			
 		# print('here')
-
 	return render(request, 'peer_review/review_approval.html', context_dict)
+
+
 
 @login_required(login_url='/reviews/login')
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
+@transaction.atomic 
 def invalidate_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
-	ApprovalHelper.invalidate_review(review,request.user)
+	if not is_review_action_taker(request.user,review):
+		return redirect(reverse_lazy('configurations:unauthorized_common'))
+	try:
+		ApprovalHelper.invalidate_review(review,request.user)
+	except Exception as e:
+		messages.error(request,str(e))
+		handle_exception()
+		return redirect(review.get_absolute_url())
 	EmailHelper.send_email(request=request,
 							user=request.user,
 							review=review,

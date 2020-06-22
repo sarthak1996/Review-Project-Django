@@ -2,11 +2,13 @@ from django.forms import ModelForm
 from django import forms
 from django.contrib.auth import get_user_model
 from peer_review.models import Review
+from concurrency.forms import VersionWidget
 class PeerTestingApprovalForm(ModelForm):
 	approver_comment=forms.CharField(required=True,label='Comment',widget=forms.Textarea(attrs={'placeholder': 'Comment','class':'form-control text_area'}))
+	version=VersionWidget()
 	class Meta:
 		model=Review
-		fields=[]
+		fields=['version']
 
 	def clean_approver_comment(self):
 		cleaned_data=super().clean()

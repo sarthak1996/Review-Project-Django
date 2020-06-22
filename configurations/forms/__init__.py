@@ -1,2 +1,4 @@
 from .LoginForm import LoginForm
 from .UserRegistrationForm import UserRegistrationForm
+from .PasswordResetRequestForm import PasswordResetRequestForm
+from .SetPasswordForm import SetPasswordForm

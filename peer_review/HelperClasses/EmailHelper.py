@@ -18,19 +18,18 @@ def send_email(request,user,review,is_updated=False,follow_up=False):
 	else:
 		subject='Re: '+subject.strip()
 	try:
-		a = subprocess.check_call('echo "'+ 
-									body +
-									'" | mutt -e "set content_type=text/html" -s "'+subject+
-									'"  '+to +' '
-									+cc
-									, shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		send_email_mutt(to=to,
+						cc=cc,
+						subject=subject,
+						body=body)
+		messages.success(request,'Email has been sent')
 	except Exception as e:
 		review.email_exceptions=str(e)
 		review.last_updated_by=user
 		review.save()
 		print(e)
 		messages.error(request,'Email could not be sent : '+str(e)) #to check if custom error should be thrown
-	messages.success(request,'Email has been sent')
+	
 
 def get_review_email_content(request,review,is_updated,follow_up):
 	latest_appr_row=ApprovalHelper.get_latest_approval_row(review)
@@ -192,4 +191,10 @@ def get_outcome_complete_response(request,review,action,action_by,addressee,comm
 	
 	return response
 	
-
+def send_email_mutt(body,subject,to,cc):
+	a = subprocess.check_call('echo "'+ 
+									body +
+									'" | mutt -e "set content_type=text/html" -s "'+subject+
+									'"  '+to +' '
+									+cc
+									, shell=True,stdout=subprocess.PIPE, stderr=subprocess.PIPE)

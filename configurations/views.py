@@ -11,6 +11,7 @@ from peer_review.models import Review,Approval
 from peer_review.HelperClasses import CommonLookups,StatusCodes,CommonCounts,CombinedPendingReviewCount
 from django.db.models.functions import ExtractMonth,ExtractYear
 from django.db.models import Count
+from django.db import transaction
 from datetime import datetime
 from django.contrib.auth.decorators import login_required,user_passes_test
 from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager
@@ -52,13 +53,20 @@ def login_view(request):
 		form.check_for_field_errors()
 	return render(request, 'registration/login.html', {'form': form})
 
+@transaction.atomic
 def user_registration_view(request):
 	form=UserRegistrationForm(request.POST or None)
 	if request.method=='POST':
 		if form.is_valid():
 			user_created=form.save(commit=False)
 			user_created.set_password(form.cleaned_data['password'])
-			form.save()
+			try:
+				form.save()
+			except Exception as e:
+				form.add_error(None,str(e))
+				form.check_for_field_errors()
+				handle_exception()
+				return render(request,'registration/userRegistration.html',{'form':form})
 			messages.success(request,'User '+form.cleaned_data['username']+ ' created sucessfully')
 			return redirect("configurations:login")
 	form.check_for_field_errors()

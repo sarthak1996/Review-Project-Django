@@ -18,6 +18,8 @@ from configurations.UpdateViews import (
     SeriesUpdateView,
     ChoiceUpdateView,
     QuestionUpdateView,
+    PasswordResetRequestView,
+    PasswordResetConfirmView
     )
 from configurations.CreateViews import (
     TeamCreateView,
@@ -54,5 +56,7 @@ urlpatterns = [
     path('ajax/choices_for_questions',views.choices_dependent_region,name='ajax_choices_for_questions'),
     path('ajax/review_raised_by_me_graph',views.review_raised_graph,name='ajax_review_raised_by_me_graph'),
     path('ajax/peer_testing_graph',views.peer_testing_graph,name='ajax_peer_testing_graph'),
-    path('unauthorized',views.unauthorized_message_view,name='unauthorized_common')
+    path('unauthorized',views.unauthorized_message_view,name='unauthorized_common'),
+    url(r'^account/reset_password$', PasswordResetRequestView.as_view(), name="reset_password"),
+    url(r'^account/reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
 ]

@@ -8,8 +8,9 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test,login_required
-from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
+from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_action_taker
 
 class DelegatePeerTestApprovalCreateView(CreateView):
 	model=Approval
@@ -23,14 +24,20 @@ class DelegatePeerTestApprovalCreateView(CreateView):
 		approval_instance=form.instance
 		review_id=self.kwargs['obj_pk']
 		review=Review.objects.filter(pk=review_id).first()
+		
 		approval_instance.review=review
 		raised_to_user=get_user_model().objects.get(pk=form.cleaned_data['raised_to'].pk)
 		if not CommonValidations.user_exists_in_team(raised_to_user,review.team):
 			form.add_error('raised_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
 			return super(DelegateReviewApprovalCreateView,self).form_invalid(form)
-		ApprovalHelper.delegate_approval(review=review,
+		try:
+			ApprovalHelper.delegate_approval(review=review,
 											user=self.request.user,
 											raised_to=form.cleaned_data['raised_to'])
+		except Exception as e:
+			form.add_error(None,str(e))
+			handle_exception()
+			return super(DelegatePeerTestApprovalCreateView,self).form_invalid(form)
 		EmailHelper.send_email(request=request,
 							user=self.request.user,
 							review=review,
@@ -62,4 +69,8 @@ class DelegatePeerTestApprovalCreateView(CreateView):
 	@method_decorator(login_required(login_url='/reviews/login'))
 	@method_decorator(user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
+		review_id=self.kwargs['obj_pk']
+		review=Review.objects.filter(pk=review_id).first()
+		if not is_review_action_taker(self.request.user,review):
+			return redirect(reverse_lazy('configurations:unauthorized_common'))
 		return super(DelegatePeerTestApprovalCreateView, self).dispatch(*args, **kwargs)
