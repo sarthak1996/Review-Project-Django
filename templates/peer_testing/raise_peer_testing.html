@@ -93,7 +93,7 @@
 										</div>
 									{% endif %}
 								</div>
-							{% elif 'version_widget' in field.field.widget.attrs.class %}
+							{% elif field in form.hidden_fields  %}
 								<div class="form-label-group" hidden>
 									{{field}}
 									{{field.label_tag}}
