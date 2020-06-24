@@ -19,7 +19,7 @@ from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or
 @login_required(login_url='/reviews/login')
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def peer_testing_home(request):
-	peer_testing_raised_by_me_count=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_testing_question_type()).count()
+	peer_testing_raised_by_me_count=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_testing_question_type(),approval_outcome=StatusCodes.get_pending_status()).count()
 	peer_testing_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_testing_question_type()).all().count()
 	
 	dashboard_objects=[]
@@ -181,7 +181,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 def invalidate_peer_test(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
-	if not is_review_action_taker(request.user,form.instance):
+	if not is_review_raised_by_me(request.user,review):
 		return redirect(reverse_lazy('configurations:unauthorized_common'))
 	try:
 		ApprovalHelper.invalidate_review(review,request.user)

@@ -1,3 +1,4 @@
 django-filter
 django-bootstrap-form
 django-concurrency
+cx_Oracle

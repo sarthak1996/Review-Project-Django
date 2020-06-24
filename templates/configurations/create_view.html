@@ -21,7 +21,9 @@
 		    	var choice_type=$(this).val();
 		    	return refresh_choices_region(url,choice_type);
 		    });
-		    
+		    $('#save_button').click(function(){
+				$('#action_processing').modal('show');
+			});
     	})
     	
   </script>
@@ -30,7 +32,18 @@
 	{{page_title}}
 {% endblock %}
 {% block content %}
-
+		<div class="modal fade action_processing" tabindex="-1" id="action_processing" role="dialog" aria-hidden="true">
+	  		<div class="modal-dialog modal-dialog-centered" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+				        <h5 class="modal-title">Processing</h5>
+		      		</div>
+			      	<div class="modal-body">
+			        	<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+			      	</div>
+		    	</div>
+	  		</div>
+		</div>
 	    <div class="row justify-content-md-center">
 	        <div class="card card-signin my-5 col-6">
 	          <div class="card-body">

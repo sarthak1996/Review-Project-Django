@@ -121,3 +121,8 @@
 .no_bullets{
   list-style-type: none;
 }
+
+.progress-bar{
+  height: 1em;
+  border-radius: 8px;
+}

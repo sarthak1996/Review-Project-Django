@@ -16,14 +16,14 @@ from configurations.models import Team
 from collections import OrderedDict
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required,user_passes_test
-from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager,is_review_action_taker
+from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager,is_review_action_taker,is_review_raised_by_me
 
 # Create your views here.
 
 @login_required(login_url='/reviews/login')
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def reviews_home(request):
-	reviews_raised_by_me_count=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_review_question_type()).count()
+	reviews_raised_by_me_count=request.user.reviews_created_by.all().filter(review_type=CommonLookups.get_peer_review_question_type(),approval_outcome=StatusCodes.get_pending_status()).count()
 	reviews_raised_to_me_count=Approval.objects.filter(latest='True',raised_to=request.user,approval_outcome=StatusCodes.get_pending_status(),review__review_type=CommonLookups.get_peer_review_question_type()).all().count()
 	
 	dashboard_objects=[]
@@ -177,6 +177,10 @@ def peer_review_approval_form(request,**kwargs):
 							user=request.user,
 							review=review,
 							is_updated=False)
+				
+				BugHelper.update_bug(request=request,
+					review=review)
+				
 				messages.success(request,'Review '+review.bug_number+' successfully approved!')
 				return redirect("peer_review:review_raised_to_me")
 			print('Exemption Formset errors (if any)')
@@ -194,7 +198,7 @@ def peer_review_approval_form(request,**kwargs):
 def invalidate_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
-	if not is_review_action_taker(request.user,review):
+	if not is_review_raised_by_me(request.user,review):
 		return redirect(reverse_lazy('configurations:unauthorized_common'))
 	try:
 		ApprovalHelper.invalidate_review(review,request.user)
