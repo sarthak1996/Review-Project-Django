@@ -96,7 +96,7 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 		return context
 
 	def get_queryset(self):
-		return Review.objects.filter(approval_review_assoc__latest='True',approval_review_assoc__raised_to=self.request.user,review_type=CommonLookups.get_peer_testing_question_type()).all()
+		return Review.objects.filter(approval_review_assoc__latest='True',approval_review_assoc__raised_to=self.request.user,review_type=CommonLookups.get_peer_testing_question_type()).all().order_by('-last_update_date')
 
 
 

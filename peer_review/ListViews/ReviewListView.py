@@ -100,7 +100,7 @@ class ReviewListView(ListView):
 
 	def get_queryset(self):
 		req=self.request 
-		return Review.objects.filter(created_by=req.user,review_type=CommonLookups.get_peer_review_question_type()).all()
+		return Review.objects.filter(created_by=req.user,review_type=CommonLookups.get_peer_review_question_type()).all().order_by('-last_update_date')
 
 		
 

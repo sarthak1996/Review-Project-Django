@@ -102,7 +102,7 @@ class PeerReviewManagerListView(ListView):
 	def get_queryset(self):
 		req=self.request 
 		teams=[team for team in req.user.managed_teams.all()]
-		return CommonCounts.get_review_raised_by_my_team(req.user,teams)
+		return CommonCounts.get_review_raised_by_my_team(req.user,teams).order_by('-last_update_date')
 		
 
 

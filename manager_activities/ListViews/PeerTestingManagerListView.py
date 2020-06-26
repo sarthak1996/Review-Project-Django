@@ -100,7 +100,7 @@ class PeerTestingManagerListView(ListView):
 	def get_queryset(self):
 		req=self.request 
 		teams=[team for team in req.user.managed_teams.all()]
-		return CommonCounts.get_peer_testing_by_my_team(req.user,teams)
+		return CommonCounts.get_peer_testing_by_my_team(req.user,teams).order_by('-last_update_date')
 
 
 	@method_decorator(login_required(login_url='/reviews/login'))
