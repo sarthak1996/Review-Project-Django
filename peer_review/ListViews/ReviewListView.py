@@ -8,7 +8,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 from configurations.models import Team
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class ReviewListView(ListView):
 	model=Review
 	template_name='configurations/list_view.html'
@@ -26,7 +27,7 @@ class ReviewListView(ListView):
 		context['is_review_active']='active'
 		context['list_view_type']='review_list_view'
 		context['logged_in_user']=self.request.user
-		
+		logger=LoggingHelper(self.request.user,__name__)
 		get_request=self.request.GET
 		f_bug_number=get_request.get('filter_form-bug_number__icontains',None)
 		f_raised_to=get_request.get('filter_form-raised_to',None)
@@ -35,8 +36,13 @@ class ReviewListView(ListView):
 		f_team=get_request.get('filter_form-team',None)
 		# f_review_type=get_request.get('filter_form-review_type',None)
 		f_series_type=get_request.get('filter_form-series_type',None)
-		print('Generating filter tags')
-		print(f_bug_number,f_raised_to,f_priority,f_approval_outcome,f_team,f_series_type)
+		logger.write('Generating filter tags',LoggingHelper.DEBUG)
+		logger.write(str(f_bug_number),LoggingHelper.DEBUG)
+		logger.write(str(f_raised_to),LoggingHelper.DEBUG)
+		logger.write(str(f_priority),LoggingHelper.DEBUG)
+		logger.write(str(f_approval_outcome),LoggingHelper.DEBUG)
+		logger.write(str(f_team),LoggingHelper.DEBUG)
+		logger.write(str(f_series_type),LoggingHelper.DEBUG)
 		applied_filter_dict={
 				'filter_form-bug_number__icontains':f_bug_number,
 				'filter_form-raised_to':f_raised_to,
@@ -54,8 +60,8 @@ class ReviewListView(ListView):
 							'team: ':Team.objects.get(pk=f_team).team_name if f_team else None,
 							'series_type: ':f_series_type
 							})
-		print(filter_badge_dict)
-		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
+		logger.write(str(filter_badge_dict),LoggingHelper.DEBUG)
+		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(self.request,**filter_badge_dict)
 		context['filter_badges']=filter_badges_list
 		context['text_filters_drop_down_icon']='dropdown-toggle'
 
@@ -74,7 +80,7 @@ class ReviewListView(ListView):
 									})
 		search_drop_downs_args=['Priority','Approval outcome','Series type','Team']
 		#mandatory search drop down
-		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
+		search_drop_downs=SearchDropDown.generate_drop_down_list(self.request,*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		
 		context['reset_filters']='peer_review:review_list_view'
@@ -85,10 +91,10 @@ class ReviewListView(ListView):
 		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=CommonCounts.get_review_raised_by_me(self.request.user),
 																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_review_question_type(),
+																		request=self.request,
 																		raised_to_me=False)
 		context={**context,**progress_dict}
-		# print('Progress bar:')
-		# print(context)
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 
 		return context
 

@@ -33,15 +33,18 @@ class FollowUpPeerTestingUpdateView(UpdateView):
 		review_instance=form.save(commit=False)
 		review_instance.last_update_by = self.request.user
 		# review_instance.save()
+		logger=LoggingHelper(self.request.user,__name__)
 		try:
-			latest_apr_row=ApprovalHelper.get_latest_approval_row(review_instance)
+			latest_apr_row=ApprovalHelper.get_latest_approval_row(review_instance,self.request.user)
 
 			ApprovalHelper.mark_review_pending(review=review_instance,
 											user=self.request.user,
 											raised_to=latest_apr_row.raised_to,
+											request=self.request,
 											comment=form.cleaned_data['approver_comment'])
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 			handle_exception()
 			return super(FollowUpPeerTestingUpdateView,self).form_invalid(form)
 		EmailHelper.send_email(request=self.request,

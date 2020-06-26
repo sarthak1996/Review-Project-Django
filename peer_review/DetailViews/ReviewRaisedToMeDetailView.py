@@ -4,7 +4,8 @@ from peer_review.models import Review
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 
 class ReviewRaisedToMeDetailView(DetailView):
 	model=Review
@@ -16,6 +17,7 @@ class ReviewRaisedToMeDetailView(DetailView):
 
 	def get_context_data(self, **kwargs):
 		context=super(ReviewRaisedToMeDetailView,self).get_context_data(**kwargs)
+		logger=LoggingHelper(self.request.user,__name__)
 		review_obj=self.object
 		context['detail_view_card_title']='Review'
 		context['detail_name']=review_obj.bug_number
@@ -34,13 +36,13 @@ class ReviewRaisedToMeDetailView(DetailView):
 		context['is_review_active']='active'
 		context['logged_in_user']=self.request.user
 		context['created_by_user']=review_obj.created_by
-		context['raised_to_user']=ApprovalHelper.get_latest_approval_row(review_obj).raised_to
+		context['raised_to_user']=ApprovalHelper.get_latest_approval_row(review_obj,self.request).raised_to
 
 		#approval timeline
 		approval_timeline=Approval.objects.filter(review=review_obj).all()
-		approval_history=ApprovalTimeline.get_approval_timeline(review_obj)
-		print('Preparing Approval timeline for review raised to me')
-		print('\n'.join([str(usage) for usage in approval_history]))
+		approval_history=ApprovalTimeline.get_approval_timeline(review_obj,self.request)
+		logger.write('Preparing Approval timeline for review raised to me',LoggingHelper.DEBUG)
+		logger.write('\n'.join([str(usage) for usage in approval_history]),LoggingHelper.DEBUG)
 		
 		context['right_aligned_timeline']=True
 		context['approval_timeline']=approval_history
@@ -52,9 +54,11 @@ class ReviewRaisedToMeDetailView(DetailView):
 								is_url=True,
 								timeline_url='peer_review:review_detail_view',
 								obj_pk=review.pk,
+								request=self.request,
 								title_right_floater=CommonLookups.get_priority_value(review.priority))
 		context['detail_timeline']=[detail_timeline]
 		context['detail_timeline_title']='Review details'
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 
 		return context
 

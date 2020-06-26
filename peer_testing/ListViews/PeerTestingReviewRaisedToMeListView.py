@@ -7,7 +7,8 @@ from collections import OrderedDict
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class PeerTestingReviewRaisedToMeListView(ListView):
 	model=Review
 	template_name='configurations/list_view.html'
@@ -29,9 +30,7 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 		context['is_peer_test_active']='active'
 		context['list_view_type']='peer_testing_to_me_list_view'
 		context['logged_in_user']=self.request.user
-		# print()
-		# print(Approval.objects.filter(latest='True',raised_to=self.request.user).approval_review_assoc.all())
-		
+		logger=LoggingHelper(self.request.user,__name__)
 
 		get_request=self.request.GET
 		f_bug_number=get_request.get('filter_form-bug_number__icontains',None)
@@ -41,8 +40,11 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 		
 		# f_series_type=get_request.get('filter_form-series_type',None)
 		
-		print('Generating filter tags')
-		print(f_bug_number,f_raised_by,f_priority,f_approval_outcome)
+		logger.write('Generating filter tags',LoggingHelper.DEBUG)
+		logger.write(f_bug_number,LoggingHelper.DEBUG)
+		logger.write(f_raised_by,LoggingHelper.DEBUG)
+		logger.write(f_priority,LoggingHelper.DEBUG)
+		logger.write(f_approval_outcome,LoggingHelper.DEBUG)
 
 
 		applied_filter_dict={
@@ -60,8 +62,8 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 							'priority: ':f_priority,
 							'approval_outcome: ': f_approval_outcome
 							})
-		print(filter_badge_dict)
-		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
+		logger.write(str(filter_badge_dict),LoggingHelper.DEBUG)
+		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(self.request,**filter_badge_dict)
 		context['filter_badges']=filter_badges_list
 		context['text_filters_drop_down_icon']='dropdown-toggle'
 
@@ -78,7 +80,7 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 									'filter_form-approval_outcome':CommonLookups.get_approval_outcomes()})
 		search_drop_downs_args=['Priority','Approval Outcome']
 		#mandatory search drop down
-		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
+		search_drop_downs=SearchDropDown.generate_drop_down_list(self.request,*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		
 		context['reset_filters']='peer_testing:peer_testing_raised_to_me'
@@ -86,9 +88,11 @@ class PeerTestingReviewRaisedToMeListView(ListView):
 		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=CommonCounts.get_peer_testing_raised_to_me(self.request.user),
 																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_testing_question_type(),
+																		request=self.request,
 																		raised_to_me=True)		
 
 		context={**context,**progress_dict}
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 	def get_queryset(self):

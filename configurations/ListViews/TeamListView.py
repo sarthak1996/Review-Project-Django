@@ -6,7 +6,8 @@ from configurations.FilterSets import TeamFilter
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class TeamListView(ListView):
 	model=Team
 	template_name='configurations/list_view.html'
@@ -16,6 +17,7 @@ class TeamListView(ListView):
 
 	def get_context_data(self,**kwargs):
 		context = super().get_context_data(**kwargs)
+		logger=LoggingHelper(self.request.user,__name__)
 		context['create_url']='configurations:team_create_view'
 		context['create_object_button_title']='Create Team'
 		context['detail_view_url']='configurations:team_detail_view'
@@ -25,8 +27,9 @@ class TeamListView(ListView):
 		get_request=self.request.GET
 		f_team_name=get_request.get('filter_form-team_name__icontains',None)
 		f_team_grp_mail=get_request.get('filter_form-team_grp_mail__icontains',None)
-		print('Generating filter tags')
-		print(f_team_name,f_team_grp_mail)
+		logger.write('Generating filter tags',LoggingHelper.DEBUG)
+		logger.write(f_team_name,LoggingHelper.DEBUG)
+		logger.write(f_team_grp_mail,LoggingHelper.DEBUG)
 		
 		applied_filter_dict={
 				'filter_form-team_name__icontains':f_team_name,
@@ -39,8 +42,7 @@ class TeamListView(ListView):
 		filter_badge_dict=OrderedDict({'team_name: %':f_team_name,
 							'team_grp_mail: %':f_team_grp_mail
 							})
-		print(filter_badge_dict)
-		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
+		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(self.request,**filter_badge_dict)
 		context['filter_badges']=filter_badges_list
 		context['text_filters_drop_down_icon']='dropdown-toggle'
 
@@ -57,7 +59,8 @@ class TeamListView(ListView):
 		
 		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:team_update_view')
 
-
+		context['logged_in_user']=self.request.user
+		logger.write('context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 
@@ -65,5 +68,8 @@ class TeamListView(ListView):
 	@method_decorator(user_passes_test(is_manager,login_url='/reviews/unauthorized'))
 	def dispatch(self, *args, **kwargs):
 		return super(TeamListView, self).dispatch(*args, **kwargs)
+
+	def get_queryset(self):
+		return Team.objects.all().order_by('team_name')
 
 		

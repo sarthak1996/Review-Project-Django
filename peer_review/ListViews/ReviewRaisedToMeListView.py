@@ -7,7 +7,8 @@ from collections import OrderedDict
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class ReviewRaisedToMeListView(ListView):
 	model=Review
 	template_name='configurations/list_view.html'
@@ -21,6 +22,7 @@ class ReviewRaisedToMeListView(ListView):
 
 	def get_context_data(self,**kwargs):
 		context = super().get_context_data(**kwargs)
+		logger=LoggingHelper(self.request.user,__name__)
 		context['create_url']='peer_review:review_create_view'
 		context['create_object_button_title']='Create Peer Review'
 		context['detail_view_url']='peer_review:review_detail_approve_view'
@@ -35,8 +37,12 @@ class ReviewRaisedToMeListView(ListView):
 		f_raised_by=get_request.get('filter_form-raised_by',None)
 		f_series_type=get_request.get('filter_form-series_type',None)
 		f_approval_outcome=get_request.get('filter_form-approval_outcome',None)
-		print('Generating filter tags')
-		print(f_bug_number,f_raised_by,f_priority,f_series_type,f_approval_outcome)
+		logger.write('Generating filter tags',LoggingHelper.DEBUG)
+		logger.write(str(f_bug_number),LoggingHelper.DEBUG)
+		logger.write(str(f_raised_by),LoggingHelper.DEBUG)
+		logger.write(str(f_priority),LoggingHelper.DEBUG)
+		logger.write(str(f_series_type),LoggingHelper.DEBUG)
+		logger.write(str(f_approval_outcome),LoggingHelper.DEBUG)
 
 		applied_filter_dict={
 				'filter_form-bug_number__icontains':f_bug_number,
@@ -54,8 +60,8 @@ class ReviewRaisedToMeListView(ListView):
 							'series_type: ':f_series_type,
 							'approval_outcome: ': f_approval_outcome
 							})
-		print(filter_badge_dict)
-		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
+		logger.write(str(filter_badge_dict),LoggingHelper.DEBUG)
+		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(self.request,**filter_badge_dict)
 		context['filter_badges']=filter_badges_list
 		context['text_filters_drop_down_icon']='dropdown-toggle'
 
@@ -73,7 +79,7 @@ class ReviewRaisedToMeListView(ListView):
 									})
 		search_drop_downs_args=['Priority','Approval Outcome','Series type']
 		#mandatory search drop down
-		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
+		search_drop_downs=SearchDropDown.generate_drop_down_list(self.request,*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		
 		context['reset_filters']='peer_review:review_raised_to_me'
@@ -82,11 +88,10 @@ class ReviewRaisedToMeListView(ListView):
 		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=CommonCounts.get_review_raised_to_me(self.request.user),
 																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_review_question_type(),
+																		request=self.request,
 																		raised_to_me=True)
 		context={**context,**progress_dict}
-		
-		# print()
-		# print(Approval.objects.filter(latest='True',raised_to=self.request.user).approval_review_assoc.all())
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 	def get_queryset(self):

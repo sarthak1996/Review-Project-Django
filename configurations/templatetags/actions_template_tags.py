@@ -2,6 +2,8 @@ from django import template
 from peer_review.models import Review
 from peer_review.FilterSets import ReviewRaisedToMeFilter,ReviewFilter
 from peer_review.HelperClasses import ApprovalHelper
+from configurations.HelperClasses import LoggingHelper
+import traceback
 register = template.Library()
 
 
@@ -11,8 +13,9 @@ register = template.Library()
 # args[3] - flag to check if logged in user = request user. (get from context)
 @register.simple_tag(takes_context=True)
 def get_action_values(context,*args):
-	print('Actions')
-	print(args)
+	logger=LoggingHelper(context['logged_in_user'],__name__)
+	logger.write('Actions',LoggingHelper.DEBUG)
+	logger.write('args:'+str(args),LoggingHelper.DEBUG)
 
 	if isinstance(args[0],Review):
 		# if len(args)>=4: #only check for review objects (configuration objects are already secured via manager perm and not via individual created objects)
@@ -44,7 +47,7 @@ def get_action_values(context,*args):
 						return None
 			return args[0].get_reviews_raised_by_me_actions()
 		elif args[1]=='review_to_me_list_view':
-			latest_apr_row=ApprovalHelper.get_latest_approval_row(args[0])
+			latest_apr_row=ApprovalHelper.get_latest_approval_row(args[0],context['logged_in_user'])
 			if context['logged_in_user']!=latest_apr_row.raised_to:
 						return None
 			return args[0].get_review_raised_to_me_actions()
@@ -53,7 +56,7 @@ def get_action_values(context,*args):
 						return None
 			return args[0].get_peer_testing_raised_by_me_actions()
 		elif args[1]=='peer_testing_to_me_list_view':
-			latest_apr_row=ApprovalHelper.get_latest_approval_row(args[0])
+			latest_apr_row=ApprovalHelper.get_latest_approval_row(args[0],context['logged_in_user'])
 			if context['logged_in_user']!=latest_apr_row.raised_to:
 						return None
 			return args[0].get_peer_testing_raised_to_me_actions()

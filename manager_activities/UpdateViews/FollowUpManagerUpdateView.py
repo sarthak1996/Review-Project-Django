@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
 from django.contrib import messages
 from peer_review.forms.FollowUpForm import FollowUpForm
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class FollowUpManagerUpdateView(UpdateView):
 	model=Review
 	template_name='configurations/create_view.html'
@@ -33,14 +34,18 @@ class FollowUpManagerUpdateView(UpdateView):
 		review_instance=form.save(commit=False)
 		review_instance.last_update_by = self.request.user
 		# review_instance.save()
-		latest_apr_row=ApprovalHelper.get_latest_approval_row(review_instance)
+		latest_apr_row=ApprovalHelper.get_latest_approval_row(review_instance,self.request.user)
 		try:
 			ApprovalHelper.mark_review_pending(review=review_instance,
 												user=self.request.user,
 												raised_to=latest_apr_row.raised_to,
+												request=self.request,
 												comment=form.cleaned_data['approver_comment'])
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger=LoggingHelper(self.request.user,__name__)
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
+			
 			handle_exception()
 			return super(FollowUpManagerUpdateView,self).form_invalid(form)
 		EmailHelper.send_email(request=self.request,
@@ -48,7 +53,7 @@ class FollowUpManagerUpdateView(UpdateView):
 								review=review_instance,
 								is_updated=False,
 								follow_up=True)
-		return redirect('manager_activities:peer_testing_raised_to_me')
+		return redirect('manager_activities:peer_testing_manager_list')
 
 
 

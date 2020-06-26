@@ -1,12 +1,17 @@
 import subprocess
 from django.shortcuts import render
 from django.contrib import messages
-from peer_review.HelperClasses import ApprovalHelper, StatusCodes,CommonLookups
+from peer_review.HelperClasses import ApprovalHelper, StatusCodes,CommonLookups,PrintObjs
+from configurations.HelperClasses import LoggingHelper
+import traceback
+
 def send_email(request,user,review,is_updated=False,follow_up=False):
 	mail_dict=get_review_email_content(request,review,is_updated,follow_up)
-	print(mail_dict)
+	logger=LoggingHelper(request.user,__name__)
+	logger.write(str(mail_dict),LoggingHelper.DEBUG)
 	if not mail_dict:
-		print('Could not create mail dictionary for review: '+str(review))
+		logger.write('Could not create mail dictionary for review: ',LoggingHelper.DEBUG)
+		PrintObjs.print_review_obj(review,request.user)
 		return
 	to,cc=mail_dict['to'],mail_dict['cc']
 	body,subject=mail_dict['body'],mail_dict['subject']
@@ -27,12 +32,12 @@ def send_email(request,user,review,is_updated=False,follow_up=False):
 		review.email_exceptions=str(e)
 		review.last_updated_by=user
 		review.save()
-		print(e)
+		logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 		messages.error(request,'Email could not be sent : '+str(e)) #to check if custom error should be thrown
 	
 
 def get_review_email_content(request,review,is_updated,follow_up):
-	latest_appr_row=ApprovalHelper.get_latest_approval_row(review)
+	latest_appr_row=ApprovalHelper.get_latest_approval_row(review,request.user)
 	mail_dict={}
 	mail_dict['subject']=get_mail_subject(review)
 	if latest_appr_row.delegated:
@@ -101,7 +106,6 @@ def get_delegated_review_body(request,review,delegated_by,addressee):
 								action='delegated',
 								action_by=delegated_by,
 								addressee=addressee).content.decode('utf-8'))
-	# print(string_response)
 	return string_response
 
 def get_rejected_review_body(request,review,rejected_by,comment,addressee):
@@ -111,7 +115,6 @@ def get_rejected_review_body(request,review,rejected_by,comment,addressee):
 								action_by=rejected_by,
 								comment=comment,
 								addressee=addressee).content.decode('utf-8'))
-	# print(string_response)
 	return string_response
 
 def get_approved_review_body(request,review,approved_by,comment,addressee):
@@ -121,7 +124,6 @@ def get_approved_review_body(request,review,approved_by,comment,addressee):
 								action_by=approved_by,
 								comment=comment,
 								addressee=addressee).content.decode('utf-8'))
-	# print(string_response)
 	return string_response
 
 def get_invalidated_review_body(request,review,invalidated_by,addressee):
@@ -155,7 +157,7 @@ def get_pending_review_body(request,review,action_by,is_updated,addressee,follow
 		else:
 			context['apr_url']='peer_testing:peer_testing_approve_detail_view'
 
-	latest_apr_row=ApprovalHelper.get_latest_approval_row(review)
+	latest_apr_row=ApprovalHelper.get_latest_approval_row(review,request.user)
 	context['follow_up_comment']=latest_apr_row.approver_comment
 	response=render(request,'email/pending_review_email.html',context)
 	return str(response.content.decode('utf-8'))
@@ -170,9 +172,10 @@ def get_outcome_complete_response(request,review,action,action_by,addressee,comm
 	context['addressee']=addressee
 	context['peer_review']=True if review.review_type==CommonLookups.get_peer_review_question_type() else False
 	context['from']=request.user.first_name
-	latest_appr_row=ApprovalHelper.get_latest_approval_row(review)
-	print('******Email Helper******')
-	print(latest_appr_row.delegated)
+	latest_appr_row=ApprovalHelper.get_latest_approval_row(review,request.user)
+	logger=LoggingHelper(request.user,__name__)
+	logger.write('******Email Helper******',LoggingHelper.DEBUG)
+	logger.write(str(latest_appr_row.delegated),LoggingHelper.DEBUG)
 	if latest_appr_row.delegated:
 		if context['peer_review']:
 			context['apr_url']='peer_review:review_detail_approve_view'
@@ -181,7 +184,7 @@ def get_outcome_complete_response(request,review,action,action_by,addressee,comm
 	elif review.approval_outcome in [StatusCodes.get_approved_status(),
 										StatusCodes.get_rejected_status(),
 										StatusCodes.get_invalid_status()]:
-		print('Not delegated')
+		logger.write('Not delegated',LoggingHelper.DEBUG)
 		if context['peer_review']:
 			context['apr_url']='peer_review:review_detail_view'
 		else:

@@ -1,6 +1,6 @@
 from peer_review.HelperClasses import Timeline,CommonLookups
 
-def get_approval_timeline(review):
+def get_approval_timeline(review,request):
 	approval_rows=review.approval_review_assoc.order_by('creation_date')
 	distinct_approval_objs=[approval_rows.first()]
 	prev_row=approval_rows.first()
@@ -15,6 +15,7 @@ def get_approval_timeline(review):
 		timeline.append(Timeline(title=apr.raised_to.get_full_name(),
 								description=['Approver comment: '+apr.approver_comment,'Delegated: '+str(apr.delegated)] if apr.approver_comment else None,
 								is_url=False,
+								request=request,
 								title_right_floater=CommonLookups.get_approval_value(apr.approval_outcome))
 						)
 	return timeline

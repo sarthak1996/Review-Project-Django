@@ -1,7 +1,8 @@
 from django.db.models.functions import ExtractYear
 from peer_review.models import Approval,Review
 from peer_review.HelperClasses import CommonLookups,StatusCodes
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 def get_review_raised_by_me(user,year=None):
 	if not year:
 		return user.reviews_created_by.all()\
@@ -45,9 +46,10 @@ def get_peer_testing_raised_to_me(user,year=None):
 						ex_year=year)
 
 
-def get_perct_num_reviews_by_apr_outcome(qs,user,review_type,raised_to_me,from_manager=False):
+def get_perct_num_reviews_by_apr_outcome(qs,user,review_type,raised_to_me,request,from_manager=False):
 	total_reviews=qs.count()
 	filtered_reviews=None
+	logger=LoggingHelper(request.user,__name__)
 	if from_manager:
 		filtered_reviews=qs
 	elif review_type==CommonLookups.get_peer_testing_question_type():
@@ -60,7 +62,7 @@ def get_perct_num_reviews_by_apr_outcome(qs,user,review_type,raised_to_me,from_m
 			filtered_reviews=get_review_raised_to_me(user)
 		else:
 			filtered_reviews=get_review_raised_by_me(user)
-			print(filtered_reviews)
+			logger.write('Filtered reviews: '+str(filtered_reviews),LoggingHelper.DEBUG)
 
 	num_pnd=filtered_reviews.filter(approval_outcome=StatusCodes.get_pending_status()).count()
 	num_inv=filtered_reviews.filter(approval_outcome=StatusCodes.get_invalid_status()).count()
@@ -79,26 +81,27 @@ def get_perct_num_reviews_by_apr_outcome(qs,user,review_type,raised_to_me,from_m
 		perct_dict=normalize_pcts({'perct_pnd':perct_pnd,
 									'perct_inv':perct_inv,
 									'perct_rej':perct_rej,
-									'perct_apr':perct_apr})
+									'perct_apr':perct_apr},request)
 		
 	else:
 		perct_dict = {'perct_pnd':0,
 			'perct_inv':0,
 			'perct_rej':0,
 			'perct_apr':0}
-	print('Progress bar dict')
-	print({**num_dict,**perct_dict})
+	logger.write('Progress bar dict',LoggingHelper.DEBUG)
+	logger.write(str({**num_dict,**perct_dict}),LoggingHelper.DEBUG)
 	return {**num_dict,**perct_dict}
 
 
-def normalize_pcts(perct_dict):
+def normalize_pcts(perct_dict,request):
 	# logic:
 	# create clone of dict
 	# remove 0 entries from cloned dict
 	# find min of 0 eliminated clone
 	# normalize min element to 100 - (rest sum)
-	print('Perct dictionary:')
-	print(perct_dict)
+	logger=LoggingHelper(request.user,__name__)
+	logger.write('Perct dictionary:',LoggingHelper.DEBUG)
+	logger.write(str(perct_dict),LoggingHelper.DEBUG)
 	zero_removed_dict={key:val for key, val in perct_dict.items() if val != 0}
 	if zero_removed_dict:
 		min_element=min(zero_removed_dict,key=zero_removed_dict.get)

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -128,3 +129,65 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS =[
     os.path.join(BASE_DIR,'static_files'),
 ]
+
+
+LOGGING = {
+    'version': 1,
+    # Version of logging
+    'disable_existing_loggers': False,
+    'filters':{
+        'simple':{
+            '()':'configurations.HelperClasses.SystemLogFilter'
+        }
+    },
+    'formatters':{
+        'simple':{
+            'format': '[ %(asctime)s - %(name)s ] - { %(levelname)s } ] : %(message)s \n',
+            
+        },
+    },
+    'handlers': {
+        'fileDebug': {
+            'level': 'DEBUG',
+            'formatter': 'simple',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR,'app_logs','AppLogs','app-debug.log'),
+            'maxBytes': 1024 * 1024 * 10,
+            'filters':['simple']
+        },
+        'fileError': {
+            'level': 'ERROR',
+            'formatter': 'simple',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR,'app_logs','AppLogs','app-error.log'),
+            'maxBytes': 1024 * 1024 * 10,
+            'filters':['simple']
+        },
+        'djangoDebug': {
+            'level': 'DEBUG',
+            'formatter': 'simple',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR,'app_logs','DjangoLogs','djangoapp-debug.log'),
+            'maxBytes': 1024 * 1024 * 10,
+            'filters':['simple']
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['fileError'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        '': {
+            'handlers': ['fileDebug'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'django': {
+            'handlers': ['djangoDebug'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+    },
+}
+

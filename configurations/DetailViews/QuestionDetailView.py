@@ -4,7 +4,8 @@ from configurations.models import Question
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class QuestionDetailView(DetailView):
 	model=Question
 	template_name='configurations/detail_view.html'
@@ -27,6 +28,8 @@ class QuestionDetailView(DetailView):
 		context['delegate_label']='Delegate'
 		context['delegate_view_url']='peer_review:delegate_view'
 		context['is_conf_active']='active'
+		logger=LoggingHelper(self.request.user,__name__)
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 	@method_decorator(login_required(login_url='/reviews/login'))

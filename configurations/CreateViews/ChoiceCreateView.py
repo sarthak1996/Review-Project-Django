@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
+from configurations.HelperClasses import LoggingHelper
+import traceback
 
 class ChoiceCreateView(CreateView):
 	model= Choice
@@ -21,6 +23,8 @@ class ChoiceCreateView(CreateView):
 			redirect=super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger=LoggingHelper(self.request.user,__name__)
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 			handle_exception()
 			return super(ChoiceCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created choice : '+form.instance.choice_text)
@@ -31,6 +35,7 @@ class ChoiceCreateView(CreateView):
 		context['page_title']='Create Choice'
 		context['card_title']='Choice'
 		context['is_conf_active']='active'
+
 		return context
 
 	@method_decorator(login_required(login_url='/reviews/login'))

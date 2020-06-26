@@ -4,7 +4,8 @@ from peer_review.models import Review,Approval
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class PeerTestingDetailView(DetailView):
 	model=Review
 	template_name='configurations/detail_view.html'
@@ -15,6 +16,7 @@ class PeerTestingDetailView(DetailView):
 
 	def get_context_data(self, **kwargs):
 		context=super(PeerTestingDetailView,self).get_context_data(**kwargs)
+		logger=LoggingHelper(self.request.user,__name__)
 		review_obj=self.object
 		context['detail_view_card_title']='Peer testing'
 		context['detail_name']=review_obj.bug_number
@@ -37,13 +39,14 @@ class PeerTestingDetailView(DetailView):
 		# context['exemptions']=exemptions
 		context['answer_rendered']=True
 		approval_timeline=Approval.objects.filter(review=review_obj).all()
-		approval_history=ApprovalTimeline.get_approval_timeline(review_obj)
-		print('\n'.join([str(usage) for usage in approval_history]))
+		approval_history=ApprovalTimeline.get_approval_timeline(review_obj,self.request)
+		logger.write('\n'.join([str(usage) for usage in approval_history]),LoggingHelper.DEBUG)
 		# context['right_aligned_timeline_title']='Approval History'
 		context['right_aligned_timeline']=True
 		context['approval_timeline']=approval_history
 		context['approval_timeline_title']='Approval History'
 		context['detail_view_type']='testing_review_user_view'
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 

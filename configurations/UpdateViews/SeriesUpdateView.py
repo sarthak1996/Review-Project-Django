@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 from django.urls import reverse_lazy
 from django.db import transaction
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class SeriesUpdateView(UpdateView):
 	model=Series
 	template_name='configurations/create_view.html'
@@ -23,10 +24,12 @@ class SeriesUpdateView(UpdateView):
 	@transaction.atomic
 	def form_valid(self, form):
 		form.instance.last_update_by=self.request.user
+		logger=LoggingHelper(self.request.user,__name__)
 		try :
 			redirect = super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger.write('Exception:'+str(traceback.format_exc()),LoggingHelper.DEBUG)
 			handle_exception()
 			return super(SeriesUpdateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully updated series : '+form.instance.series_name)

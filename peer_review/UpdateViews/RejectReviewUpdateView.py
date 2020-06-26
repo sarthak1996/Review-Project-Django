@@ -9,7 +9,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_action_taker
 from django.contrib import messages
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class RejectReviewUpdateView(UpdateView):
 	model=Review
 	template_name='configurations/create_view.html'
@@ -39,9 +40,12 @@ class RejectReviewUpdateView(UpdateView):
 		try:
 			ApprovalHelper.reject_review(review=review_instance,
 										user=self.request.user,
+										request=request,
 										approver_comment=form.cleaned_data['approver_comment'])
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger=LoggingHelper(self.request.user,__name__)
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 			handle_exception()
 			return super(RejectReviewUpdateView,self).form_invalid(form)
 

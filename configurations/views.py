@@ -15,6 +15,10 @@ from django.db import transaction
 from datetime import datetime
 from django.contrib.auth.decorators import login_required,user_passes_test
 from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager
+from configurations.HelperClasses import LoggingHelper
+import traceback
+
+
 # Create your views here.
 @login_required(login_url='/reviews/login')
 def index(request):	
@@ -56,6 +60,7 @@ def login_view(request):
 @transaction.atomic
 def user_registration_view(request):
 	form=UserRegistrationForm(request.POST or None)
+	logger=LoggingHelper(request.user,__name__)
 	if request.method=='POST':
 		if form.is_valid():
 			user_created=form.save(commit=False)
@@ -65,6 +70,7 @@ def user_registration_view(request):
 			except Exception as e:
 				form.add_error(None,str(e))
 				form.check_for_field_errors()
+				logger.write('Exception:'+str(traceback.format_exc()),LoggingHelper.DEBUG)
 				handle_exception()
 				return render(request,'registration/userRegistration.html',{'form':form})
 			messages.success(request,'User '+form.cleaned_data['username']+ ' created sucessfully')
@@ -95,8 +101,8 @@ def configurations_home(request):
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def choices_dependent_region(request):
 	choice_type=request.GET.get('choice_type')
-	print('Choice type ajax')
-	print(choice_type)
+	logger=LoggingHelper(request.user,__name__)
+	logger.write('Choice type ajax: '+str(choice_type),LoggingHelper.DEBUG)
 	if choice_type=='TXT':
 		return HttpResponse('Choice not needed for text type')
 	choices=Choice.objects.all()
@@ -108,6 +114,7 @@ def choices_dependent_region(request):
 @login_required(login_url='/reviews/login')
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def review_raised_graph(request):
+	logger=LoggingHelper(request.user,__name__)
 	labels=[]
 	data=[]
 	months_dict={
@@ -146,8 +153,7 @@ def review_raised_graph(request):
 	for i in review_months_all:
 		labels.append(months_dict[i[0]])
 		data.append(i[1])
-	print('Review raised graph')
-	print(labels,data)
+	
 
 	raised_to_me_review=CommonCounts.get_review_raised_to_me(user=request.user,year=curr_year)\
 										.annotate(month=ExtractMonth('creation_date'))\
@@ -167,6 +173,11 @@ def review_raised_graph(request):
 	for i in raised_to_me_months_all:
 		data2.append(i[1])
 
+	logger.write('Review raised graph',LoggingHelper.DEBUG)
+	logger.write(str(labels),LoggingHelper.DEBUG)
+	logger.write(str(data),LoggingHelper.DEBUG)
+	logger.write(str(data2),LoggingHelper.DEBUG)
+	
 	return JsonResponse(data={
         'labels': labels,
         'data1': data,
@@ -177,6 +188,7 @@ def review_raised_graph(request):
 @login_required(login_url='/reviews/login')
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def peer_testing_graph(request):
+	logger=LoggingHelper(request.user,__name__)
 	labels=[]
 	data=[]
 	months_dict={
@@ -203,7 +215,6 @@ def peer_testing_graph(request):
 	# labels.append(2)
 	# data.append(3)
 	# data.append(4)
-	print(peer_testing_queryset)
 	review_months_all=[]
 	already_present_months=[]
 	for item in peer_testing_queryset:
@@ -216,8 +227,7 @@ def peer_testing_graph(request):
 	for i in review_months_all:
 		labels.append(months_dict[i[0]])
 		data.append(i[1])
-	print('Peer testing graph')
-	print(labels,data)
+	
 
 	raised_to_me_review=CommonCounts.get_peer_testing_raised_to_me(user=request.user,year=curr_year)\
 									.annotate(month=ExtractMonth('creation_date'))\
@@ -237,6 +247,11 @@ def peer_testing_graph(request):
 	for i in raised_to_me_months_all:
 		data2.append(i[1])
 
+	logger.write('Peer testing graph',LoggingHelper.DEBUG)
+	logger.write(str(labels),LoggingHelper.DEBUG)
+	logger.write(str(data),LoggingHelper.DEBUG)
+	logger.write(str(data2),LoggingHelper.DEBUG)
+	
 	return JsonResponse(data={
         'labels': labels,
         'data1': data,

@@ -10,7 +10,8 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_raised_by_me
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class ReviewUpdateView(UpdateView):
 	model=Review
 	template_name='configurations/create_view.html'
@@ -25,7 +26,7 @@ class ReviewUpdateView(UpdateView):
 	@transaction.atomic
 	def form_valid(self, form):
 		raised_to_user=get_user_model().objects.get(pk=form.cleaned_data['raise_to'].pk)
-		
+		logger=LoggingHelper(self.request.user,__name__)
 		form.instance.last_update_by=self.request.user
 		form.instance.review_type=CommonLookups.get_peer_review_question_type()
 		review_obj=form.instance
@@ -33,15 +34,18 @@ class ReviewUpdateView(UpdateView):
 			form.add_error('raise_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
 			return super(ReviewUpdateView,self).form_invalid(form)
 		review_obj=form.save(commit=False)
-		print('Review approval:'+ review_obj.approval_outcome)
+		logger.write('Review approval:'+ str(review_obj.approval_outcome),LoggingHelper.DEBUG)
 		# review_obj.save()
 		try:
 			ApprovalHelper.mark_review_pending(review=review_obj,
 							user=self.request.user,
+							request=self.request,
 							raised_to=form.cleaned_data['raise_to'])
 		except Exception as e:
 			form.add_error(None,str(e))
 			handle_exception()
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
+			
 			return super(ReviewUpdateView,self).form_invalid(form)
 
 		EmailHelper.send_email(request=self.request,

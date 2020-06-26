@@ -8,7 +8,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 from configurations.models import Team
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class PeerReviewManagerListView(ListView):
 	model=Review
 	template_name='configurations/list_view.html'
@@ -18,6 +19,7 @@ class PeerReviewManagerListView(ListView):
 
 	def get_context_data(self,**kwargs):
 		context = super().get_context_data(**kwargs)
+		logger=LoggingHelper(self.request.user,__name__)
 		context['detail_view_url']='manager_activities:manager_review_view'
 		context['page_title']='Peer Review - Manager'
 		context['create_button_rendered']=False
@@ -34,8 +36,13 @@ class PeerReviewManagerListView(ListView):
 		f_team=get_request.get('filter_form-team',None)
 		# f_review_type=get_request.get('filter_form-review_type',None)
 		f_series_type=get_request.get('filter_form-series_type',None)
-		print('Generating filter tags')
-		print(f_bug_number,f_raised_to,f_priority,f_approval_outcome,f_team,f_series_type)
+		logger.write('Generating filter tags',LoggingHelper.DEBUG)
+		logger.write(f_bug_number,LoggingHelper.DEBUG)
+		logger.write(f_raised_to,LoggingHelper.DEBUG)
+		logger.write(f_priority,LoggingHelper.DEBUG)
+		logger.write(f_approval_outcome,LoggingHelper.DEBUG)
+		logger.write(f_team,LoggingHelper.DEBUG)
+		logger.write(f_series_type,LoggingHelper.DEBUG)
 		applied_filter_dict={
 				'filter_form-bug_number__icontains':f_bug_number,
 				'filter_form-raised_to':f_raised_to,
@@ -53,8 +60,8 @@ class PeerReviewManagerListView(ListView):
 							'team: ':Team.objects.get(pk=f_team).team_name if f_team else None,
 							'series_type: ':f_series_type
 							})
-		print(filter_badge_dict)
-		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
+		logger.write(str(filter_badge_dict),LoggingHelper.DEBUG)
+		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(self.request,**filter_badge_dict)
 		context['filter_badges']=filter_badges_list
 		context['text_filters_drop_down_icon']='dropdown-toggle'
 
@@ -73,7 +80,7 @@ class PeerReviewManagerListView(ListView):
 									})
 		search_drop_downs_args=['Priority','Approval outcome','Series type','Team']
 		#mandatory search drop down
-		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
+		search_drop_downs=SearchDropDown.generate_drop_down_list(self.request,*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		
 		context['reset_filters']='manager_activities:peer_review_manager_list'
@@ -85,11 +92,11 @@ class PeerReviewManagerListView(ListView):
 																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_review_question_type(),
 																		raised_to_me=False,
+																		request=self.request,
 																		from_manager=True)
 		context={**context,**progress_dict}
-		# print('Progress bar:')
-		# print(context)
-
+		
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 	def get_queryset(self):

@@ -22,7 +22,7 @@ class Team(models.Model):
 		field_dict['Team Group Email']=self.team_grp_mail
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
-		# print(field_dict.items())
+		
 		return field_dict.items()
 
 	def get_last_update_fields(self):

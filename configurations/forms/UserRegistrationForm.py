@@ -19,21 +19,18 @@ class UserRegistrationForm(forms.ModelForm):
 
 	def clean_confirm_password(self):
 		cleaned_data=super().clean()
-		# print('Inside clean_confirm_password')
 		if cleaned_data.get('confirm_password')==cleaned_data.get('password'):
 			return cleaned_data.get('confirm_password')
 		else:
 			raise forms.ValidationError("Passwords do not match! Enter again")
 	def clean_team(self):
 		cleaned_data=super().clean()
-		# print('Inside clean_team')
 		if cleaned_data.get('team') is not None:
 			return cleaned_data.get('team')
 		else:
 			raise forms.ValidationError("Team field can not be empty")
 	def clean_email(self):
 		cleaned_data=super().clean()
-		# print('Inside clean_email')
 		input_email=cleaned_data.get('email')
 		user_with_email=get_user_model().objects.filter(email=input_email)
 		if user_with_email.exists():

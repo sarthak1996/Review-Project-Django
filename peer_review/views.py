@@ -17,7 +17,9 @@ from collections import OrderedDict
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required,user_passes_test
 from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager,is_review_action_taker,is_review_raised_by_me
-
+from peer_review.HelperClasses.oracle import BugHelper
+from configurations.HelperClasses import LoggingHelper
+import traceback
 # Create your views here.
 
 @login_required(login_url='/reviews/login')
@@ -39,11 +41,12 @@ def reviews_home(request):
 @transaction.atomic 
 def peer_review_approval_form(request,**kwargs):
 	# form=PeerReviewAnswerForm(request.POST or None)
+	logger=LoggingHelper(request.user,__name__)
 	review_id=kwargs['obj_pk']
 	review=Review.objects.filter(pk=review_id).first()
 	if not is_review_action_taker(request.user,review):
 		return redirect(reverse_lazy('configurations:unauthorized_common'))
-	initial_questions=PeerReviewApprovalQuestions.get_answer_form_sets_for_peer_review(review)
+	initial_questions=PeerReviewApprovalQuestions.get_answer_form_sets_for_peer_review(review,request)
 	model_formset=modelformset_factory(Answer, form=PeerReviewAnswerForm, extra=len(initial_questions))
 	formset=model_formset(request.POST or None,queryset=Answer.objects.none(),initial=initial_questions,prefix='answer')
 	
@@ -61,7 +64,7 @@ def peer_review_approval_form(request,**kwargs):
 	context_dict['is_review_active']='active'
 	context_dict['logged_in_user']=request.user
 	context_dict['created_by_user']=review.created_by
-	context_dict['raised_to_user']=ApprovalHelper.get_latest_approval_row(review).raised_to
+	context_dict['raised_to_user']=ApprovalHelper.get_latest_approval_row(review,request).raised_to
 	
 	#approval timeline
 	approval_timeline=Approval.objects.filter(review=review).all()
@@ -70,9 +73,10 @@ def peer_review_approval_form(request,**kwargs):
 		approval_history.append(Timeline(title=approval.raised_to.get_full_name(),
 										description=approval.approver_comment,
 										is_url=False,
+										request=request,
 										title_right_floater=CommonLookups.get_approval_value(approval.approval_outcome)
 										))
-	print('\n'.join([str(usage) for usage in approval_history]))
+	logger.write('\n'.join([str(usage) for usage in approval_history]),LoggingHelper.DEBUG)
 	context_dict['right_aligned_timeline']=True
 
 	context_dict['right_aligned_timeline']=True
@@ -85,32 +89,31 @@ def peer_review_approval_form(request,**kwargs):
 							is_url=True,
 							timeline_url='peer_review:review_detail_view',
 							obj_pk=review.pk,
+							request=request,
 							title_right_floater=CommonLookups.get_priority_value(review.priority))
 	context_dict['detail_timeline']=[detail_timeline]
 	context_dict['detail_timeline_title']='Review details'
-	# for form in formset:
-	# 	print('Initial form values' + str(form.initial['question']))
+	
 
 	if request.method=='POST':
 		all_forms_valid=False
 		if formset.is_valid:
-			# print('test')
+			
 			all_forms_valid=True
 			for form in formset:
-				print('Approval Form errors:')
-				print(form.errors)
+				logger.write('Approval Form errors:',LoggingHelper.ERROR)
+				logger.write(str(form.errors),LoggingHelper.ERROR)
 				if form.is_valid():
 					all_forms_valid=True
 				else:
 					all_forms_valid=False
 					break
-		print('Approval form :')
-		print('Forms valid:'+str(all_forms_valid))
-		print('Review Approval Formset errors (if any)')
-		print(formset.errors)
-		print(formset.non_form_errors())
+		logger.write('Approval form :',LoggingHelper.DEBUG)
+		logger.write('Forms valid:'+str(all_forms_valid),LoggingHelper.DEBUG)
+		logger.write('Review Approval Formset errors (if any)',LoggingHelper.ERROR)
+		logger.write(str(formset.errors),LoggingHelper.ERROR)
+		logger.write(str(formset.non_form_errors()),LoggingHelper.ERROR)
 		if all_forms_valid:
-			# print('here2')
 			for form in formset:
 
 				obj_instance=form.instance
@@ -124,41 +127,42 @@ def peer_review_approval_form(request,**kwargs):
 				obj_instance.last_update_by=request.user
 				
 				
-			print('Exemption logging')
+			logger.write('Exemption logging',LoggingHelper.DEBUG)
 			all_forms_valid=False
 			if exemption_formset.is_valid():
 				all_forms_valid=True
-				print('Exemption formset is valid')
-				print('Printing exemption form details')
+				logger.write('Exemption formset is valid',LoggingHelper.DEBUG)
+				logger.write('Printing exemption form details',LoggingHelper.DEBUG)
 				for form1 in exemption_formset:
-					print('Exemption Form errors:')
-					print(form1.errors)
+					logger.write('Exemption Form errors:',LoggingHelper.ERROR)
+					logger.write(str(form1.errors),LoggingHelper.ERROR)
 					if form1.is_valid():
 						all_forms_valid=True
 					else:
 						all_forms_valid=False
 						break
-			print('Exemption form:')
-			print('Forms valid:'+str(all_forms_valid))
-			# print('Request')
-			# print(request.POST)
+			logger.write('Exemption form:',LoggingHelper.DEBUG)
+			logger.write('Forms valid:'+str(all_forms_valid),LoggingHelper.DEBUG)
+			
 			if all_forms_valid:
 				for form1 in exemption_formset:
 
 					
 					obj_instance=form1.instance
 					if not form1.cleaned_data.get('DELETE',False):
-						# print(form1.cleaned_data)
+						
 						exemption_for=form1.cleaned_data['exemption_for']
 						exemption_explanation=form1.cleaned_data['exemption_explanation']
 						try:
 							ExemptionHelper.create_exemption_row(review=review,
 															user=request.user,
 															exemption_for=exemption_for,
-															exemption_explanation=exemption_explanation
+															exemption_explanation=exemption_explanation,
+															request=request
 															)
 						except Exception as e:
 							form1.add_error(None,str(e))
+							logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 							handle_exception()
 							return render(request, 'peer_review/review_approval.html', context_dict)
 
@@ -167,9 +171,11 @@ def peer_review_approval_form(request,**kwargs):
 					formset.save()
 					ApprovalHelper.approve_review(review=review,
 												user=request.user,
+												request=request,
 												approver_comment=None)
 				except Exception as e:
 					messages.error(request,str(e))
+					logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 					handle_exception()
 					return render(request, 'peer_review/review_approval.html', context_dict)
 
@@ -183,11 +189,10 @@ def peer_review_approval_form(request,**kwargs):
 				
 				messages.success(request,'Review '+review.bug_number+' successfully approved!')
 				return redirect("peer_review:review_raised_to_me")
-			print('Exemption Formset errors (if any)')
-			print(exemption_formset.errors)
-			print(exemption_formset.non_form_errors())
+			logger.write('Exemption Formset errors (if any)',LoggingHelper.ERROR)
+			logger.write(str(exemption_formset.errors),LoggingHelper.ERROR)
+			logger.write(str(exemption_formset.non_form_errors()),LoggingHelper.ERROR)
 			
-		# print('here')
 	return render(request, 'peer_review/review_approval.html', context_dict)
 
 
@@ -197,13 +202,15 @@ def peer_review_approval_form(request,**kwargs):
 @transaction.atomic 
 def invalidate_review(request,**kwargs):
 	review_id=kwargs['obj_pk']
+	logger=LoggingHelper(request.user,__name__)
 	review=Review.objects.filter(pk=review_id).first()
 	if not is_review_raised_by_me(request.user,review):
 		return redirect(reverse_lazy('configurations:unauthorized_common'))
 	try:
-		ApprovalHelper.invalidate_review(review,request.user)
+		ApprovalHelper.invalidate_review(review,request.user,request)
 	except Exception as e:
 		messages.error(request,str(e))
+		logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 		handle_exception()
 		return redirect(review.get_absolute_url())
 	EmailHelper.send_email(request=request,
@@ -224,13 +231,12 @@ def invalidate_review(request,**kwargs):
 @login_required(login_url='/reviews/login')
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized')
 def load_users_based_on_team(request):
-	# review=request.GET.get('review')
-	# print('Review request url')
-	# print(request.GET)
+	
 	team=request.GET.get('team')
-	print('Team id:'+str(team))
+	logger=LoggingHelper(request.user,__name__)
+	logger.write('Team id:'+str(team),LoggingHelper.DEBUG)
 	team_obj=Team.objects.get(pk=team)
-	print(team_obj)
+	logger.write(str(team_obj),LoggingHelper.DEBUG)
 	users=team_obj.user_team_assoc.all().exclude(pk=request.user.pk).order_by('first_name')
 	objects_lov=OrderedDict()
 	for user in users:

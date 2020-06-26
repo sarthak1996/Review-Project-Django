@@ -9,7 +9,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
 from configurations.models import Team
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class PeerTestingManagerListView(ListView):
 	model=Review
 	template_name='configurations/list_view.html'
@@ -19,6 +20,7 @@ class PeerTestingManagerListView(ListView):
 
 	def get_context_data(self,**kwargs):
 		context = super().get_context_data(**kwargs)
+		logger=LoggingHelper(self.request.user,__name__)
 		context['detail_view_url']='manager_activities:manager_peer_testing_view'
 		context['page_title']='Peer Testing - Manager'
 		context['is_man_home_active']='active'
@@ -35,8 +37,12 @@ class PeerTestingManagerListView(ListView):
 		# f_review_type=get_request.get('filter_form-review_type',None)
 		# f_series_type=get_request.get('filter_form-series_type',None)
 
-		print('Generating filter tags')
-		print(f_bug_number,f_raised_to,f_priority,f_approval_outcome,f_team)
+		logger.write('Generating filter tags',LoggingHelper.DEBUG)
+		logger.write(f_bug_number,LoggingHelper.DEBUG)
+		logger.write(f_raised_to,LoggingHelper.DEBUG)
+		logger.write(f_priority,LoggingHelper.DEBUG)
+		logger.write(f_approval_outcome,LoggingHelper.DEBUG)
+		logger.write(f_team,LoggingHelper.DEBUG)
 
 
 		applied_filter_dict={
@@ -55,8 +61,8 @@ class PeerTestingManagerListView(ListView):
 							'approval_outcome: ':f_approval_outcome,
 							'team: ':Team.objects.get(pk=f_team).team_name if f_team else None
 							})
-		print(filter_badge_dict)
-		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
+		logger.write(str(filter_badge_dict),LoggingHelper.DEBUG)
+		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(self.request,**filter_badge_dict)
 		context['filter_badges']=filter_badges_list
 		context['text_filters_drop_down_icon']='dropdown-toggle'
 
@@ -74,19 +80,21 @@ class PeerTestingManagerListView(ListView):
 									})
 		search_drop_downs_args=['Priority','Approval outcome','Team']
 		#mandatory search drop down
-		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
+		search_drop_downs=SearchDropDown.generate_drop_down_list(self.request,*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		
 		context['reset_filters']='manager_activities:peer_testing_manager_list'
 		context['progressbar']=True
-		print('Manager list view')
-		print(context['filter'].qs)
+		logger.write('Manager list view',LoggingHelper.DEBUG)
+		logger.write(str(context['filter'].qs),LoggingHelper.DEBUG)
 		progress_dict=CommonCounts.get_perct_num_reviews_by_apr_outcome(qs=context['filter'].qs,
 																		user=self.request.user,
 																		review_type=CommonLookups.get_peer_testing_question_type(),
 																		raised_to_me=False,
+																		request=self.request,
 																		from_manager=True)
 		context={**context,**progress_dict}
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 	def get_queryset(self):

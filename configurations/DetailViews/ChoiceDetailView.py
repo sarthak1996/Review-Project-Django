@@ -4,7 +4,8 @@ from peer_review.HelperClasses import Timeline
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class ChoiceDetailView(DetailView):
 	model=Choice
 	template_name='configurations/detail_view.html'
@@ -36,13 +37,17 @@ class ChoiceDetailView(DetailView):
 											timeline_url=question_url,
 											description=['Question Type:'+question.question_type],
 											is_url=True,
-											obj_pk=question.pk
+											obj_pk=question.pk,
+											request=self.request
 											))
-		print('\n'.join([str(usage) for usage in choice_usages]))
+		
+		logger=LoggingHelper(self.request.user,__name__)
+		logger.write('\n'.join([str(usage) for usage in choice_usages]),LoggingHelper.DEBUG)
+			
 		context['right_aligned_timeline']=True
 		context['detail_timeline']=choice_usages
 		context['detail_timeline_title']='Question Usages'
-
+		logger.write('Context:'+str(context),LoggingHelper.DEBUG)
 
 
 		return context

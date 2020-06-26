@@ -14,6 +14,8 @@ from peer_review.forms.PeerReviewAnswerForm import PeerReviewAnswerForm
 from peer_testing.forms.PeerTestingReviewForm import PeerTestingReviewForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager,is_review_raised_by_me,is_review_action_taker
+from configurations.HelperClasses import LoggingHelper
+import traceback
 # Create your views here.
 
 @login_required(login_url='/reviews/login')
@@ -33,7 +35,7 @@ def peer_testing_home(request):
 @login_required(login_url='/reviews/login')
 @user_passes_test(is_emp_or_manager,login_url='/reviews/unauthorized') 
 def raise_peer_testing(request):
-	initial_questions=PeerTestingQuestions.get_answer_form_sets_for_peer_testing()
+	initial_questions=PeerTestingQuestions.get_answer_form_sets_for_peer_testing(request)
 	return create_or_update_review(request=request,
 								initial_questions=initial_questions,
 								initial_review_instance=None,
@@ -46,7 +48,7 @@ def update_peer_testing_review(request,**kwargs):
 	review=Review.objects.get(pk=review_id)
 	if not is_review_raised_by_me(request.user,review):
 		return redirect(reverse_lazy('configurations:unauthorized_common'))
-	initial_answers=PeerTestingQuestions.construct_init_dictionary(review)
+	initial_answers=PeerTestingQuestions.construct_init_dictionary(review,request)
 	
 	return create_or_update_review(request=request,
 		initial_questions=initial_answers,
@@ -75,28 +77,28 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 	context_dict['dependent_raise_to']=True
 	context_dict['is_peer_test_active']='active'
 	review_pk=None
+	logger=LoggingHelper(request.user,__name__)
 	if edit and not initial_review_instance:
-		print('Invalid call ! returning with null')
+		logger.write('Invalid call ! returning with null',LoggingHelper.ERROR)
 		return None
 	if request.method=='POST':
 		all_forms_valid=False
 		if formset.is_valid:
-			# print('test')
 			all_forms_valid=True
 			for form in formset:
-				print('Review Form errors:')
-				print(form.errors)
+				logger.write('Review Form errors:')
+				logger.write(str(form.errors),LoggingHelper.ERROR)
 				if form.is_valid():
 					all_forms_valid=True
 				else:
 					all_forms_valid=False
 					break
-		print('Review form :')
-		print('Forms valid:'+str(all_forms_valid))
-		print('Review Formset errors (if any)')
-		print(formset.errors)
-		print(formset.non_form_errors())
-
+		logger.write('Review form :',LoggingHelper.DEBUG)
+		logger.write('Forms valid:'+str(all_forms_valid),LoggingHelper.DEBUG)
+		logger.write('Review Formset errors (if any)',LoggingHelper.ERROR)
+		logger.write(str(formset.errors),LoggingHelper.ERROR)
+		logger.write(str(formset.non_form_errors()),LoggingHelper.ERROR)
+		logger.write('Context:'+str(context_dict),LoggingHelper.DEBUG)
 		if all_forms_valid:
 			if review_form.is_valid():
 				review_instance=review_form.save(commit=False)
@@ -106,7 +108,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 				review_instance.last_update_by=request.user
 				review_instance.approval_outcome=StatusCodes.get_pending_status()
 				review_instance.review_type=CommonLookups.get_peer_testing_question_type()
-				PrintObjs.print_review_obj(review_instance)
+				PrintObjs.print_review_obj(review_instance,request.user)
 				raised_to_user=review_form.cleaned_data['raise_to']
 				if not CommonValidations.user_exists_in_team(raised_to_user,review_instance.team):
 					form.add_error('raise_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
@@ -115,6 +117,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 					review_form.save()
 				except Exception as e:
 					review_form.add_error(None,str(e))
+					logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 					handle_exception()
 					return render(request,'peer_testing/raise_peer_testing.html',context_dict)
 				review_pk=review_form.instance.pk
@@ -123,7 +126,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 						obj_instance=form.instance
 						if 'question' in form.initial:
 							obj_instance.question=form.initial['question']
-						# print(obj_instance)
+						
 						question_choice_type=obj_instance.question.question_choice_type
 						obj_instance.answer=form.cleaned_data['single_choice_field'] if question_choice_type==CommonLookups.get_single_choice_question_type() else form.cleaned_data['text_answer']
 						obj_instance.creation_date=datetime.datetime.now()
@@ -144,6 +147,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 							answer_row.save()
 						except Exception as e:
 							form.add_error(None,str(e))
+							logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 							handle_exception()
 							return render(request,'peer_testing/raise_peer_testing.html',context_dict)
 
@@ -151,9 +155,11 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 				try:
 					ApprovalHelper.mark_review_pending(review=review_instance,
 													user=request.user,
+													request=request,
 													raised_to=review_form.cleaned_data['raise_to'])
 				except Exception as e:
 					messages.error(request,str(e))
+					logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 					handle_exception()
 					return render(request,'peer_testing/raise_peer_testing.html',context_dict)
 				if not edit:
@@ -161,6 +167,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 						formset.save()
 					except Exception as e:
 						messages.error(request,str(e))
+						logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 						handle_exception()
 						return render(request,'peer_testing/raise_peer_testing.html',context_dict)
 				EmailHelper.send_email(request=request,
@@ -184,9 +191,11 @@ def invalidate_peer_test(request,**kwargs):
 	if not is_review_raised_by_me(request.user,review):
 		return redirect(reverse_lazy('configurations:unauthorized_common'))
 	try:
-		ApprovalHelper.invalidate_review(review,request.user)
+		ApprovalHelper.invalidate_review(review,request.user,request)
 	except Exception as e:
 		messages.error(request,str(e))
+		logger=LoggingHelper(request.user,__name__)
+		logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 		handle_exception()
 		return redirect(review.get_absolute_url())
 	EmailHelper.send_email(request=request,

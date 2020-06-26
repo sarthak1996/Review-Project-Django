@@ -6,7 +6,8 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class SeriesCreateView(CreateView):
 	model= Series
 	form_class=SeriesForm
@@ -22,6 +23,9 @@ class SeriesCreateView(CreateView):
 			redirect=super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger=LoggingHelper(self.request.user,__name__)
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
+			
 			handle_exception()
 			return super(SeriesCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created series : '+form.instance.series_name)

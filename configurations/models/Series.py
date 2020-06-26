@@ -30,7 +30,7 @@ class Series(models.Model):
 		field_dict['Series type']=SERIES_TYPE[1][1] if not self.series_type else self.series_type
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
-		# print(field_dict.items())
+		
 		return field_dict.items()
 
 	def get_last_update_fields(self):

@@ -28,6 +28,5 @@ class PeerTestingReviewForm(ModelForm):
 		else: 
 			self.fields['raise_to'].queryset=get_user_model().objects.all()
 		if review_instance and review_instance.pk:
-			print('Review instance exists.')
-			self.initial['raise_to']=ApprovalHelper.get_latest_approval_row(review_instance).raised_to
+			self.initial['raise_to']=ApprovalHelper.get_latest_approval_row(review_instance,request_user).raised_to
 	

@@ -13,8 +13,6 @@ class ExemptionForm(ModelForm):
 
 	def clean_exemption_for(self):
 		cleaned_data=super().clean()
-		# print('In clean exemption_for')
-		# print(cleaned_data)
 		if 'exemption_for' in cleaned_data:
 			if cleaned_data.get('exemption_for') is not None:
 				return cleaned_data.get('exemption_for')
@@ -23,8 +21,6 @@ class ExemptionForm(ModelForm):
 
 	def clean_exemption_explanation(self):
 		cleaned_data=super().clean()
-		# print('In clean exemption_explanation')
-		# print(cleaned_data)
 		if 'exemption_explanation' in cleaned_data:
 			if cleaned_data.get('exemption_explanation') is not None:
 				return cleaned_data.get('exemption_explanation')

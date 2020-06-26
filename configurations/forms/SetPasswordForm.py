@@ -7,8 +7,6 @@ class SetPasswordForm(forms.Form):
 
 	def clean_confirm_password(self):
 		cleaned_data=super().clean()
-		# print('Inside clean_confirm_password')
-		# print(cleaned_data)
 		if cleaned_data.get('confirm_password')==cleaned_data.get('password'):
 			return cleaned_data.get('confirm_password')
 		else:
