@@ -8,7 +8,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class QuestionListView(ListView):
 	model=Question
 	template_name='configurations/list_view.html'
@@ -16,7 +17,7 @@ class QuestionListView(ListView):
 	login_url ='/reviews/login'
 
 	def get_context_data(self,**kwargs):
-		# print('Helo')
+		logger=LoggingHelper(self.request.user,__name__)
 		context = super().get_context_data(**kwargs)
 		context['create_url']='configurations:question_create_view'
 		context['create_object_button_title']='Create Question'
@@ -29,8 +30,6 @@ class QuestionListView(ListView):
 		# number_badges_dict['Peer Testing']=Question.objects.filter(question_type=CommonLookups.get_peer_testing_question_type()).all().count()
 		# context['read_only_number_badges']=number_badges_dict.items()
 
-		# print('Filter request')
-		# print(self.request.GET)
 
 		#filter badges initialization
 		get_request=self.request.GET
@@ -39,8 +38,13 @@ class QuestionListView(ListView):
 		f_question_choice_type=get_request.get('filter_form-question_choice_type',None)
 		f_series_type=get_request.get('filter_form-series_type',None)
 		f_question_type=get_request.get('filter_form-question_type',None)
-		print('Generating filter tags')
-		print(f_question_text,f_mandatory,f_question_choice_type,f_series_type,f_question_type)
+		logger.write('Generating filter tags',LoggingHelper.DEBUG)
+		logger.write(f_question_text,LoggingHelper.DEBUG)
+		logger.write(f_mandatory,LoggingHelper.DEBUG)
+		logger.write(f_question_choice_type,LoggingHelper.DEBUG)
+		logger.write(f_series_type,LoggingHelper.DEBUG)
+		logger.write(f_question_type,LoggingHelper.DEBUG)
+
 		
 		#generating applied filter params url
 		applied_filter_dict={
@@ -58,7 +62,7 @@ class QuestionListView(ListView):
 							'series_type: ':f_series_type,
 							'question_type: ':f_question_type
 							})
-		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
+		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(self.request,**filter_badge_dict)
 
 		context['filter_badges']=filter_badges_list
 		context['text_filters_drop_down_icon']=''
@@ -76,12 +80,14 @@ class QuestionListView(ListView):
 									})
 		search_drop_downs_args=['Mandatory','Question choice type','Series type','Question type']
 		#mandatory search drop down
-		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
+		search_drop_downs=SearchDropDown.generate_drop_down_list(self.request,*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		context['reset_filters']='configurations:question_list_view'
+
+		context['logged_in_user']=self.request.user
 		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:question_update_view')
 
-
+		logger.write('context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 
@@ -90,4 +96,5 @@ class QuestionListView(ListView):
 	def dispatch(self, *args, **kwargs):
 		return super(QuestionListView, self).dispatch(*args, **kwargs)
 
-
+	def get_queryset(self):
+		return Question.objects.all().order_by('question_text')

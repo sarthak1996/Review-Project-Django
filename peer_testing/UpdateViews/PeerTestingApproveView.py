@@ -32,13 +32,15 @@ class PeerTestingApproveView(UpdateView):
 	@transaction.atomic
 	def form_valid(self, form):
 		review_instance=form.save(commit=False)
-		review_instance.last_update_by = self.request.user
+		logger=LoggingHelper(self.request.user,__name__)
 		try:
 			ApprovalHelper.approve_review(review=review_instance,
 										user=self.request.user,
+										request=self.request,
 										approver_comment=form.cleaned_data['approver_comment'])
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 			handle_exception()
 			return super(PeerTestingApproveView,self).form_invalid(form)
 		EmailHelper.send_email(request=self.request,

@@ -22,7 +22,7 @@ class Choice(models.Model):
 		# field_dict['Choice Text']=self.choice_text
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
-		# print(field_dict.items())
+		
 		return field_dict.items()
 
 	def get_last_update_fields(self):

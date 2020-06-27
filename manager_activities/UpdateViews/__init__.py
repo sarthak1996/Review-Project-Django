@@ -1,1 +1,2 @@
-from .FollowUpManagerUpdateView import FollowUpManagerUpdateView
+from .FollowUpReviewManagerUpdateView import FollowUpReviewManagerUpdateView
+from .FollowUpPeerTestManagerUpdateView import FollowUpPeerTestManagerUpdateView

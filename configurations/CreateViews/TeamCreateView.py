@@ -6,7 +6,8 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class TeamCreateView(CreateView):
 	model= Team
 	form_class=TeamForm
@@ -15,13 +16,13 @@ class TeamCreateView(CreateView):
 	login_url ='/reviews/login'
 	
 	def form_valid(self, form):
-		form.instance.last_update_by=self.request.user
-		form.instance.created_by=self.request.user
-		form.instance.creation_date=datetime.datetime.now()
 		try:
 			redirect=super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger=LoggingHelper(self.request.user,__name__)
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
+			
 			handle_exception()
 			return super(TeamCreateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully created team : '+form.instance.team_name)

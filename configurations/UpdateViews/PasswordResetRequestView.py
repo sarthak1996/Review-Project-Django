@@ -8,14 +8,15 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db.models.query_utils import Q
 from peer_review.HelperClasses.EmailHelper import send_email_mutt
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class PasswordResetRequestView(FormView):
     template_name = "registration/password_reset.html"
     success_url = '/reviews/login'
     form_class = PasswordResetRequestForm
 
     def form_valid(self,form):
-        
+        logger=LoggingHelper(self.request.user,__name__)
         data= form.cleaned_data["email_or_username"]
         user= get_user_model().objects.filter(Q(email=data)|Q(username=data)).first()
         if user:
@@ -38,7 +39,7 @@ class PasswordResetRequestView(FormView):
                             subject=subject)
                 messages.success(self.request,'Email has been sent to '+user.email)
             except Exception as e:
-                print(e)
+                logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
                 messages.error(self.request,'Email could not be sent : '+str(e))
         return super().form_valid(form)
 

@@ -9,7 +9,8 @@ from django.urls import reverse_lazy
 from django.db import transaction
 from datetime import datetime
 from django.utils import timezone
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 
 class TeamUpdateView(UpdateView):
 	model=Team
@@ -25,11 +26,12 @@ class TeamUpdateView(UpdateView):
 
 	@transaction.atomic
 	def form_valid(self, form):
-		form.instance.last_update_by=self.request.user
+		logger=LoggingHelper(self.request.user,__name__)
 		try :
 			redirect = super().form_valid(form)
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger.write('Exception:'+str(traceback.format_exc()),LoggingHelper.DEBUG)
 			handle_exception()
 			return super(TeamUpdateView,self).form_invalid(form)
 		messages.success(self.request, 'Successfully updated team : '+form.instance.team_name)

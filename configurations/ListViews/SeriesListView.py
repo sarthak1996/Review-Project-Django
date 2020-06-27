@@ -7,7 +7,8 @@ from configurations.HelperClasses import SearchFilterBadges,SearchDropDown,Pagin
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_manager
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class SeriesListView(ListView):
 	model=Series
 	template_name='configurations/list_view.html'
@@ -15,6 +16,7 @@ class SeriesListView(ListView):
 	login_url ='/reviews/login'
 
 	def get_context_data(self,**kwargs):
+		logger=LoggingHelper(self.request.user,__name__)
 		context = super().get_context_data(**kwargs)
 		context['create_url']='configurations:series_create_view'
 		context['create_object_button_title']='Create Series'
@@ -25,8 +27,9 @@ class SeriesListView(ListView):
 		get_request=self.request.GET
 		f_series_name=get_request.get('filter_form-series_name__icontains',None)
 		f_series_type=get_request.get('filter_form-series_type',None)
-		print('Generating filter tags')
-		print(f_series_type,f_series_name)
+		logger.write('Generating filter tags',LoggingHelper.DEBUG)
+		logger.write(f_series_type,LoggingHelper.DEBUG)
+		logger.write(f_series_name,LoggingHelper.DEBUG)
 		
 		applied_filter_dict={
 				'filter_form-series_name__icontains':f_series_name,
@@ -37,8 +40,8 @@ class SeriesListView(ListView):
 		filter_badge_dict=OrderedDict({'series_name: %':f_series_name,
 							'series_type: ':f_series_type
 							})
-		print(filter_badge_dict)
-		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(**filter_badge_dict)
+		
+		filter_badges_list=SearchFilterBadges.generate_filter_badges_list(self.request,**filter_badge_dict)
 		context['filter_badges']=filter_badges_list
 		context['text_filters_drop_down_icon']=''
 
@@ -53,11 +56,13 @@ class SeriesListView(ListView):
 		search_drop_downs_kwargs=OrderedDict({'filter_form-series_type':CommonLookups.get_series_types()})
 		search_drop_downs_args=['Series type']
 		#mandatory search drop down
-		search_drop_downs=SearchDropDown.generate_drop_down_list(*search_drop_downs_args,**search_drop_downs_kwargs)
+		search_drop_downs=SearchDropDown.generate_drop_down_list(self.request,*search_drop_downs_args,**search_drop_downs_kwargs)
 		context['search_drop_downs']=search_drop_downs
 		context['reset_filters']='configurations:series_list_view'
-		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:series_update_view')
 
+		context['logged_in_user']=self.request.user
+		# context['actions_drop']=Actions.get_actions_for_configuration_objects('configurations:series_update_view')
+		logger.write('context:'+str(context),LoggingHelper.DEBUG)
 		return context
 
 
@@ -66,3 +71,5 @@ class SeriesListView(ListView):
 	def dispatch(self, *args, **kwargs):
 		return super(SeriesListView, self).dispatch(*args, **kwargs)
 		
+	def get_queryset(self):
+		return Series.objects.all().order_by('series_name')

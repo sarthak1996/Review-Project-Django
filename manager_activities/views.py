@@ -107,7 +107,6 @@ def graph_manager(request,qs,teams):
 				'rgba(118,255,3, 0.8)']
 	dataset=[]
 	for idx,team in enumerate(teams):
-		# print('Hi '+ str(team))
 		team_qs=generic_queryset.filter(team=team)
 		months_all=[]
 		already_present_months=[]
@@ -130,11 +129,7 @@ def graph_manager(request,qs,teams):
 			'borderColor' : border_colors[idx%len(border_colors)],
 			'data' :data
 		})
-	# labels.append(1)
-	# labels.append(2)
-	# data.append(3)
-	# data.append(4)
-	# print(peer_testing_queryset)
+	
 
 	return JsonResponse(data={
         'labels': labels,

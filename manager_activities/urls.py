@@ -12,7 +12,8 @@ from manager_activities.DetailViews import(
 	)
 
 from manager_activities.UpdateViews import(
-	FollowUpManagerUpdateView
+	FollowUpReviewManagerUpdateView,
+	FollowUpPeerTestManagerUpdateView
 )
 
 app_name='manager_activities'
@@ -25,5 +26,6 @@ urlpatterns =[
 	url(r'^manager_peer_testing_view/(?P<obj_pk>\d+)$',PeerTestingManagerDetailView.as_view(),name='manager_peer_testing_view'),
 	path('ajax_peer_testing_graph_manager',views.peer_testing_graph_manager,name='ajax_peer_testing_graph_manager'),
 	path('ajax_peer_review_graph_manager',views.peer_review_graph_manager,name='ajax_peer_review_graph_manager'),
-	url(r'^follow_up_manager/(?P<obj_pk>\d+)$',FollowUpManagerUpdateView.as_view(),name='follow_up_manager')
+	url(r'^follow_up_manager_review/(?P<obj_pk>\d+)$',FollowUpReviewManagerUpdateView.as_view(),name='follow_up_manager_review'),
+	url(r'^follow_up_manager_peer_test/(?P<obj_pk>\d+)$',FollowUpPeerTestManagerUpdateView.as_view(),name='follow_up_manager_peer_test')
 ]

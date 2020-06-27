@@ -42,7 +42,7 @@ class Question(models.Model):
 		field_dict['MULTI_DISP_FIELD']='Choices'
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
-		# print(field_dict.items())
+		
 		return field_dict.items()
 
 	#create method to return choice list for rendering

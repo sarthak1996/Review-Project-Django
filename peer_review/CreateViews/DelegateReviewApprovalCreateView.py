@@ -11,7 +11,8 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_action_taker
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class DelegateReviewApprovalCreateView(CreateView):
 	model=Approval
 	form_class=DelegateReviewApprovalFlowForm
@@ -24,7 +25,6 @@ class DelegateReviewApprovalCreateView(CreateView):
 		review_id=self.kwargs['obj_pk']
 		review=Review.objects.filter(pk=review_id).first()
 		approval_instance=form.instance
-		
 		approval_instance.review=review
 		raised_to_user=get_user_model().objects.get(pk=form.cleaned_data['raised_to'].pk)
 		if not CommonValidations.user_exists_in_team(raised_to_user,review.team):
@@ -33,9 +33,12 @@ class DelegateReviewApprovalCreateView(CreateView):
 		try:
 			ApprovalHelper.delegate_approval(review=review,
 											user=self.request.user,
+											request=self.request,
 											raised_to=form.cleaned_data['raised_to'])
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger=LoggingHelper(self.request.user,__name__)
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 			handle_exception()
 			return super(DelegateReviewApprovalCreateView,self).form_invalid(form)
 

@@ -131,3 +131,7 @@
 .pagination{
   float: right;
 }
+.progress-bar{
+  height: 1em;
+  border-radius: 8px;
+}

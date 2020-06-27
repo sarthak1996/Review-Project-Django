@@ -12,9 +12,6 @@ class FollowUpForm(ModelForm):
 
 	def clean_approver_comment(self):
 		cleaned_data=super().clean()
-		# print('Followup form')
-		# print(cleaned_data)
-		# print(not cleaned_data.get('approver_comment'))
 		if not cleaned_data.get('approver_comment'):
 			return 'Gentle reminder'
 		return cleaned_data.get('approver_comment')

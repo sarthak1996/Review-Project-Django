@@ -11,7 +11,8 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_action_taker
-
+from configurations.HelperClasses import LoggingHelper
+import traceback
 class DelegatePeerTestApprovalCreateView(CreateView):
 	model=Approval
 	form_class=DelegateReviewApprovalFlowForm
@@ -33,9 +34,13 @@ class DelegatePeerTestApprovalCreateView(CreateView):
 		try:
 			ApprovalHelper.delegate_approval(review=review,
 											user=self.request.user,
+											request=self.request,
 											raised_to=form.cleaned_data['raised_to'])
 		except Exception as e:
 			form.add_error(None,str(e))
+			logger=LoggingHelper(self.request.user,__name__)
+			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
+			
 			handle_exception()
 			return super(DelegatePeerTestApprovalCreateView,self).form_invalid(form)
 		EmailHelper.send_email(request=request,

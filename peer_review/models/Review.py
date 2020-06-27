@@ -50,7 +50,6 @@ class Review(models.Model):
 		field_dict['Series Type']=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		field_dict['Created By']=self.created_by.username
 		field_dict['Creation Date']= str(self.creation_date)
-		# print(field_dict.items())
 		return field_dict.items()
 
 	def get_values_for_fields_answers(self):
@@ -76,7 +75,6 @@ class Review(models.Model):
 		return self.approval_outcome==StatusCodes.get_pending_status()
 
 	def get_tag_right_1(self):
-		# print('tag_right_1')
 		return ''.join([value for (item,value) in APPROVAL_OUTCOMES if item==self.approval_outcome])
 
 	def get_display_list_description(self):
@@ -99,8 +97,6 @@ class Review(models.Model):
 		if self.approval_outcome==StatusCodes.get_approved_status():
 			return None
 		actions=OrderedDict()
-		print('Fetching actions allowed on raised by me review')
-		print(exclude)
 		if not exclude or (exclude and 'update' not in exclude):
 			actions['Update']='peer_review:review_update_view'
 		if not exclude or (exclude and 'invalidate' not in exclude):
@@ -114,8 +110,6 @@ class Review(models.Model):
 		if self.approval_outcome!=StatusCodes.get_pending_status():
 			return None
 		actions=OrderedDict()
-		print('Fetching actions allowed on raised to me review')
-		print(exclude)
 		if not exclude or (exclude and 'approve' not in exclude):
 			actions['Approve']='peer_review:review_detail_approve_view'
 		if not exclude or (exclude and 'reject' not in exclude):
@@ -128,8 +122,7 @@ class Review(models.Model):
 		if self.approval_outcome!=StatusCodes.get_pending_status():
 			return None
 		actions=OrderedDict()
-		print('Fetching actions allowed on raised to me review')
-		print(exclude)
+
 		if not exclude or (exclude and 'approve' not in exclude):
 			actions['Approve']='peer_testing:peer_testing_approve'
 		if not exclude or (exclude and 'reject' not in exclude):
@@ -143,8 +136,7 @@ class Review(models.Model):
 		if self.approval_outcome==StatusCodes.get_approved_status():
 			return None
 		actions=OrderedDict()
-		print('Fetching actions allowed on raised by me review')
-		print(exclude)
+
 		if not exclude or (exclude and 'update' not in exclude):
 			actions['Update']='peer_testing:peer_testing_update'
 		if not exclude or (exclude and 'invalidate' not in exclude):
@@ -163,8 +155,12 @@ class Review(models.Model):
 		display_email['Series']=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		return display_email.items()
 
-	def get_follow_up_action_manager(self):
+	def get_follow_up_action_manager_review(self):
 		if self.approval_outcome==StatusCodes.get_pending_status():
-			return {'Follow up':'manager_activities:follow_up_manager'}.items()
+			return {'Follow up':'manager_activities:follow_up_manager_review'}.items()
 		return None
 
+	def get_follow_up_action_manager_peer_test(self):
+		if self.approval_outcome==StatusCodes.get_pending_status():
+			return {'Follow up':'manager_activities:follow_up_manager_peer_test'}.items()
+		return None
