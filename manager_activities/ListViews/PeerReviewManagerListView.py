@@ -24,7 +24,7 @@ class PeerReviewManagerListView(ListView):
 		context['page_title']='Peer Review - Manager'
 		context['create_button_rendered']=False
 		context['is_man_home_active']='active'
-		context['list_view_type']='manager_view'
+		context['list_view_type']='manager_view_review'
 		context['logged_in_user']=self.request.user
 		# context['restrict_by_user_prop']=True
 		

@@ -11,6 +11,10 @@
 				$('#invalidate_modal').modal('hide');
 				$('#action_processing').modal('show');
 			});
+			$('.invalidate_action_container').click(function(){
+				data_url=$(this).attr("data-url_invalidate");
+				$('#invalidate_review_confirm').attr('href',data_url);
+			});
 		});
 	</script>
 	
@@ -45,7 +49,7 @@
 		        	<p>Are you sure?</p>
 		      	</div>
 		      	<div class="modal-footer">
-			        <a type="button" class="btn btn-primary" href="{% url 'peer_review:invalidate_review' obj_pk=detail_obj.pk%}" id ="invalidate_review_confirm">Yes</a>
+			        <a type="button" class="btn btn-primary" href="#">Yes</a>
 			        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
 		      	</div>
 	    	</div>
@@ -65,7 +69,7 @@
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 									{% for action_name,action_url in actions_drop %}
 										{% if action_name|lower == 'invalidate' %}
-											<a class="dropdown-item" href="#" data-toggle="modal" data-target="#invalidate_modal">{{action_name}}</a>
+											<a class="dropdown-item invalidate_action_container" href="#" data-toggle="modal" data-target="#invalidate_modal" data-url_invalidate="{% url action_url obj_pk=detail_obj.pk%}">{{action_name}}</a>
 										{% else %}
 											<a class="dropdown-item" href="{% url action_url obj_pk=detail_obj.pk%}">{{action_name}}</a>
 										{% endif %}

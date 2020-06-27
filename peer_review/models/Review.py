@@ -155,8 +155,12 @@ class Review(models.Model):
 		display_email['Series']=CommonLookups.get_non_aru_series_type_name() if not self.series_type else self.series_type
 		return display_email.items()
 
-	def get_follow_up_action_manager(self):
+	def get_follow_up_action_manager_review(self):
 		if self.approval_outcome==StatusCodes.get_pending_status():
-			return {'Follow up':'manager_activities:follow_up_manager'}.items()
+			return {'Follow up':'manager_activities:follow_up_manager_review'}.items()
 		return None
 
+	def get_follow_up_action_manager_peer_test(self):
+		if self.approval_outcome==StatusCodes.get_pending_status():
+			return {'Follow up':'manager_activities:follow_up_manager_peer_test'}.items()
+		return None

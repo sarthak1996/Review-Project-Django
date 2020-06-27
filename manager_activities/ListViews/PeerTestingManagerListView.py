@@ -24,7 +24,7 @@ class PeerTestingManagerListView(ListView):
 		context['detail_view_url']='manager_activities:manager_peer_testing_view'
 		context['page_title']='Peer Testing - Manager'
 		context['is_man_home_active']='active'
-		context['list_view_type']='manager_view'
+		context['list_view_type']='manager_view_peer_test'
 		context['restrict_by_user_prop']=True
 		context['logged_in_user']=self.request.user
 

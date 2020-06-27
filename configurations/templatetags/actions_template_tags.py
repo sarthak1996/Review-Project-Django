@@ -60,7 +60,9 @@ def get_action_values(context,*args):
 			if context['logged_in_user']!=latest_apr_row.raised_to:
 						return None
 			return args[0].get_peer_testing_raised_to_me_actions()
-		elif args[1]=='manager_view':
-			return args[0].get_follow_up_action_manager()
+		elif args[1]=='manager_view_review':
+			return args[0].get_follow_up_action_manager_review()
+		elif args[1]=='manager_view_peer_test':
+			return args[0].get_follow_up_action_manager_peer_test()
 	else:
 		return args[0].get_actions_drop()
