@@ -5,8 +5,6 @@ from django.contrib.auth import get_user_model
 from peer_testing.models import Answer
 from configurations.models import Choice,Question
 from concurrency.forms import VersionWidget
-from configurations.HelperClasses import LoggingHelper
-import traceback
 class PeerReviewAnswerForm(ModelForm):
 
 	single_choice_field=forms.ModelChoiceField(required=False,queryset=Choice.objects.all(),empty_label='Choose a value',widget=forms.Select(attrs={'class':'form-control not_rendered choice_select'}))
@@ -21,8 +19,6 @@ class PeerReviewAnswerForm(ModelForm):
 		super(PeerReviewAnswerForm, self).__init__(*args, **kwargs)
 		if 'question' in self.initial :
 			selected_question=self.initial['question']
-			logger=LoggingHelper(self.request.user,__name__)
-			logger.write('Question'+str(selected_question),LoggingHelper.DEBUG)
 			self.fields['question'].value =selected_question
 			self.fields['text_answer'].label=selected_question.question_text
 			question_choices=Question.get_questions_choice_types()['question_choice_type']

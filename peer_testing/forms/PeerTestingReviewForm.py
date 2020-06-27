@@ -11,7 +11,7 @@ class PeerTestingReviewForm(ModelForm):
 	priority=forms.ChoiceField(required=False,initial=CommonLookups.get_review_normal_priority(),choices=Review.get_review_priority_approval_types()['review_priority'],widget=forms.Select(attrs={'class':'form-control choice_select','label':'Priority'}))
 	team=forms.ModelChoiceField(queryset=Team.objects.all(),empty_label='Choose a Team',widget=forms.Select(attrs={'class':'form-control choice_select'}))
 	raise_to=UserModelChoiceField(queryset=get_user_model().objects.all(),empty_label='Choose a User',widget=forms.Select(attrs={'class':'form-control choice_select'}))
-	version=VersionWidget(attrs={'placeholder': 'Object version number','class':'form-control version_widget',})
+	version=VersionWidget()
 	class Meta:
 		model=Review
 		fields=['bug_number','priority','team','version']

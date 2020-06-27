@@ -16,7 +16,9 @@
         		return delete_exemption_form(this,'exemption');
         	});
         	hide_deleted_exemptions();
-
+        	$('#submit_button').click(function(){
+				$('#action_processing').modal('show');
+			});
     	})
     
     </script>
@@ -27,6 +29,18 @@
 {% block content%}
 	{% get_action_values review_object 'review_approval' as actions_drop%}
 	<!--{% include 'lov/action_modal.html' %}-->
+	<div class="modal fade action_processing" tabindex="-1" id="action_processing" role="dialog" aria-hidden="true">
+  		<div class="modal-dialog modal-dialog-centered" role="document">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+			        <h5 class="modal-title">Processing</h5>
+	      		</div>
+		      	<div class="modal-body">
+		        	<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+		      	</div>
+	    	</div>
+  		</div>
+	</div>
     <div class="row justify-content-md-center">
         
 			<div class="card border-dark col-6" >

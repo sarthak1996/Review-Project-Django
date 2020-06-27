@@ -86,7 +86,7 @@ def create_or_update_review(request,initial_questions,initial_review_instance=No
 		if formset.is_valid:
 			all_forms_valid=True
 			for form in formset:
-				logger.write('Review Form errors:')
+				logger.write('Review Form errors:',LoggingHelper.ERROR)
 				logger.write(str(form.errors),LoggingHelper.ERROR)
 				if form.is_valid():
 					all_forms_valid=True
