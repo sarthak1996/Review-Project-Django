@@ -29,9 +29,7 @@ class ReviewCreateView(CreateView):
 			form.add_error('raise_to','User '+str(raised_to_user.get_full_name())+' does not belong to the team to which the review was raised.')
 			return super(ReviewCreateView,self).form_invalid(form)
 		
-		review_obj.last_update_by=self.request.user
-		review_obj.created_by=self.request.user
-		review_obj.creation_date=datetime.datetime.now()
+		
 		review_obj.review_type=CommonLookups.get_peer_review_question_type()
 		logger=LoggingHelper(self.request.user,__name__)
 		logger.write('Review approval:'+ str(review_obj.approval_outcome),LoggingHelper.DEBUG)

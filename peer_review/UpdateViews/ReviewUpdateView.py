@@ -27,7 +27,6 @@ class ReviewUpdateView(UpdateView):
 	def form_valid(self, form):
 		raised_to_user=get_user_model().objects.get(pk=form.cleaned_data['raise_to'].pk)
 		logger=LoggingHelper(self.request.user,__name__)
-		form.instance.last_update_by=self.request.user
 		form.instance.review_type=CommonLookups.get_peer_review_question_type()
 		review_obj=form.instance
 		if not CommonValidations.user_exists_in_team(raised_to_user,review_obj.team):

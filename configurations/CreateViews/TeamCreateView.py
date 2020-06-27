@@ -16,9 +16,6 @@ class TeamCreateView(CreateView):
 	login_url ='/reviews/login'
 	
 	def form_valid(self, form):
-		form.instance.last_update_by=self.request.user
-		form.instance.created_by=self.request.user
-		form.instance.creation_date=datetime.datetime.now()
 		try:
 			redirect=super().form_valid(form)
 		except Exception as e:

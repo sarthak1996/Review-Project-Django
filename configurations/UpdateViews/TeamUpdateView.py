@@ -26,7 +26,6 @@ class TeamUpdateView(UpdateView):
 
 	@transaction.atomic
 	def form_valid(self, form):
-		form.instance.last_update_by=self.request.user
 		logger=LoggingHelper(self.request.user,__name__)
 		try :
 			redirect = super().form_valid(form)

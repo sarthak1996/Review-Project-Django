@@ -122,9 +122,7 @@ def peer_review_approval_form(request,**kwargs):
 				question_choice_type=obj_instance.question.question_choice_type
 				obj_instance.review=review
 				obj_instance.answer=form.cleaned_data['single_choice_field'] if question_choice_type==CommonLookups.get_single_choice_question_type() else form.cleaned_data['text_answer']
-				obj_instance.creation_date=datetime.now()
-				obj_instance.created_by=request.user
-				obj_instance.last_update_by=request.user
+				
 				
 				
 			logger.write('Exemption logging',LoggingHelper.DEBUG)

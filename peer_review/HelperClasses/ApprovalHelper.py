@@ -44,7 +44,7 @@ class ApprovalHelper():
 	@staticmethod
 	def mark_rest_rows_as_not_latest(review,exclude,user):
 		all_approval_rows=ApprovalHelper.get_all_approval_rows(review).exclude(pk=exclude.pk)
-		all_approval_rows.update(latest=False,last_update_by=user,last_update_date=datetime.datetime.now())
+		all_approval_rows.update(latest=False)
 		for apr in all_approval_rows:
 			apr.save()
 
@@ -115,7 +115,7 @@ class ApprovalHelper():
 
 	@staticmethod
 	def __mark_all_approval_rows_as_not_latest(all_approval_rows,user):
-		all_approval_rows.update(latest=False,last_update_by=user,last_update_date=datetime.datetime.now())
+		all_approval_rows.update(latest=False)
 		for apr in all_approval_rows:
 			apr.save()
 
@@ -134,7 +134,7 @@ class ApprovalHelper():
 		ApprovalHelper.__mark_all_approval_rows_as_not_latest(ApprovalHelper.__get_all_approval_rows(review_obj),created_by)
 		
 		review_obj.approval_outcome=approval_outcome
-		review_obj.last_update_by=created_by
+		
 		review_obj.save()
 		approval_obj=Approval(review=review_obj,
 									raised_by=raised_by,
@@ -142,10 +142,7 @@ class ApprovalHelper():
 									approval_outcome=approval_outcome,
 									delegated=delegated,
 									latest=True,
-									creation_date=datetime.datetime.now(),
-									approver_comment=approver_comment,
-									created_by=created_by,
-									last_update_by=created_by)
+									approver_comment=approver_comment)
 		PrintObjs.print_approval_obj(approval_obj,request.user)
 		approval_obj.save()
 

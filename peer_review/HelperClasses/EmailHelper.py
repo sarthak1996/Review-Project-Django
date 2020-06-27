@@ -18,7 +18,6 @@ def send_email(request,user,review,is_updated=False,follow_up=False):
 	
 	if not review.email_subject:
 		review.email_subject=subject
-		review.last_updated_by=user
 		review.save()
 	else:
 		subject='Re: '+subject.strip()
@@ -30,7 +29,6 @@ def send_email(request,user,review,is_updated=False,follow_up=False):
 		messages.success(request,'Email has been sent')
 	except Exception as e:
 		review.email_exceptions=str(e)
-		review.last_updated_by=user
 		review.save()
 		logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
 		messages.error(request,'Email could not be sent : '+str(e)) #to check if custom error should be thrown

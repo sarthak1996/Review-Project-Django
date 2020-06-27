@@ -23,7 +23,6 @@ class ChoiceUpdateView(UpdateView):
 	@transaction.atomic
 	def form_valid(self, form):
 		logger=LoggingHelper(self.request.user,__name__)
-		form.instance.last_update_by=self.request.user
 		try :
 			redirect = super().form_valid(form)
 		except Exception as e:

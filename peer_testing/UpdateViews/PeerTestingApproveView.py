@@ -33,7 +33,6 @@ class PeerTestingApproveView(UpdateView):
 	def form_valid(self, form):
 		review_instance=form.save(commit=False)
 		logger=LoggingHelper(self.request.user,__name__)
-		review_instance.last_update_by = self.request.user
 		try:
 			ApprovalHelper.approve_review(review=review_instance,
 										user=self.request.user,
