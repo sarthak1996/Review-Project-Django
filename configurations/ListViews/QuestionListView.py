@@ -39,11 +39,11 @@ class QuestionListView(ListView):
 		f_series_type=get_request.get('filter_form-series_type',None)
 		f_question_type=get_request.get('filter_form-question_type',None)
 		logger.write('Generating filter tags',LoggingHelper.DEBUG)
-		logger.write(f_question_text,LoggingHelper.DEBUG)
-		logger.write(f_mandatory,LoggingHelper.DEBUG)
-		logger.write(f_question_choice_type,LoggingHelper.DEBUG)
-		logger.write(f_series_type,LoggingHelper.DEBUG)
-		logger.write(f_question_type,LoggingHelper.DEBUG)
+		logger.write(str(f_question_text),LoggingHelper.DEBUG)
+		logger.write(str(f_mandatory),LoggingHelper.DEBUG)
+		logger.write(str(f_question_choice_type),LoggingHelper.DEBUG)
+		logger.write(str(f_series_type),LoggingHelper.DEBUG)
+		logger.write(str(f_question_type),LoggingHelper.DEBUG)
 
 		
 		#generating applied filter params url

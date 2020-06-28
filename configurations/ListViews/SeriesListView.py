@@ -28,8 +28,8 @@ class SeriesListView(ListView):
 		f_series_name=get_request.get('filter_form-series_name__icontains',None)
 		f_series_type=get_request.get('filter_form-series_type',None)
 		logger.write('Generating filter tags',LoggingHelper.DEBUG)
-		logger.write(f_series_type,LoggingHelper.DEBUG)
-		logger.write(f_series_name,LoggingHelper.DEBUG)
+		logger.write(str(f_series_type),LoggingHelper.DEBUG)
+		logger.write(str(f_series_name),LoggingHelper.DEBUG)
 		
 		applied_filter_dict={
 				'filter_form-series_name__icontains':f_series_name,

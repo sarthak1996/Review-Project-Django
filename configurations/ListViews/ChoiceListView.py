@@ -27,7 +27,7 @@ class ChoiceListView(ListView):
 		get_request=self.request.GET
 		f_choice_text=get_request.get('filter_form-choice_text__icontains',None)	
 		logger.write('Generating filter tags',LoggingHelper.DEBUG)
-		logger.write('filter:'+f_choice_text,LoggingHelper.DEBUG)
+		logger.write('filter:'+str(f_choice_text),LoggingHelper.DEBUG)
 		
 		
 		applied_filter_dict={

@@ -30,6 +30,11 @@ textarea{
 	height: 150px !important;
 }
 
+
+.card{
+  align-self: flex-start;
+}
+
 .stretched_card{
   display: inline-flex;
 }

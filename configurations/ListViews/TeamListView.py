@@ -28,8 +28,8 @@ class TeamListView(ListView):
 		f_team_name=get_request.get('filter_form-team_name__icontains',None)
 		f_team_grp_mail=get_request.get('filter_form-team_grp_mail__icontains',None)
 		logger.write('Generating filter tags',LoggingHelper.DEBUG)
-		logger.write(f_team_name,LoggingHelper.DEBUG)
-		logger.write(f_team_grp_mail,LoggingHelper.DEBUG)
+		logger.write(str(f_team_name),LoggingHelper.DEBUG)
+		logger.write(str(f_team_grp_mail),LoggingHelper.DEBUG)
 		
 		applied_filter_dict={
 				'filter_form-team_name__icontains':f_team_name,

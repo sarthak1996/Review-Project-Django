@@ -37,12 +37,12 @@ class PeerReviewManagerListView(ListView):
 		# f_review_type=get_request.get('filter_form-review_type',None)
 		f_series_type=get_request.get('filter_form-series_type',None)
 		logger.write('Generating filter tags',LoggingHelper.DEBUG)
-		logger.write(f_bug_number,LoggingHelper.DEBUG)
-		logger.write(f_raised_to,LoggingHelper.DEBUG)
-		logger.write(f_priority,LoggingHelper.DEBUG)
-		logger.write(f_approval_outcome,LoggingHelper.DEBUG)
-		logger.write(f_team,LoggingHelper.DEBUG)
-		logger.write(f_series_type,LoggingHelper.DEBUG)
+		logger.write(str(f_bug_number),LoggingHelper.DEBUG)
+		logger.write(str(f_raised_to),LoggingHelper.DEBUG)
+		logger.write(str(f_priority),LoggingHelper.DEBUG)
+		logger.write(str(f_approval_outcome),LoggingHelper.DEBUG)
+		logger.write(str(f_team),LoggingHelper.DEBUG)
+		logger.write(str(f_series_type),LoggingHelper.DEBUG)
 		applied_filter_dict={
 				'filter_form-bug_number__icontains':f_bug_number,
 				'filter_form-raised_to':f_raised_to,
