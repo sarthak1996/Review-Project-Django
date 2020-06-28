@@ -26,6 +26,7 @@ class SeriesDetailView(DetailView):
 		context['update_rendered']=True
 		context['delegate_rendered']=False
 		context['delegate_label']='Delegate'
+		context['logged_in_user']=self.request.user
 		context['delegate_view_url']='peer_review:delegate_view'
 		context['is_conf_active']='active'
 		logger=LoggingHelper(self.request.user,__name__)

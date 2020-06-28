@@ -23,6 +23,7 @@ class TeamDetailView(DetailView):
 		context['detail_view_title']='Team'
 		context['update_view_url']='configurations:team_update_view'
 		context['button_label']='Update'
+		context['logged_in_user']=self.request.user
 		context['update_rendered']=True
 		context['delegate_rendered']=False
 		context['delegate_label']='Delegate'

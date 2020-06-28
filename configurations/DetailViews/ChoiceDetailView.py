@@ -28,7 +28,7 @@ class ChoiceDetailView(DetailView):
 		context['delegate_label']='Delegate'
 		context['delegate_view_url']='peer_review:delegate_view'
 		context['is_conf_active']='active'
-
+		context['logged_in_user']=self.request.user
 		choice_questions=Question.objects.filter(choices=choice_obj)
 		question_url='configurations:question_detail_view'
 		choice_usages=[]

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-
+import logging.config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -132,6 +132,7 @@ STATICFILES_DIRS =[
 ]
 
 
+LOGGING_CONFIG = None
 LOGGING = {
     'version': 1,
     # Version of logging
@@ -153,7 +154,8 @@ LOGGING = {
             'formatter': 'simple',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR,'app_logs','AppLogs','app-debug.log'),
-            'maxBytes': 1024 * 1024 * 10,
+            'maxBytes': 1024 * 1024 * 100,
+            'backupCount':30,
             'filters':['simple']
         },
         'fileError': {
@@ -161,7 +163,8 @@ LOGGING = {
             'formatter': 'simple',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR,'app_logs','AppLogs','app-error.log'),
-            'maxBytes': 1024 * 1024 * 10,
+            'maxBytes': 1024 * 1024 * 100,
+            'backupCount':30,
             'filters':['simple']
         },
         'djangoDebug': {
@@ -169,7 +172,8 @@ LOGGING = {
             'formatter': 'simple',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR,'app_logs','DjangoLogs','djangoapp-debug.log'),
-            'maxBytes': 1024 * 1024 * 10,
+            'maxBytes': 1024 * 1024 * 100,
+            'backupCount':30,
             'filters':['simple']
         },
     },
@@ -191,4 +195,5 @@ LOGGING = {
         },
     },
 }
+logging.config.dictConfig(LOGGING)
 
