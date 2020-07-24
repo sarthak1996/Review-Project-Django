@@ -15,6 +15,11 @@ class Approval(models.Model):
 	created_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='approvals_created_by',on_delete=models.PROTECT)
 	last_update_by=models.ForeignKey(settings.AUTH_USER_MODEL, related_name='approvals_last_update_by',on_delete=models.PROTECT)
 	version = IntegerVersionField()
+
+	class Meta:
+		verbose_name_plural = "Approvals"
+		db_table="prv_approval"
+
 	def __str__(self):
 		if self.review:
 			return self.review.bug_number+'->'+self.review.review_type

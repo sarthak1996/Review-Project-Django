@@ -4,3 +4,4 @@ db.sqlite3
 external/
 oracle/
 app_logs/
+settings.py

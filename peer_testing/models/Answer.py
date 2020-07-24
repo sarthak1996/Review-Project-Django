@@ -14,6 +14,7 @@ class Answer(models.Model):
 	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Answers"
+		db_table="prv_answers"
 	def __str__(self):
 		return str(self.review)+'@'+str(self.question) + ' : '+self.answer
 

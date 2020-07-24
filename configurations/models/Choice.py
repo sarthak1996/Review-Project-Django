@@ -13,6 +13,7 @@ class Choice(models.Model):
 	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Choices"
+		db_table="prv_choices"
 	def __str__(self):
 		return self.choice_text
 

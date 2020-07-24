@@ -13,5 +13,6 @@ class Exemption(models.Model):
 	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Exemptions"
+		db_table="prv_exemptions"
 	def __str__(self):
 		return self.review.bug_number + '->' + self.exemption_for+'->' +self.exemption_explanation

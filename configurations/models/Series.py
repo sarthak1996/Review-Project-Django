@@ -15,6 +15,7 @@ class Series(models.Model):
 	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Series"
+		db_table="prv_series"
 
 	def __str__(self):
 		return self.series_name

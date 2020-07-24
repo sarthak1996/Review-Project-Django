@@ -20,6 +20,7 @@ class Question(models.Model):
 	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Questions"
+		db_table="prv_questions"
 	def __str__(self):
 		return self.question_text
 

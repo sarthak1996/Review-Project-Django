@@ -14,6 +14,7 @@ class Team(models.Model):
 	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Teams"
+		db_table="prv_teams"
 	def __str__(self):
 		return self.team_name
 	def get_values_for_fields(self):

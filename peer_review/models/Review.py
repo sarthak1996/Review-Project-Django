@@ -27,6 +27,7 @@ class Review(models.Model):
 	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Reviews"
+		db_table="prv_reviews"
 	def __str__(self):
 		return self.created_by.username + '->' + ' for '+ self.bug_number
 
