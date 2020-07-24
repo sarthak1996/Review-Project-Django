@@ -15,9 +15,12 @@ class LoggingHelper():
 		self.__resolve_logger_level_and_log(log_text,logging_level)
 
 	def __resolve_logger_level_and_log(self,log_text,logging_level):
+		uname=None
+		if getattr(self,'user',None) and self.user and self.user.username:
+			uname=self.user.username
 		if log_text:
 			log_text=log_text.replace('%','%%')
-			log_text='( User: ' + self.user.username + ' ) => ' + log_text
+			log_text='( User: ' + str(uname) + ' ) => ' + log_text
 		logging.basicConfig()
 		logger = logging.getLogger()
 		

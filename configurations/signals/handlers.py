@@ -45,6 +45,11 @@ def update_who_columns(sender,instance,**kwargs):
 	user=get_current_authenticated_user()
 	logger=LoggingHelper(user,__name__)
 	curr_time=timezone.now()
+	
+	
+	#check for seed data
+	if instance.created_by is not None and instance.last_update_by is not None and instance.created_by==instance.last_update_by:
+		user = instance.created_by
 	logger.write('Pre save signal',LoggingHelper.DEBUG)	
 	logger.write('Request user: '+str(user.username),LoggingHelper.DEBUG)
 	logger.write('Is created: '+str(is_created),LoggingHelper.DEBUG)
