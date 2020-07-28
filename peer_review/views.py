@@ -17,7 +17,7 @@ from collections import OrderedDict
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required,user_passes_test
 from configurations.HelperClasses.PermissionResolver import is_manager,is_emp_or_manager,is_review_action_taker,is_review_raised_by_me
-from peer_review.HelperClasses.oracle import BugHelper
+from peer_review.HelperClasses.bug import BugHelper
 from configurations.HelperClasses import LoggingHelper
 import traceback
 # Create your views here.
