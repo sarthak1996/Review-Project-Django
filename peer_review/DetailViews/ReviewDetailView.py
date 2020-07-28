@@ -54,7 +54,7 @@ class ReviewDetailView(DetailView):
 		exemption_timeline=[]
 		for exemption in exemptions_added:
 			exemption_timeline.append(Timeline(title=exemption.exemption_for,
-												description=exemption.exemption_explanation,
+												description=[exemption.exemption_explanation],
 												is_url=False,
 												request=self.request))
 		context['exemption_timeline']=exemption_timeline
