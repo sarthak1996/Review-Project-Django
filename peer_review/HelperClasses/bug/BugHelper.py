@@ -1,7 +1,7 @@
 import cx_Oracle
 import os
 from django.contrib import messages
-from peer_review.HelperClasses import CommonLookups,StatusCodes
+from peer_review.HelperClasses import CommonLookups,StatusCodes,ApprovalHelper
 from configurations.HelperClasses import LoggingHelper
 import traceback
 def get_pl_sql_to_update_bug():
@@ -25,20 +25,18 @@ def update_bug(request,review):
 			connectString = os.getenv('ora_db_connect')
 			con = cx_Oracle.connect(connectString)
 			cur = con.cursor()
-			error_code=cursor.var(int)
-			error_msg=cursor.var(str)
+			error_code=cur.var(int)
+			error_msg=cur.var(str)
 			bug_text=get_bug_text_review(request,review)
 			if bug_text:
 				cur.execute(get_pl_sql_to_update_bug(),
 							bug_num=review.bug_number,
 							bug_text=bug_text,
 							error_code=error_code,
-							error_msg=out_error)
-				if error_code or error_code.getvalue() or error_msg or error_msg.getvalue():
-					messages.error(request,'Error while updating bug -' + str(error_code)+':'+str(error_msg))
-					logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
-				else:
-					messages.success(request,'Bug updated sucessfully')
+							error_msg=error_msg)
+				con.commit()
+				messages.error(request,error_msg.getvalue())
+				logger.write('After bug update: '+str(error_code)+" -- "+str(error_msg),LoggingHelper.ERROR)
 		except Exception as e:
 			messages.error(request,str(e))
 			logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
