@@ -275,6 +275,18 @@
 					</div>
 					</br>
 				{% endif %}
+				{% if checklist_timeline %}
+					<div>
+						<h4>{{checklist_title}}</h4>
+						<ul class="timeline">
+							<li>
+								{{checklist_approved_content}}
+							</li>
+						</ul>
+					<!-- </div> -->
+					</div>
+					</br>
+				{% endif %}
 			 </div>
    {% endif %}
         

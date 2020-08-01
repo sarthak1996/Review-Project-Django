@@ -28,6 +28,8 @@ def update_bug(request,review):
 			error_code=cur.var(int)
 			error_msg=cur.var(str)
 			bug_text=get_bug_text_review(request,review)
+			review.review_approved_checklist=bug_text
+			review.save()
 			if bug_text:
 				cur.execute(get_pl_sql_to_update_bug(),
 							bug_num=review.bug_number,

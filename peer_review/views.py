@@ -87,6 +87,9 @@ def peer_review_approval_form(request,**kwargs):
 	context_dict['detail_timeline']=[detail_timeline]
 	context_dict['detail_timeline_title']='Review details'
 	
+	context_dict['checklist_timeline']=True if review.review_approved_checklist else False
+	context_dict['checklist_title']='Checklist'
+	context_dict['checklist_approved_content']=review.review_approved_checklist
 
 	if request.method=='POST':
 		all_forms_valid=False
@@ -175,8 +178,14 @@ def peer_review_approval_form(request,**kwargs):
 							review=review,
 							is_updated=False)
 				
-				BugHelper.update_bug(request=request,
-					review=review)
+				try:				
+					BugHelper.update_bug(request=request,
+								review=review)
+				except Exception as e:
+					messages.error(request,str(e))
+					logger.write('Exception occurred: '+ str(traceback.format_exc()),LoggingHelper.ERROR)
+					handle_exception()
+					return render(request, 'peer_review/review_approval.html', context_dict)
 				
 				messages.success(request,'Review '+review.bug_number+' successfully approved!')
 				return redirect("peer_review:review_raised_to_me")
