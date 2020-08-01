@@ -24,6 +24,7 @@ class Review(models.Model):
 	series_type=models.CharField(max_length=3,blank=True,null=True,choices = CommonLookups.get_series_types())
 	email_subject=models.CharField(max_length=100,blank=True,null=True)
 	email_exceptions=models.CharField(max_length=1000,blank=True,null=True)
+	review_approved_checklist=models.CharField(max_length=2000,blank=True,null=True)
 	version = IntegerVersionField()
 	class Meta:
 		verbose_name_plural = "Reviews"
