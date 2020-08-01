@@ -280,7 +280,9 @@
 						<h4>{{checklist_title}}</h4>
 						<ul class="timeline">
 							<li>
-								{{checklist_approved_content}}
+								{% for content in checklist_approved_content %}
+									<p>{{content}}</p>
+								{% endfor %}
 							</li>
 						</ul>
 					<!-- </div> -->

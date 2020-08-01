@@ -89,7 +89,7 @@ def peer_review_approval_form(request,**kwargs):
 	
 	context_dict['checklist_timeline']=True if review.review_approved_checklist else False
 	context_dict['checklist_title']='Checklist'
-	context_dict['checklist_approved_content']=review.review_approved_checklist
+	context_dict['checklist_approved_content']=review.review_approved_checklist.split('\n')
 
 	if request.method=='POST':
 		all_forms_valid=False
