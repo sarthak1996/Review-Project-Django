@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test,login_required
 from configurations.HelperClasses.PermissionResolver import is_emp_or_manager,is_review_action_taker
-from configuration.HelperClasses import LoggingHelper
+from configurations.HelperClasses import LoggingHelper
 from django.urls import reverse_lazy
 class PeerTestingApproveView(UpdateView):
 	model=Review

@@ -40,7 +40,7 @@ def get_review_email_content(request,review,is_updated,follow_up):
 	mail_dict['subject']=get_mail_subject(review)
 	if latest_appr_row.delegated:
 		mail_dict['to']=latest_appr_row.raised_to.email
-		mail_dict['cc']=' -c ' if latest_appr_row.raised_by.email else '' +latest_appr_row.raised_by.email
+		mail_dict['cc']=[ latest_appr_row.raised_by.email ]
 		mail_dict['body']=get_delegated_review_body(request=request,
 													review=review,
 													delegated_by=latest_appr_row.raised_by,
@@ -50,10 +50,10 @@ def get_review_email_content(request,review,is_updated,follow_up):
 		#send email to approver to approve
 		if follow_up:
 			mail_dict['to']=latest_appr_row.raised_to.email.strip()+','+review.created_by.email.strip()
-			mail_dict['cc']=request.user.email
+			mail_dict['cc']=[ request.user.email ]
 		else:
 			mail_dict['to']=latest_appr_row.raised_to.email
-			mail_dict['cc']=' -c ' if review.created_by.email else '' +review.created_by.email
+			mail_dict['cc']=[ review.created_by.email ]
 		mail_dict['body']=get_pending_review_body(request=request,
 												review=review,
 												action_by=review.created_by,
@@ -63,7 +63,7 @@ def get_review_email_content(request,review,is_updated,follow_up):
 	elif latest_appr_row.approval_outcome==StatusCodes.get_invalid_status():
 		#send email to approver - FYI review has been invalidated
 		mail_dict['to']=latest_appr_row.raised_to.email
-		mail_dict['cc']=' -c ' if review.created_by.email else '' +review.created_by.email
+		mail_dict['cc']=[ review.created_by.email ]
 		mail_dict['body']=get_invalidated_review_body(request=request,
 													review=review,
 													invalidated_by=review.created_by,
@@ -71,7 +71,7 @@ def get_review_email_content(request,review,is_updated,follow_up):
 	elif latest_appr_row.approval_outcome==StatusCodes.get_approved_status():
 		#send email to raised_by - FYI review has been approved
 		mail_dict['to']=review.created_by.email
-		mail_dict['cc']=' -c ' if latest_appr_row.raised_to.email else '' +latest_appr_row.raised_to.email
+		mail_dict['cc']=[ latest_appr_row.raised_to.email ]
 		mail_dict['body']=get_approved_review_body(request=request,
 													review=review,
 													approved_by=latest_appr_row.raised_to,
@@ -80,12 +80,13 @@ def get_review_email_content(request,review,is_updated,follow_up):
 	elif latest_appr_row.approval_outcome==StatusCodes.get_rejected_status():
 		#send email to raised_by - Action Required (review is rejected)
 		mail_dict['to']=review.created_by.email
-		mail_dict['cc']=' -c ' if latest_appr_row.raised_to.email else '' +latest_appr_row.raised_to.email
+		mail_dict['cc']=[ latest_appr_row.raised_to.email ]
 		mail_dict['body']=get_rejected_review_body(request=request,
 													review=review,
 													rejected_by=latest_appr_row.raised_to,
 													comment=latest_appr_row.approver_comment,
 													addressee=review.created_by.first_name)
+	mail_dict['cc']=' '.join([' -c '+ elem for elem in mail_dict['cc']])
 	return mail_dict
 
 
