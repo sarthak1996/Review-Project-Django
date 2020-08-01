@@ -29,7 +29,7 @@
 {% block content%}
 	{% get_action_values review_object 'review_approval' as actions_drop%}
 	<!--{% include 'lov/action_modal.html' %}-->
-	<div class="modal fade action_processing" tabindex="-1" id="action_processing" role="dialog" aria-hidden="true">
+	<div class="modal fade action_processing" tabindex="-1" id="action_processing" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   		<div class="modal-dialog modal-dialog-centered" role="document">
 	    	<div class="modal-content">
 	      		<div class="modal-header">
