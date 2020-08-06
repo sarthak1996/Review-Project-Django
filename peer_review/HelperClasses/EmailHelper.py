@@ -14,13 +14,11 @@ def send_email(request,user,review,is_updated=False,follow_up=False):
 		PrintObjs.print_review_obj(review,request.user)
 		return
 	to,cc=mail_dict['to'],mail_dict['cc']
-	body,subject=mail_dict['body'],mail_dict['subject']
+	body,subject=mail_dict['body'],mail_dict['subject'].strip()
 	
 	if not review.email_subject:
 		review.email_subject=subject
 		review.save()
-	else:
-		subject='Re: '+subject.strip()
 	try:
 		send_email_mutt(to=to,
 						cc=cc,
