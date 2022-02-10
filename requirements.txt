@@ -4,5 +4,5 @@ django-concurrency
 cx_Oracle
 django-currentuser
 python-dotenv
-django==2.2.13
+django==2.2.27
 mod_wsgi
